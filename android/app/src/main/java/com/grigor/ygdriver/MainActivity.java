@@ -1,4 +1,4 @@
-package kz.rakoedov.template;
+package com.grigor.ygdriver;
 
 import android.os.Bundle;
 import com.zoontek.rnbootsplash.RNBootSplash;
@@ -12,7 +12,7 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected String getMainComponentName() {
-    return "TemplateApp";
+    return "YG-Driver";
   }
 
   @Override

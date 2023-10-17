@@ -73,9 +73,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "kz.rakoedov.template"
+    namespace "com.grigor.ygdriver"
     defaultConfig {
-        applicationId "kz.rakoedov.template"
+        applicationId "com.grigor.ygdriver"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
