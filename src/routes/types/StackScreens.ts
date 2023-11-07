@@ -1,3 +1,5 @@
+import { UserRole } from "../../types/role";
+
 export type StackScreens = {
   Init: undefined;
   AuthenticationChoice: undefined;
@@ -5,4 +7,12 @@ export type StackScreens = {
   SmsVerification: undefined;
   Subscription: undefined;
   AuthorizationComplete: undefined;
+  CreateProfile: {
+    type: UserRole;
+  };
+  CreateProfileComplete: undefined;
+  Orders: undefined;
+  OrderDetails: {
+    id: string;
+  };
 };

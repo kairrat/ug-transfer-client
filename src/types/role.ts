@@ -1,6 +1,11 @@
 export enum UserRole {
-  DRIVER = 'driver',
-  ADMIN = 'admin',
-  CONTROLLER = 'controller',
-  DRIVERCONTROLLER = 'driverController',
+  DRIVER = "Водитель",
+  ADMIN = "Админ",
+  CONTROLLER = "Диспетчер",
+  DRIVERCONTROLLER = "Водитель \\ Диспетчер",
+}
+
+export enum SubRole {
+  DRIVER = "Водитель",
+  CONTROLLER = "Диспетчер",
 }

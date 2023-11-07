@@ -1,4 +1,4 @@
-import { authorizationApi } from './api/AuthorizationApi';
+import { authorizationApi } from "./api/AuthorizationApi";
 
 export const sendCheckCode = async (phone: string) => {
   const { data } = await authorizationApi.sendCheckCode(phone);

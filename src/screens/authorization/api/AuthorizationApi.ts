@@ -1,18 +1,21 @@
-import AbstractApiRepository from '../../../app/api/ApiRepository';
-import { API_URL, APP_TYPE } from '@env';
-import { CallResponse, VerifyResponse } from '../authorization-response';
+import AbstractApiRepository from "../../../app/api/ApiRepository";
+import { CallResponse, VerifyResponse } from "../authorization-response";
+
+const urlU = "http://95.163.235.158:3000";
+const type = "drivers";
 
 class AuthorizationApi extends AbstractApiRepository {
   sendCheckCode(phone: string) {
+    console.log(`${urlU}/users/${type}/make-call`);
     return this.apiClient.post<CallResponse>({
-      url: `${API_URL}/users/${APP_TYPE}/make-call`,
+      url: `${urlU}/users/${type}/make-call`,
       data: { phone },
     });
   }
 
   verifyCode(phone: string, code: string) {
     return this.apiClient.post<VerifyResponse>({
-      url: `${API_URL}/users/${APP_TYPE}/verify`,
+      url: `${urlU}/users/${type}/verify`,
       data: { phone, code },
     });
   }
