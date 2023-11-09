@@ -29,28 +29,28 @@
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
-			remoteInfo = "YGDriver";
+			remoteInfo = YGDriver;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		00E356EE1AD99517003FC87E /* YGDriverTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "YGDriverTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		00E356EE1AD99517003FC87E /* YGDriverTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YGDriverTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00E356F21AD99517003FC87E /* YGDriverTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "YGDriverTests.m"; sourceTree = "<group>"; };
+		00E356F21AD99517003FC87E /* YGDriverTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YGDriverTests.m; sourceTree = "<group>"; };
 		0E0F249B15B94BFC8234087A /* Montserrat-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Light.ttf"; path = "../assets/fonts/Montserrat-Light.ttf"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* YGDriver.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "YGDriver.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = "YGDriver/AppDelegate.h"; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = "YGDriver/AppDelegate.mm"; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "YGDriver/Images.xcassets"; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = "YGDriver/Info.plist"; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = "YGDriver/main.m"; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* YGDriver.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YGDriver.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = YGDriver/AppDelegate.h; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = YGDriver/AppDelegate.mm; sourceTree = "<group>"; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = YGDriver/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = YGDriver/Info.plist; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = YGDriver/main.m; sourceTree = "<group>"; };
 		26B1A5EC7DF23D27337DC6A5 /* Pods-YGDriver.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YGDriver.debug.xcconfig"; path = "Target Support Files/Pods-YGDriver/Pods-YGDriver.debug.xcconfig"; sourceTree = "<group>"; };
 		36961E48DC3A9C86457D75A3 /* libPods-YGDriver-YGDriverTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-YGDriver-YGDriverTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4556B498FF5847FB950CE58E /* Montserrat-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-SemiBold.ttf"; path = "../assets/fonts/Montserrat-SemiBold.ttf"; sourceTree = "<group>"; };
 		4933F150850542B2BF18D23E /* Montserrat-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Bold.ttf"; path = "../assets/fonts/Montserrat-Bold.ttf"; sourceTree = "<group>"; };
 		4D7A694CBB3344E7B897A46B /* Pods-YGDriver-YGDriverTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YGDriver-YGDriverTests.release.xcconfig"; path = "Target Support Files/Pods-YGDriver-YGDriverTests/Pods-YGDriver-YGDriverTests.release.xcconfig"; sourceTree = "<group>"; };
 		74188CB8567A4C9DA915487E /* Montserrat-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Regular.ttf"; path = "../assets/fonts/Montserrat-Regular.ttf"; sourceTree = "<group>"; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "YGDriver/LaunchScreen.storyboard"; sourceTree = "<group>"; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = YGDriver/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B550DFCC2A85562300DEA356 /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = YGDriver/BootSplash.storyboard; sourceTree = "<group>"; };
 		C5E08D191A45D96A6209CB3D /* Pods-YGDriver.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YGDriver.release.xcconfig"; path = "Target Support Files/Pods-YGDriver/Pods-YGDriver.release.xcconfig"; sourceTree = "<group>"; };
 		D1BBCADCA6AB49D1A1052D17 /* Montserrat-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Black.ttf"; path = "../assets/fonts/Montserrat-Black.ttf"; sourceTree = "<group>"; };
@@ -86,7 +86,7 @@
 				00E356F21AD99517003FC87E /* YGDriverTests.m */,
 				00E356F01AD99517003FC87E /* Supporting Files */,
 			);
-			path = "YGDriverTests";
+			path = YGDriverTests;
 			sourceTree = "<group>";
 		};
 		00E356F01AD99517003FC87E /* Supporting Files */ = {
@@ -108,7 +108,7 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
-			name = "YGDriver";
+			name = YGDriver;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -218,8 +218,8 @@
 			);
 			dependencies = (
 			);
-			name = "YGDriver";
-			productName = "YGDriver";
+			name = YGDriver;
+			productName = YGDriver;
 			productReference = 13B07F961A680F5B00A75B9A /* YGDriver.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -473,7 +473,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "YGDriverTests/Info.plist";
+				INFOPLIST_FILE = YGDriverTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -485,7 +485,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.grigor.ygdriver";
+				PRODUCT_BUNDLE_IDENTIFIER = com.grigor.ygdriver;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YGDriver.app/YGDriver";
 			};
@@ -497,7 +497,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				INFOPLIST_FILE = "YGDriverTests/Info.plist";
+				INFOPLIST_FILE = YGDriverTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -509,7 +509,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.grigor.ygdriver";
+				PRODUCT_BUNDLE_IDENTIFIER = com.grigor.ygdriver;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YGDriver.app/YGDriver";
 			};
@@ -522,10 +522,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 59MU62B95M;
+				DEVELOPMENT_TEAM = 5VRZ68G4M3;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = "YGDriver/Info.plist";
-             INFOPLIST_KEY_CFBundleDisplayName = "YG-Driver";
+				INFOPLIST_FILE = YGDriver/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = YGDriver;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -537,8 +536,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.grigor.ygdriver";
-				PRODUCT_NAME = "YGDriver";
+				PRODUCT_BUNDLE_IDENTIFIER = com.grigor.ygdriver;
+				PRODUCT_NAME = YGDriver;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -552,9 +551,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 59MU62B95M;
-				INFOPLIST_FILE = "YGDriver/Info.plist";
-             INFOPLIST_KEY_CFBundleDisplayName = "YG-Driver";
+				DEVELOPMENT_TEAM = 5VRZ68G4M3;
+				INFOPLIST_FILE = YGDriver/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = YGDriver;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -566,8 +564,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.grigor.ygdriver";
-				PRODUCT_NAME = "YGDriver";
+				PRODUCT_BUNDLE_IDENTIFIER = com.grigor.ygdriver;
+				PRODUCT_NAME = YGDriver;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -722,7 +720,7 @@
 				00E356F71AD99517003FC87E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "YGDriver" */ = {
 			isa = XCConfigurationList;
@@ -731,7 +729,7 @@
 				13B07F951A680F5B00A75B9A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "YGDriver" */ = {
 			isa = XCConfigurationList;
@@ -740,7 +738,7 @@
 				83CBBA211A601CBA00E9B192 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
