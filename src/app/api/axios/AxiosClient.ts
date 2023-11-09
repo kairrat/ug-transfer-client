@@ -1,9 +1,9 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 
-import { IAxiosConfig, IAxiosResponse, IExcludedUrl } from './IAxiosInterfaces';
+import { IAxiosConfig, IAxiosResponse, IExcludedUrl } from "./IAxiosInterfaces";
 
-import { IApiClient } from '../ApiInterfaces';
-import { appConfig } from '../../../appConfig';
+import { IApiClient } from "../ApiInterfaces";
+import { appConfig } from "../../../appConfig";
 
 export default class AxiosClient implements IApiClient {
   readonly SUCCESS_STATUSES = [200, 201];
@@ -25,7 +25,7 @@ export default class AxiosClient implements IApiClient {
   };
 
   clearAccessToken = () => {
-    this.api.defaults.headers.common.Authorization = '';
+    this.api.defaults.headers.common.Authorization = "";
   };
 
   get = <T extends {}>(config: IAxiosConfig) => {
@@ -54,13 +54,13 @@ export default class AxiosClient implements IApiClient {
   };
 
   protected excludedUrls(response: any) {
-    const excluded: IExcludedUrl[] = [{ url: '/categories', method: 'GET' }];
+    const excluded: IExcludedUrl[] = [{ url: "/categories", method: "GET" }];
     let isExclude = false;
 
     const request = response.request;
     const config = response.config;
 
-    excluded.forEach(item => {
+    excluded.forEach((item) => {
       if (
         request.responseURL.includes(item.url) &&
         config.method.toLowerCase() === item.method.toLowerCase()
@@ -76,19 +76,19 @@ export default class AxiosClient implements IApiClient {
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     this.api.interceptors.request.use(
-      async config => {
-        config.headers.set('Content-Type', 'application/json');
-        config.headers.set('Accept-Timezone', timeZone);
+      async (config) => {
+        config.headers.set("Content-Type", "application/json");
+        config.headers.set("Accept-Timezone", timeZone);
 
         return { ...config, headers: config.headers };
       },
-      error => Promise.reject(error)
+      (error) => Promise.reject(error),
     );
   };
 
   private setInterceptorResponse = () => {
     this.api.interceptors.response.use(
-      response => {
+      (response) => {
         const isExcluded = this.excludedUrls(response);
 
         if (!this.SUCCESS_STATUSES.includes(response.status)) {
@@ -97,7 +97,7 @@ export default class AxiosClient implements IApiClient {
 
         return response;
       },
-      error => {
+      (error) => {
         const isExcluded = this.excludedUrls(error.response);
 
         if (!isExcluded) {
@@ -112,7 +112,7 @@ export default class AxiosClient implements IApiClient {
         }
 
         return Promise.reject(error);
-      }
+      },
     );
   };
 }

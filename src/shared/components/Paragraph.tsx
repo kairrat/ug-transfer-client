@@ -1,18 +1,18 @@
-import React from 'react';
-import { Text, TextProps } from 'react-native';
-import { colors } from '../style/colors';
+import React from "react";
+import { Text, TextProps } from "react-native";
+import { colors } from "../style/colors";
 
 export enum FontEnum {
-  Light = 'Montserrat-Light',
-  Regular = 'Montserrat-Regular',
-  Medium = 'Montserrat-Medium',
-  SemiBold = 'Montserrat-SemiBold',
-  Bold = 'Montserrat-Bold',
-  Black = 'Montserrat-Black',
+  Light = "Montserrat-Light",
+  Regular = "Montserrat-Regular",
+  Medium = "Montserrat-Medium",
+  SemiBold = "Montserrat-SemiBold",
+  Bold = "Montserrat-Bold",
+  Black = "Montserrat-Black",
 }
 
 type Weight = 300 | 400 | 500 | 600 | 700 | 900;
-type Align = 'auto' | 'left' | 'right' | 'center';
+type Align = "auto" | "left" | "right" | "center";
 
 interface Paragraph extends TextProps {
   weight?: Weight;
@@ -34,14 +34,19 @@ export const Paragraph: React.FC<Paragraph> = function Paragraph({
   weight = 400,
   size = 16,
   color = colors.black,
-  align = 'left',
+  align = "left",
   children,
   style,
 }) {
   const FONT = FONTS[weight];
 
   return (
-    <Text style={[{ fontFamily: FONT, fontSize: size, color: color, textAlign: align }, style]}>
+    <Text
+      style={[
+        { fontFamily: FONT, fontSize: size, color: color, textAlign: align },
+        style,
+      ]}
+    >
       {children}
     </Text>
   );

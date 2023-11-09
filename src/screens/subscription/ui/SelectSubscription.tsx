@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { View } from "react-native";
-import { Car } from "@components/icons/Car";
 import { subscriptions } from "../contants";
 import { SelectSubscriptionItem } from "./SelectSubscriptionItem";
-import { PrimaryButton } from "@components/button/PrimaryButton";
+import {Subscription} from "effector";
 
 interface CompProps {
   onSelectSubscription: (subscription: Subscription) => void;

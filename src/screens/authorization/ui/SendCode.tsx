@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
-import { SmsLayout } from './SmsLayout';
-import { Input } from '@components/input/Input';
-import { PhoneRounded } from '@components/icons/PhoneRounded';
-import { colors, fonts } from '@styles';
+import React, { useState } from "react";
+import { StyleSheet, Text } from "react-native";
+import { SmsLayout } from "./SmsLayout";
+import { Input } from "@components/input/Input";
+import { PhoneRounded } from "@components/icons/PhoneRounded";
+import { colors, fonts } from "@styles";
 
 interface CompProps {
   buttonText: string;
@@ -12,7 +12,12 @@ interface CompProps {
   onSendPress: (number: string) => void;
 }
 
-export const SendCode = ({ buttonText, titleText, onSendPress, onBackPress }: CompProps) => {
+export const SendCode = ({
+  buttonText,
+  titleText,
+  onSendPress,
+  onBackPress,
+}: CompProps) => {
   const [phone, setPhone] = useState<string>();
 
   const phoneNumberRegex = /^\+(?:[0-9] ?){6,14}[0-9]$/;
@@ -38,7 +43,7 @@ export const SendCode = ({ buttonText, titleText, onSendPress, onBackPress }: Co
         onChangeText={setPhone}
       />
       <Text style={[compStyles.smsText, fonts.description]}>
-        {'На ваш номер телефона придет СМС с проверочным кодом'}
+        {"На ваш номер телефона придет СМС с проверочным кодом"}
       </Text>
     </SmsLayout>
   );
@@ -52,7 +57,7 @@ const compStyles = StyleSheet.create({
   smsText: {
     color: colors.white,
     marginTop: 35,
-    width: '80%',
-    textAlign: 'center',
+    width: "80%",
+    textAlign: "center",
   },
 });

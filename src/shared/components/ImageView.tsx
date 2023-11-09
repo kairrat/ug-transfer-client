@@ -1,8 +1,8 @@
-import { StyleProp, StyleSheet, View } from 'react-native';
-import FastImage, { ImageStyle, ResizeMode } from 'react-native-fast-image';
-import { sharedStyles } from '../style/styles';
-import { Loader } from './Loader';
-import { useState } from 'react';
+import { StyleProp, StyleSheet, View } from "react-native";
+import FastImage, { ImageStyle, ResizeMode } from "react-native-fast-image";
+import { sharedStyles } from "../style/styles";
+import { Loader } from "./Loader";
+import { useState } from "react";
 
 interface CompProps {
   uri: string;
@@ -26,7 +26,7 @@ export const ImageView: React.FC<CompProps> = function ImageView(props) {
           ...(props.auth ? { headers: { Authorization: props.auth } } : {}),
           priority: FastImage.priority.normal,
         }}
-        resizeMode={FastImage.resizeMode[props.resizeMode || 'cover']}
+        resizeMode={FastImage.resizeMode[props.resizeMode || "cover"]}
       />
       {isLoad && (
         <View style={[compStyle.loader, props.imageStyle, sharedStyles.center]}>
@@ -43,6 +43,6 @@ const compStyle = StyleSheet.create({
     height: 100,
   },
   loader: {
-    position: 'absolute',
+    position: "absolute",
   },
 });

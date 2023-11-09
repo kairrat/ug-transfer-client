@@ -1,7 +1,7 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { colors, fonts, sharedStyles } from '@styles';
-import CrownIcon from '@assets/img/crown.svg';
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { colors, fonts, sharedStyles } from "@styles";
+import CrownIcon from "@assets/img/crown.svg";
 
 interface CompProps {
   title: string;
@@ -24,8 +24,8 @@ export const MenuProfileItem = ({ title, icon }: CompProps) => {
 
 const compStyles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     borderBottomWidth: 1,
     borderBottomColor: colors.line,
     paddingStart: 25,
@@ -34,7 +34,7 @@ const compStyles = StyleSheet.create({
   },
   text: {
     color: colors.white,
-    position: 'relative',
+    position: "relative",
     top: 10,
   },
 });

@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { fonts, colors, sharedStyles } from '@styles';
-import { hexToRGBA } from '@utils/hexToRGBA';
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { fonts, colors, sharedStyles } from "@styles";
+import { hexToRGBA } from "@utils/hexToRGBA";
 
 export const DistanceResult = () => {
   return (

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Text, StyleSheet, View } from 'react-native';
-import { SmsLayout } from './SmsLayout';
-import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
-import { colors, fonts } from '@styles';
-import { ResendCode } from './ResendCode';
+import React, { useState } from "react";
+import { Text, StyleSheet, View } from "react-native";
+import { SmsLayout } from "./SmsLayout";
+import SmoothPinCodeInput from "react-native-smooth-pincode-input";
+import { colors, fonts } from "@styles";
+import { ResendCode } from "./ResendCode";
 
 interface CompProps {
   onBackPress: () => void;
@@ -18,7 +18,7 @@ export const CheckCode = ({
   onResendCodePress,
   onBackPress,
 }: CompProps) => {
-  const [codeInput, setCodeInput] = useState('');
+  const [codeInput, setCodeInput] = useState("");
 
   return (
     <SmsLayout
@@ -27,7 +27,7 @@ export const CheckCode = ({
       onBackPress={onBackPress}
       isDisabledButton={codeInput.length < 4}
     >
-      <Text style={[compStyles.title, fonts.label]}>{'Проверочные цифры'}</Text>
+      <Text style={[compStyles.title, fonts.label]}>{"Проверочные цифры"}</Text>
       <SmoothPinCodeInput
         cellStyle={compStyles.codeChar}
         cellStyleFocused={{
@@ -40,16 +40,23 @@ export const CheckCode = ({
         onTextChange={setCodeInput}
       />
       <Text style={[compStyles.enterCodeText, fonts.description]}>
-        {'Введите пожалуйста 4 последние цифры номера телефона нашего автоответчика'}
+        {
+          "Введите пожалуйста 4 последние цифры номера телефона нашего автоответчика"
+        }
       </Text>
 
       <View style={compStyles.errorTextContainer}>
         {isCodeError && (
-          <Text style={[compStyles.errorText, fonts.description]}>{'Неправильный код'}</Text>
+          <Text style={[compStyles.errorText, fonts.description]}>
+            {"Неправильный код"}
+          </Text>
         )}
       </View>
 
-      <ResendCode containerStyle={compStyles.resendCodeContainer} onResend={onResendCodePress} />
+      <ResendCode
+        containerStyle={compStyles.resendCodeContainer}
+        onResend={onResendCodePress}
+      />
     </SmsLayout>
   );
 };
@@ -71,7 +78,7 @@ const compStyles = StyleSheet.create({
     color: colors.white,
     marginTop: 20,
     paddingHorizontal: 45,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 39,
   },
   errorTextContainer: {
@@ -81,6 +88,6 @@ const compStyles = StyleSheet.create({
     color: colors.error,
   },
   resendCodeContainer: {
-    marginTop: 'auto',
+    marginTop: "auto",
   },
 });

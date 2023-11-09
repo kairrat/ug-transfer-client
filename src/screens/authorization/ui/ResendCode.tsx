@@ -1,6 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
-import { fonts, colors } from '@styles';
+import React, { useEffect, useState } from "react";
+import {
+  StyleProp,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native";
+import { fonts, colors } from "@styles";
 
 interface CompProps {
   onResend: () => void;
@@ -17,7 +24,7 @@ export const ResendCode = ({ onResend, containerStyle }: CompProps) => {
     if (isCodeResended) {
       interval = setInterval(() => {
         if (timer > 0) {
-          setTimer(prevTimer => prevTimer - 1);
+          setTimer((prevTimer) => prevTimer - 1);
         } else {
           clearInterval(interval);
           setIsCodeResended(false);
@@ -43,15 +50,21 @@ export const ResendCode = ({ onResend, containerStyle }: CompProps) => {
       {isCodeResended ? (
         <>
           <Text style={[compStyles.cooldownText, fonts.text]}>
-            {'Вы сможете отправить код  \n  повторно через'}
+            {"Вы сможете отправить код  \n  повторно через"}
           </Text>
-          <Text style={[compStyles.timerText, fonts.timer]}>00:{timer} сек</Text>
+          <Text style={[compStyles.timerText, fonts.timer]}>
+            00:{timer} сек
+          </Text>
         </>
       ) : (
         <>
-          <Text style={[compStyles.title, fonts.description]}>{'Не было звонка?'}</Text>
+          <Text style={[compStyles.title, fonts.description]}>
+            {"Не было звонка?"}
+          </Text>
           <TouchableOpacity onPress={onPressResend}>
-            <Text style={[compStyles.sendCodeText, fonts.text_Bold]}>{'Перезвонить повторно'}</Text>
+            <Text style={[compStyles.sendCodeText, fonts.text_Bold]}>
+              {"Перезвонить повторно"}
+            </Text>
           </TouchableOpacity>
         </>
       )}
@@ -65,19 +78,19 @@ const compStyles = StyleSheet.create({
   },
   timerText: {
     color: colors.opacity,
-    textAlign: 'center',
+    textAlign: "center",
   },
   title: {
     color: colors.white,
-    textAlign: 'center',
+    textAlign: "center",
   },
   sendCodeText: {
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
     color: colors.green,
   },
   cooldownText: {
     color: colors.white,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 13,
   },
 });

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   KeyboardTypeOptions,
   StyleProp,
@@ -7,8 +7,8 @@ import {
   TouchableOpacity,
   View,
   ViewStyle,
-} from 'react-native';
-import { sharedStyles, colors } from '@styles';
+} from "react-native";
+import { sharedStyles, colors } from "@styles";
 
 interface CompProps {
   value: string;
@@ -27,7 +27,7 @@ export const Input = ({
   placeholder,
   leftIcon,
   rightIcon,
-  keyboardType = 'default',
+  keyboardType = "default",
   containerStyle,
   onChangeText,
   onPressLeftIcon,
@@ -42,9 +42,19 @@ export const Input = ({
 
   return (
     <View style={compStyles.container}>
-      <View style={[sharedStyles.row, compStyles.inputWrapper, containerStyle, calculatedStyles()]}>
+      <View
+        style={[
+          sharedStyles.row,
+          compStyles.inputWrapper,
+          containerStyle,
+          calculatedStyles(),
+        ]}
+      >
         {leftIcon && (
-          <TouchableOpacity disabled={!onPressLeftIcon} onPress={onPressLeftIcon}>
+          <TouchableOpacity
+            disabled={!onPressLeftIcon}
+            onPress={onPressLeftIcon}
+          >
             {leftIcon}
           </TouchableOpacity>
         )}
@@ -73,10 +83,10 @@ export const Input = ({
 
 const compStyles = StyleSheet.create({
   container: {
-    width: '100%',
+    width: "100%",
   },
   inputWrapper: {
-    alignItems: 'center',
+    alignItems: "center",
     backgroundColor: colors.field,
     paddingVertical: 15,
     borderWidth: 1,
