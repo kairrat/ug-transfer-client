@@ -41,7 +41,7 @@ export const SubscriptionScreen: React.FC<CompProps> =
 
     const handleSelectSubscrion = (subscription: Subscription) => {
       setSelectedSubscripion((currentSubscription) =>
-        currentSubscription?.title === subscription.title ? null : subscription
+        currentSubscription?.title === subscription.title ? null : subscription,
       );
     };
 

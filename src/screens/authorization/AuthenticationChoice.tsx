@@ -1,65 +1,95 @@
-import { PrimaryButton } from '@components/button/PrimaryButton';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { setAuthorizationType } from './models/Authorization';
-import { sharedStyles, fonts, colors } from '@styles';
-import { useEvent } from 'effector-react';
-import React from 'react';
-import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
-import { StackScreens } from 'src/routes/types/StackScreens';
-import { AuthorizationType } from '../../app/types/authorization';
+import { PrimaryButton } from "@components/button/PrimaryButton";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { setAuthorizationType } from "./models/Authorization";
+import { sharedStyles, fonts, colors } from "@styles";
+import { useEvent } from "effector-react";
+import React from "react";
+import {
+  Dimensions,
+  Image,
+  ImageBackground,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { StackScreens } from "src/routes/types/StackScreens";
+import { AuthorizationType } from "../../app/types/authorization";
 
-type CompProps = NativeStackScreenProps<StackScreens, 'AuthenticationChoice'>;
+const { width, height } = Dimensions.get("window");
+type CompProps = NativeStackScreenProps<StackScreens, "AuthenticationChoice">;
+const baseWidth = 414;
+const baseHeight = 896;
+const scale = (size) => (width / baseWidth) * size;
 
-export const AuthenticationChoice: React.FC<CompProps> = function AuthenticationChoiceScreen() {
-  const navigation = useNavigation();
-  const handleAuthoriztionType = useEvent(setAuthorizationType);
+const fontScale = (size) => size * PixelRatio.getFontScale();
+export const AuthenticationChoice: React.FC<CompProps> =
+  function AuthenticationChoiceScreen() {
+    const navigation = useNavigation();
+    const handleAuthoriztionType = useEvent(setAuthorizationType);
 
-  const handleButtonClick = (type: AuthorizationType) => {
-    handleAuthoriztionType(type);
+    const handleButtonClick = (type: AuthorizationType) => {
+      handleAuthoriztionType(type);
 
-    navigation.navigate('PrivacyPolicy');
+      navigation.navigate("PrivacyPolicy");
+    };
+    return (
+      <>
+        <ImageBackground
+          source={require("@assets/img/backgroundSplash.jpg")}
+          style={[sharedStyles.flex, sharedStyles.center]}
+        >
+          <View style={compStyles.logoContainer}>
+            <Image
+              style={compStyles.logo}
+              source={require("@assets/img/logo.png")}
+            />
+          </View>
+          <View style={[compStyles.container, sharedStyles.paddingHorizontal]}>
+            <Text style={[compStyles.text]}>
+              {"Поможем найти тех, кто нужен \n Вам и отвезет Вас куда угодно"}
+            </Text>
+            <PrimaryButton
+              text="Авторизация"
+              backgroundColorStyle="rgba(48, 48, 48, 0.4)"
+              containerStyle={compStyles.authorisationButton}
+              textColor={colors.white}
+              paddingVertical={Math.floor(height * 0.01)}
+              onPress={() => handleButtonClick(AuthorizationType.LOGIN)}
+            />
+            <PrimaryButton
+              text="Зарегистрироваться"
+              paddingVertical={Math.floor(height * 0.01)}
+              onPress={() => handleButtonClick(AuthorizationType.REGISTER)}
+            />
+          </View>
+        </ImageBackground>
+      </>
+    );
   };
-  return (
-    <>
-      <ImageBackground
-        source={require('@assets/img/backgroundSplash.jpg')}
-        style={[sharedStyles.flex, sharedStyles.center]}
-      >
-        <Image style={compStyles.logo} source={require('@assets/img/logo.png')} />
-        <View style={[compStyles.container, sharedStyles.paddingHorizontal]}>
-          <Text style={[fonts.text_semiBold, compStyles.text]}>
-            {'Поможем найти тех, кто нужен Вам и отвезет Вас куда угодно'}
-          </Text>
-          <PrimaryButton
-            text="Авторизация"
-            backgroundColorStyle="rgba(48, 48, 48, 0.4)"
-            containerStyle={compStyles.authorisationButton}
-            textColor={colors.white}
-            onPress={() => handleButtonClick(AuthorizationType.LOGIN)}
-          />
-          <PrimaryButton
-            text="Зарегистрироваться"
-            onPress={() => handleButtonClick(AuthorizationType.REGISTER)}
-          />
-        </View>
-      </ImageBackground>
-    </>
-  );
-};
-
 const compStyles = StyleSheet.create({
   container: {
-    flexDirection: 'column',
-    width: '100%',
-    position: 'absolute',
-    bottom: 50,
+    flexDirection: "column",
+    width: "100%",
+    position: "absolute",
+    bottom: Math.floor(height * 0.03),
+  },
+  logoContainer: {
+    position: "absolute",
+    left: "50%",
+    top: "45%",
+    transform: [
+      { translateX: -(scale(200) / 2) },
+      { translateY: -(scale(80) / 2) },
+    ],
   },
   text: {
+    fontSize: fontScale(12),
     color: colors.white,
     marginBottom: 18,
-    textAlign: 'center',
-    paddingHorizontal: 35,
+    textAlign: "center",
+    justifyContent: "center",
   },
   authorisationButton: {
     borderWidth: 1,
@@ -67,7 +97,7 @@ const compStyles = StyleSheet.create({
     marginBottom: 9,
   },
   logo: {
-    width: 240,
-    height: 90,
+    width: scale(200),
+    height: scale(80),
   },
 });

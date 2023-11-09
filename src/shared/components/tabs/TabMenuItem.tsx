@@ -1,7 +1,7 @@
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { colors } from '../../style/colors';
-import { Paragraph } from '../Paragraph';
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { colors } from "../../style/colors";
+import { Paragraph } from "../Paragraph";
 
 interface CompProps {
   value: string;
@@ -22,7 +22,10 @@ export const TabMenuItem: React.FC<CompProps> = function TabMenuItem(props) {
       ]}
       onPress={() => props.onChangeTab(props.value)}
     >
-      <Paragraph align={'center'} style={[compStyles.text, isActive && compStyles.activeText]}>
+      <Paragraph
+        align={"center"}
+        style={[compStyles.text, isActive && compStyles.activeText]}
+      >
         {props.value}
       </Paragraph>
     </TouchableOpacity>
@@ -39,7 +42,7 @@ const compStyles = StyleSheet.create({
     borderBottomColor: colors.black,
   },
   text: {
-    color: 'gray',
+    color: "gray",
   },
   activeText: {
     color: colors.black,

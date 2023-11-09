@@ -1,6 +1,12 @@
-import React from 'react';
-import { StyleProp, TouchableOpacity, StyleSheet, Text, ViewStyle } from 'react-native';
-import { sharedStyles, colors, fonts } from '@styles';
+import React from "react";
+import {
+  StyleProp,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  ViewStyle,
+} from "react-native";
+import { sharedStyles, colors, fonts } from "@styles";
 
 interface CompProps {
   text: string;
@@ -10,6 +16,7 @@ interface CompProps {
   containerStyle?: StyleProp<ViewStyle>;
   disabled?: boolean;
   textColor?: string;
+  paddingVertical?: number;
 }
 
 export const PrimaryButton = ({
@@ -20,9 +27,16 @@ export const PrimaryButton = ({
   disabled = false,
   textColor,
   onPress,
+  paddingVertical,
 }: CompProps) => {
   const opacityStyle = disabled ? 0.5 : 1;
 
+  const compStyles = StyleSheet.create({
+    text: {
+      width: "100%",
+      paddingVertical: paddingVertical ?? 15,
+    },
+  });
   return (
     <TouchableOpacity
       disabled={disabled}
@@ -38,14 +52,16 @@ export const PrimaryButton = ({
       ]}
       onPress={onPress}
     >
-      <Text style={[fonts.text_semiBold, { color: textColor ?? colors.black }]}>{text}</Text>
+      <Text style={[fonts.text_semiBold, { color: textColor ?? colors.black }]}>
+        {text}
+      </Text>
     </TouchableOpacity>
   );
 };
 
 const compStyles = StyleSheet.create({
   text: {
-    width: '100%',
+    width: "100%",
     paddingVertical: 15,
   },
 });

@@ -1,6 +1,6 @@
-import { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig } from "axios";
 
-import { IApiConfig, IApisResponse } from '../ApiInterfaces';
+import { IApiConfig, IApisResponse } from "../ApiInterfaces";
 
 export interface IAxiosConfig extends IApiConfig {
   data?: Object;

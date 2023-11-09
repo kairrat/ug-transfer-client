@@ -1,4 +1,4 @@
-import { UserRole } from '../../../types/role';
+import { UserRole } from "../../../types/role";
 
 export interface MenuItemProps {
   title: string;

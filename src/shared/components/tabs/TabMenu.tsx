@@ -1,7 +1,13 @@
-import React from 'react';
-import { ScrollView, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
-import { TabMenuItem } from './TabMenuItem';
-import { sharedStyles } from '../../style/styles';
+import React from "react";
+import {
+  ScrollView,
+  StyleProp,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from "react-native";
+import { TabMenuItem } from "./TabMenuItem";
+import { sharedStyles } from "../../style/styles";
 
 export type TabItemModel = {
   [key: string]: string;
@@ -24,7 +30,7 @@ export const TabMenu: React.FC<TabMenuProps> = function TabMenu(props) {
         contentContainerStyle={[compStyles.container, sharedStyles.row]}
         horizontal={true}
       >
-        {tabList.map(tab => (
+        {tabList.map((tab) => (
           <TabMenuItem
             key={`tab-${tab[0]}`}
             value={tab[1]}
@@ -40,6 +46,6 @@ export const TabMenu: React.FC<TabMenuProps> = function TabMenu(props) {
 
 const compStyles = StyleSheet.create({
   container: {
-    width: '100%',
+    width: "100%",
   },
 });

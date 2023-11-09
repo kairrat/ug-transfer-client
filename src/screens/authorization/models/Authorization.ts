@@ -1,5 +1,5 @@
-import { createEvent, createStore } from 'effector';
-import { AuthorizationType } from '../../../app/types/authorization';
+import { createEvent, createStore } from "effector";
+import { AuthorizationType } from "../../../app/types/authorization";
 
 interface AuthorizationState {
   authorizationType: AuthorizationType;
@@ -16,4 +16,7 @@ export const $authorization = createStore<AuthorizationState>({
   .on(setAuthorizationType, (state, authorizationType) => {
     return { ...state, authorizationType: authorizationType };
   })
-  .on(setIsAuthorized, (state, isAuthorized) => ({ ...state, isAuthorized: isAuthorized }));
+  .on(setIsAuthorized, (state, isAuthorized) => ({
+    ...state,
+    isAuthorized: isAuthorized,
+  }));

@@ -1,9 +1,9 @@
-import { DependencyList, useEffect, useState } from 'react';
+import { DependencyList, useEffect, useState } from "react";
 
 export const useDebouncedEffect = (
   callback: () => void,
   delay: number,
-  dependencies: DependencyList
+  dependencies: DependencyList,
 ) => {
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 

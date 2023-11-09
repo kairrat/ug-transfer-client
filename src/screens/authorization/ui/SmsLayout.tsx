@@ -1,6 +1,6 @@
-import { FullScreenLayout } from '@components/FullScreenLayout';
-import { PrimaryButton } from '@components/button/PrimaryButton';
-import React, { ReactNode, useMemo } from 'react';
+import { FullScreenLayout } from "@components/FullScreenLayout";
+import { PrimaryButton } from "@components/button/PrimaryButton";
+import React, { ReactNode, useMemo } from "react";
 import {
   Image,
   Keyboard,
@@ -8,10 +8,10 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   View,
-} from 'react-native';
-import { sharedStyles, colors } from '@styles';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import ArrowLeftIcon from '@assets/img/arrowLeft.svg';
+} from "react-native";
+import { sharedStyles, colors } from "@styles";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import ArrowLeftIcon from "@assets/img/arrowLeft.svg";
 
 interface CompProps {
   children: ReactNode;
@@ -31,8 +31,15 @@ export const SmsLayout = ({
   onBackPress,
 }: CompProps) => {
   const calculatedPaddingTop = useMemo(
-    () => (Platform.OS === 'android' ? (isBackButton ? 50 : 82) : isBackButton ? 100 : 165),
-    [isBackButton]
+    () =>
+      Platform.OS === "android"
+        ? isBackButton
+          ? 50
+          : 82
+        : isBackButton
+        ? 100
+        : 165,
+    [isBackButton],
   );
 
   return (
@@ -44,9 +51,16 @@ export const SmsLayout = ({
       )}
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View
-          style={[compStyles.container, sharedStyles.flex, { paddingTop: calculatedPaddingTop }]}
+          style={[
+            compStyles.container,
+            sharedStyles.flex,
+            { paddingTop: calculatedPaddingTop },
+          ]}
         >
-          <Image style={compStyles.logo} source={require('@assets/img/logo.png')} />
+          <Image
+            style={compStyles.logo}
+            source={require("@assets/img/logo.png")}
+          />
           {children}
           <PrimaryButton
             text={buttonText}
@@ -62,10 +76,10 @@ export const SmsLayout = ({
 
 const compStyles = StyleSheet.create({
   container: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   backIcon: {
-    marginTop: Platform.OS === 'ios' ? 65 : 20,
+    marginTop: Platform.OS === "ios" ? 65 : 20,
   },
   logo: {
     width: 172,
@@ -73,7 +87,7 @@ const compStyles = StyleSheet.create({
     marginBottom: 90,
   },
   button: {
-    marginTop: 'auto',
+    marginTop: "auto",
     marginBottom: 40,
   },
 });

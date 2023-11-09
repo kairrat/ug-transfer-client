@@ -1,14 +1,14 @@
-import {Platform} from 'react-native';
+import { Platform } from "react-native";
 import {
   getBuildNumber,
   getVersion,
   getUniqueId,
-} from 'react-native-device-info';
+} from "react-native-device-info";
 
 const getDevideId = (): string => {
-  let deviceID: string = '';
+  let deviceID: string = "";
 
-  getUniqueId().then(id => {
+  getUniqueId().then((id) => {
     deviceID = id;
   });
 
@@ -18,5 +18,5 @@ const getDevideId = (): string => {
 export const appConfig = {
   deviceId: getDevideId(),
   version: `${getVersion()} (${getBuildNumber()})`,
-  isIOS: Platform.OS === 'ios',
+  isIOS: Platform.OS === "ios",
 };

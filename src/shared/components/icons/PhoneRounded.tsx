@@ -1,7 +1,7 @@
-import React from 'react';
-import Svg, { Path } from 'react-native-svg';
-import { colors } from '@styles';
-import { IconProps } from 'src/app/types/icon';
+import React from "react";
+import Svg, { Path } from "react-native-svg";
+import { colors } from "@styles";
+import { IconProps } from "src/app/types/icon";
 
 export const PhoneRounded = ({
   fillColor: backgroundColor = colors.primary,
