@@ -3,11 +3,18 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { colors, fonts, sharedStyles } from "@styles";
 import React from "react";
-import { Platform, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { StackScreens } from "src/routes/types/StackScreens";
-
+const { width, height } = Dimensions.get("window");
 type CompProps = NativeStackScreenProps<StackScreens, "PrivacyPolicy">;
-
+const fontScale = (size) => size * Platform.select({ ios: 1, android: 1.2 });
 export const PrivacyPolicy: React.FC<CompProps> =
   function PrivacyPolicyScreen() {
     const navigation = useNavigation();
@@ -17,7 +24,7 @@ export const PrivacyPolicy: React.FC<CompProps> =
     };
 
     const handleBackNavigation = () => {
-      navigation.goBack();
+      navigation.navigate("AuthenticationChoice");
     };
 
     return (
@@ -129,12 +136,17 @@ export const PrivacyPolicy: React.FC<CompProps> =
           <View style={sharedStyles.paddingHorizontal}>
             <PrimaryButton
               text="Назад"
+              paddingVertical={Math.floor(height * 0.01)}
               backgroundColorStyle={colors.background}
               containerStyle={compStyles.backButton}
               textColor={colors.white}
               onPress={handleBackNavigation}
             />
-            <PrimaryButton text="Соглашаюсь" onPress={hanldeConfirmPress} />
+            <PrimaryButton
+              text="Соглашаюсь"
+              onPress={hanldeConfirmPress}
+              paddingVertical={Math.floor(height * 0.01)}
+            />
           </View>
         </View>
       </View>

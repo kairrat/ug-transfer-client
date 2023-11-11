@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Dimensions,
   StyleProp,
   StyleSheet,
   Text,
@@ -8,13 +9,21 @@ import {
   ViewStyle,
 } from "react-native";
 import { fonts, colors } from "@styles";
+const { width, height } = Dimensions.get("window");
 
 interface CompProps {
   onResend: () => void;
   containerStyle?: StyleProp<ViewStyle>;
+  changeIsCodeCorrect: (isCodeCorrect: boolean) => void;
+  setCodeInput: (input: any) => void;
 }
 
-export const ResendCode = ({ onResend, containerStyle }: CompProps) => {
+export const ResendCode = ({
+  onResend,
+  containerStyle,
+  changeIsCodeCorrect,
+  setCodeInput,
+}: CompProps) => {
   const [isCodeResended, setIsCodeResended] = useState(false);
   const [timer, setTimer] = useState(60);
 
@@ -40,8 +49,11 @@ export const ResendCode = ({ onResend, containerStyle }: CompProps) => {
   }, [isCodeResended, timer, onResend]);
 
   const onPressResend = () => {
+    console.log("Перезвонить повторно");
+    setCodeInput("");
+    changeIsCodeCorrect(false);
     setIsCodeResended(true);
-    setTimer(60);
+    setTimer(20);
     onResend();
   };
 
@@ -71,10 +83,10 @@ export const ResendCode = ({ onResend, containerStyle }: CompProps) => {
     </View>
   );
 };
-
 const compStyles = StyleSheet.create({
   container: {
     gap: 5,
+    top: height > 700 ? "10%" : "0%",
   },
   timerText: {
     color: colors.opacity,

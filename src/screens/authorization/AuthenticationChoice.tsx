@@ -16,21 +16,18 @@ import {
 } from "react-native";
 import { StackScreens } from "src/routes/types/StackScreens";
 import { AuthorizationType } from "../../app/types/authorization";
+import { fontScale, scale } from "../../helpers/scale";
+const { height } = Dimensions.get("window");
 
-const { width, height } = Dimensions.get("window");
 type CompProps = NativeStackScreenProps<StackScreens, "AuthenticationChoice">;
-const baseWidth = 414;
-const baseHeight = 896;
-const scale = (size) => (width / baseWidth) * size;
 
-const fontScale = (size) => size * PixelRatio.getFontScale();
 export const AuthenticationChoice: React.FC<CompProps> =
   function AuthenticationChoiceScreen() {
     const navigation = useNavigation();
-    const handleAuthoriztionType = useEvent(setAuthorizationType);
+    const handleAuthorizationType = useEvent(setAuthorizationType);
 
     const handleButtonClick = (type: AuthorizationType) => {
-      handleAuthoriztionType(type);
+      handleAuthorizationType(type);
 
       navigation.navigate("PrivacyPolicy");
     };
@@ -68,6 +65,7 @@ export const AuthenticationChoice: React.FC<CompProps> =
       </>
     );
   };
+
 const compStyles = StyleSheet.create({
   container: {
     flexDirection: "column",

@@ -11,16 +11,12 @@ import { fonts, colors } from "@styles";
 
 interface CompProps {
   title: string;
-  step: number;
-  limit: number;
   containerStyle?: StyleProp<ViewStyle>;
   onPressBack: () => void;
 }
 
 export const HeaderWithSteps = ({
   title,
-  step,
-  limit,
   containerStyle,
   onPressBack,
 }: CompProps) => {
@@ -34,22 +30,14 @@ export const HeaderWithSteps = ({
       <TouchableOpacity onPress={onPressBack}>
         <ArrowLeftIcon />
       </TouchableOpacity>
-
-      {step > 0 && (
+      {
         <>
-          <Text
-            style={[
-              fonts.text_semiBold,
-              { color: colors.white, marginLeft: 30 },
-            ]}
-          >
+          <Text style={[fonts.text_semiBold, { color: colors.white }]}>
             {title}
           </Text>
-          <Text style={[fonts.text_semiBold, { color: colors.primary }]}>
-            Шаг {step} из {limit}
-          </Text>
         </>
-      )}
+      }
+      <View></View>
     </View>
   );
 };

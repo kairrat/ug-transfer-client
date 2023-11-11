@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import { Text, StyleSheet, View } from "react-native";
+import { Text, StyleSheet, View, Dimensions } from "react-native";
 import { SmsLayout } from "./SmsLayout";
-import SmoothPinCodeInput from "react-native-smooth-pincode-input";
 import { colors, fonts } from "@styles";
 import { ResendCode } from "./ResendCode";
-
+import PinCodeInput from "@components/pincode/Pincode";
+const { width, height } = Dimensions.get("window");
 interface CompProps {
   onBackPress: () => void;
   onCodeConfirm: (code: string) => void;
   onResendCodePress: () => void;
   isCodeError: boolean;
+  changeIsCodeCorrect: (isCodeCorrect: boolean) => void;
 }
 
 export const CheckCode = ({
@@ -17,9 +18,9 @@ export const CheckCode = ({
   onCodeConfirm,
   onResendCodePress,
   onBackPress,
+  changeIsCodeCorrect,
 }: CompProps) => {
   const [codeInput, setCodeInput] = useState("");
-
   return (
     <SmsLayout
       buttonText="Далее"
@@ -28,7 +29,7 @@ export const CheckCode = ({
       isDisabledButton={codeInput.length < 4}
     >
       <Text style={[compStyles.title, fonts.label]}>{"Проверочные цифры"}</Text>
-      <SmoothPinCodeInput
+      <PinCodeInput
         cellStyle={compStyles.codeChar}
         cellStyleFocused={{
           borderColor: colors.primary,
@@ -40,30 +41,28 @@ export const CheckCode = ({
         onTextChange={setCodeInput}
       />
       <Text style={[compStyles.enterCodeText, fonts.description]}>
-        {
-          "Введите пожалуйста 4 последние цифры номера телефона нашего автоответчика"
-        }
+        Введите 4-х значный код
       </Text>
-
       <View style={compStyles.errorTextContainer}>
         {isCodeError && (
           <Text style={[compStyles.errorText, fonts.description]}>
-            {"Неправильный код"}
+            Неверный код
           </Text>
         )}
       </View>
-
       <ResendCode
+        setCodeInput={setCodeInput}
         containerStyle={compStyles.resendCodeContainer}
         onResend={onResendCodePress}
+        changeIsCodeCorrect={changeIsCodeCorrect}
       />
     </SmsLayout>
   );
 };
-
+console.log("height", height);
 const compStyles = StyleSheet.create({
   title: {
-    marginBottom: 52,
+    marginBottom: "5%",
     color: colors.white,
   },
   codeChar: {
@@ -76,18 +75,16 @@ const compStyles = StyleSheet.create({
   },
   enterCodeText: {
     color: colors.white,
-    marginTop: 20,
+    marginTop: "5%",
     paddingHorizontal: 45,
     textAlign: "center",
-    marginBottom: 39,
+    marginBottom: "10%",
   },
   errorTextContainer: {
-    height: 40,
+    height: "10%",
   },
   errorText: {
     color: colors.error,
   },
-  resendCodeContainer: {
-    marginTop: "auto",
-  },
+  resendCodeContainer: {},
 });

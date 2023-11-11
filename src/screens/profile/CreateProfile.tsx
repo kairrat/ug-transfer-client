@@ -51,12 +51,7 @@ export const CreateProfileScreen: React.FC<CompProps> =
           paddingHorizontal: 15,
         }}
       >
-        <HeaderWithSteps
-          title="Даннные"
-          step={2}
-          limit={2}
-          onPressBack={handleBackPress}
-        />
+        <HeaderWithSteps title="Даннные" onPressBack={handleBackPress} />
 
         <CreateForm role={role} onHandleSubmit={hanldeFormSubmit} />
       </View>

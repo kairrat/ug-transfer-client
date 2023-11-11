@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { View } from "react-native";
 import { subscriptions } from "../contants";
-import { SelectSubscriptionItem } from "./SelectSubscriptionItem";
-import {Subscription} from "effector";
+import { Subscription } from "effector";
+import { SelectSubscriptionItem } from "@screens/subscription/ui/SelectSubscriptionItem";
 
 interface CompProps {
   onSelectSubscription: (subscription: Subscription) => void;

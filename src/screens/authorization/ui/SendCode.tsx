@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { SmsLayout } from "./SmsLayout";
 import { Input } from "@components/input/Input";
 import { PhoneRounded } from "@components/icons/PhoneRounded";
@@ -53,6 +53,7 @@ const compStyles = StyleSheet.create({
   title: {
     marginBottom: 29,
     color: colors.white,
+    textAlign: "center",
   },
   smsText: {
     color: colors.white,

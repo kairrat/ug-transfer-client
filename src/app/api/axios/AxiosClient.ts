@@ -82,7 +82,7 @@ export default class AxiosClient implements IApiClient {
 
         return { ...config, headers: config.headers };
       },
-      (error) => Promise.reject(error),
+      (error) => Promise.reject(error)
     );
   };
 
@@ -112,7 +112,7 @@ export default class AxiosClient implements IApiClient {
         }
 
         return Promise.reject(error);
-      },
+      }
     );
   };
 }

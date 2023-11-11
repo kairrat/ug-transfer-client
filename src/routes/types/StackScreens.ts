@@ -6,7 +6,6 @@ export type StackScreens = {
   PrivacyPolicy: undefined;
   SmsVerification: undefined;
   Subscription: undefined;
-  AuthorizationComplete: undefined;
   CreateProfile: {
     type: UserRole;
   };

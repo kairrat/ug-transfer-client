@@ -12,6 +12,8 @@ import {
 import { sharedStyles, colors } from "@styles";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import ArrowLeftIcon from "@assets/img/arrowLeft.svg";
+import { scale } from "../../../helpers/scale";
+import { ResendCode } from "@screens/authorization/ui/ResendCode";
 
 interface CompProps {
   children: ReactNode;
@@ -39,7 +41,7 @@ export const SmsLayout = ({
         : isBackButton
         ? 100
         : 165,
-    [isBackButton],
+    [isBackButton]
   );
 
   return (
@@ -82,9 +84,9 @@ const compStyles = StyleSheet.create({
     marginTop: Platform.OS === "ios" ? 65 : 20,
   },
   logo: {
-    width: 172,
-    height: 67,
-    marginBottom: 90,
+    width: scale(150),
+    height: scale(50),
+    marginBottom: "auto",
   },
   button: {
     marginTop: "auto",

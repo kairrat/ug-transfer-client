@@ -14,17 +14,19 @@ import { sendCheckCode, verifyCode } from "./authorization-actions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setProfileData } from "../profile/models/Profile";
 
-type CompProps = NativeStackScreenProps<StackScreens, "SmsVerification">;
+interface SmsVerificationProps
+  extends NativeStackScreenProps<StackScreens, "SmsVerification"> {}
 
-export const SmsVerification: React.FC<CompProps> =
+export const SmsVerification: React.FC<SmsVerificationProps> =
   function SmsVerificationScreen() {
     const [phone, setPhone] = useState("");
     const [isCodeCorrect, setIsCodeCorrect] = useState(true);
-
     const navigation = useNavigation();
     const { authorizationType } = useStore($authorization);
     const handleProfileData = useEvent(setProfileData);
-
+    const changeCodeCorrect = () => {
+      setIsCodeCorrect(true);
+    };
     const labelText =
       authorizationType === AuthorizationType.LOGIN ? "Вход" : "Регистрация";
 
@@ -37,23 +39,20 @@ export const SmsVerification: React.FC<CompProps> =
     };
 
     const handleCodeConfirm = async (code: string) => {
-      const {
-        token,
-        user_data: { subscription_status },
-      } = await verifyCode(phone, code);
-
-      if (token) {
-        await AsyncStorage.setItem(AsyncStorakeKeys.TOKEN, token);
-      } else {
+      console.log("handleCodeConfirm");
+      const data = await verifyCode(phone, code);
+      if (!data) {
         setIsCodeCorrect(false);
         return;
       }
-
+      const {
+        token,
+        user_data: { subscription_status },
+      } = data;
+      await AsyncStorage.setItem(AsyncStorakeKeys.TOKEN, token);
       handleProfileData({ phone, subscriptionStatus: subscription_status });
-
-      if (subscription_status) {
-      } else {
-        navigation.navigate("AuthorizationComplete");
+      if (!subscription_status) {
+        navigation.navigate("Orders");
       }
     };
 
@@ -69,17 +68,18 @@ export const SmsVerification: React.FC<CompProps> =
       <>
         {phone === "" ? (
           <SendCode
-            titleText={`${labelText} по номеру телефона`}
+            titleText={`${labelText} \n по номеру телефона`}
             buttonText={labelText}
             onSendPress={handleSendCode}
             onBackPress={handleBackPress}
           />
         ) : (
           <CheckCode
+            onResendCodePress={handleResendCode}
             isCodeError={!isCodeCorrect}
             onCodeConfirm={handleCodeConfirm}
-            onResendCodePress={handleResendCode}
             onBackPress={() => setPhone("")}
+            changeIsCodeCorrect={changeCodeCorrect}
           />
         )}
       </>

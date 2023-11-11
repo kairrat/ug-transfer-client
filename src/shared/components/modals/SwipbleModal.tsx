@@ -25,7 +25,7 @@ interface ISwipeableModalProps extends ModalizeProps {
 }
 
 export const SwipeableModal: React.FC<ISwipeableModalProps> = function name(
-  props,
+  props
 ) {
   const { children, modalizeRef, fullScreen, onClose, ...otherProps } = props;
 

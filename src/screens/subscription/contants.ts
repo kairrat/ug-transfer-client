@@ -14,20 +14,4 @@ export const subscriptions: Subscription[] = [
     role: UserRole.DRIVER,
     isActive: true,
   },
-  {
-    title: "Диспетчер",
-    icon: Controller,
-    text: "Lorem ipsum dolor sit amet consectetur. Dignissim porttitor eu ullamcorper velit at. Sed eget malesuada cursus tellus. Euismod.",
-    price: 250,
-    role: UserRole.CONTROLLER,
-    isActive: false,
-  },
-  {
-    title: "Водитель \\ Диспетчер",
-    icon: DriverController,
-    text: "Lorem ipsum dolor sit amet consectetur. Dignissim porttitor eu ullamcorper velit at. Sed eget malesuada cursus tellus. Euismod.",
-    price: 250,
-    role: UserRole.DRIVERCONTROLLER,
-    isActive: false,
-  },
 ];

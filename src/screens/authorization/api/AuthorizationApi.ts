@@ -6,7 +6,6 @@ const type = "drivers";
 
 class AuthorizationApi extends AbstractApiRepository {
   sendCheckCode(phone: string) {
-    console.log(`${urlU}/users/${type}/make-call`);
     return this.apiClient.post<CallResponse>({
       url: `${urlU}/users/${type}/make-call`,
       data: { phone },

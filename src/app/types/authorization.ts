@@ -1,5 +1,5 @@
 export enum AuthorizationType {
-  LOGIN = "Logn",
+  LOGIN = "Login",
   REGISTER = "Register",
 }
 

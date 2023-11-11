@@ -18,7 +18,7 @@ export const SlideMenu = () => {
   } = useStore($profile);
 
   const filteredMenus = menuItems.filter(
-    (item) => (item.role && item.role === role) ?? true,
+    (item) => (item.role && item.role === role) ?? true
   );
 
   const handleMenuItemPress = (route: string) => {
