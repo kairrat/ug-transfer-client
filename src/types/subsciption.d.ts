@@ -4,8 +4,10 @@ interface Subscription {
   title: string;
   icon: any;
   isActive: boolean;
-  text?: string;
-  price?: number;
+  price?: string;
   role?: UserRole;
   expires?: string;
+  description?: string;
+  type?: string;
+  period?: string;
 }

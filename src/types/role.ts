@@ -4,7 +4,11 @@ export enum UserRole {
   CONTROLLER = "Диспетчер",
   DRIVERCONTROLLER = "Водитель \\ Диспетчер",
 }
-
+export enum UserRoleBackend {
+  DRIVER = "Driver",
+  ADMIN = "Admin",
+  CLIENT = "Client",
+}
 export enum SubRole {
   DRIVER = "Водитель",
   CONTROLLER = "Диспетчер",

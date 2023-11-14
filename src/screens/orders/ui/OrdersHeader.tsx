@@ -4,14 +4,13 @@ import WalletIcon from "@assets/img/wallet.svg";
 import { colors, fonts } from "../../../shared/style";
 import MenuIcon from "@assets/img/menu.svg";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
-import { UserRole } from "../../../types/role";
 
 interface CompProps {
   title: string;
 }
 
 export const OrdersHeader = ({ title }: CompProps) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   const handleMenuOpen = () => {
     navigation.dispatch(DrawerActions.openDrawer());

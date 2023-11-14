@@ -5,7 +5,6 @@ import { colors, fonts } from "@styles";
 import { InactiveSubscription } from "./InactiveSubscription";
 import { UrgentOrdersWarning } from "./UrgentOrdersWarning";
 import { SubscriptionExpire } from "./SubscriptionExpire";
-import { Subscription } from "../../../types/subsciption";
 
 interface CompProps extends Subscription {}
 

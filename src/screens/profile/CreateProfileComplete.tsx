@@ -11,7 +11,7 @@ type CompProps = NativeStackScreenProps<StackScreens, "CreateProfileComplete">;
 
 export const CreateProfileCompleteScreen: React.FC<CompProps> =
   function CreateProfileCompleteScreen() {
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
 
     const hanldeButtonPress = () => {
       navigation.navigate("Orders");
