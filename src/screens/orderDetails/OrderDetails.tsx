@@ -18,7 +18,7 @@ type CompProps = NativeStackScreenProps<StackScreens, "OrderDetails">;
 
 export const OrderDetailsScreen: React.FC<CompProps> =
   function OrderDetailsScreen({ route }) {
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
     const { id } = route.params;
     const order = orders.find((item) => item.id === id);
 

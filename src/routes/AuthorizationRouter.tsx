@@ -9,7 +9,7 @@ const Stack = createNativeStackNavigator<StackScreens>();
 
 export const AuthorizationRouter = () => {
   return (
-    <Stack.Group screenOptions={{ presentation: "modal" }}>
+    <Stack.Group>
       <Stack.Screen
         name="AuthenticationChoice"
         component={AuthenticationChoice}

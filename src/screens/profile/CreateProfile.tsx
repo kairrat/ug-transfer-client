@@ -25,7 +25,7 @@ export const CreateProfileScreen: React.FC<CompProps> =
   function CreateProfileScreen({ route }) {
     const role = route.params.type;
 
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
 
     const handleProfileData = useEvent(setProfileData);
 

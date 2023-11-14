@@ -6,13 +6,12 @@ import ProfileIcon from "@assets/img/profile.svg";
 import { MenuProfileItem } from "./MenuProfileItem";
 import { MenuItem } from "./MenuItem";
 import { menuItems } from "./contants";
-import { UserRole } from "../../../types/role";
 import { useNavigation } from "@react-navigation/native";
 import { useStore } from "effector-react";
 import { $profile } from "@screens/profile/models/Profile";
 
 export const SlideMenu = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const {
     data: { role, firstName },
   } = useStore($profile);

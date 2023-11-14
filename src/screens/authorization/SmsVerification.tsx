@@ -21,7 +21,7 @@ export const SmsVerification: React.FC<SmsVerificationProps> =
   function SmsVerificationScreen() {
     const [phone, setPhone] = useState("");
     const [isCodeCorrect, setIsCodeCorrect] = useState(true);
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
     const { authorizationType } = useStore($authorization);
     const handleProfileData = useEvent(setProfileData);
     const changeCodeCorrect = () => {
@@ -52,7 +52,7 @@ export const SmsVerification: React.FC<SmsVerificationProps> =
       await AsyncStorage.setItem(AsyncStorakeKeys.TOKEN, token);
       handleProfileData({ phone, subscriptionStatus: subscription_status });
       if (!subscription_status) {
-        navigation.navigate("Orders");
+        navigation.navigate("Subscription");
       }
     };
 

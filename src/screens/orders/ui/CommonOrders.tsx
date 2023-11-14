@@ -12,7 +12,7 @@ interface CompProps {
 }
 
 export const CommonOrders = ({ role }) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   const handleOrderDetailsPress = (orderId: string) => {
     navigation.navigate("OrderDetails", { id: orderId });

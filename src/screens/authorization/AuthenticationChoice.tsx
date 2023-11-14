@@ -1,15 +1,15 @@
 import { PrimaryButton } from "@components/button/PrimaryButton";
-import { useNavigation } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { setAuthorizationType } from "./models/Authorization";
 import { sharedStyles, fonts, colors } from "@styles";
 import { useEvent } from "effector-react";
-import React from "react";
+import React, { useEffect } from "react";
 import {
+  Alert,
+  BackHandler,
   Dimensions,
   Image,
   ImageBackground,
-  PixelRatio,
   StyleSheet,
   Text,
   View,
@@ -17,20 +17,47 @@ import {
 import { StackScreens } from "src/routes/types/StackScreens";
 import { AuthorizationType } from "../../app/types/authorization";
 import { fontScale, scale } from "../../helpers/scale";
+import { useIsFocused } from "@react-navigation/native";
 const { height } = Dimensions.get("window");
-
 type CompProps = NativeStackScreenProps<StackScreens, "AuthenticationChoice">;
 
 export const AuthenticationChoice: React.FC<CompProps> =
-  function AuthenticationChoiceScreen() {
-    const navigation = useNavigation();
+  function AuthenticationChoiceScreen({ navigation }) {
     const handleAuthorizationType = useEvent(setAuthorizationType);
-
     const handleButtonClick = (type: AuthorizationType) => {
       handleAuthorizationType(type);
-
       navigation.navigate("PrivacyPolicy");
     };
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+      const backAction = () => {
+        if (!isFocused) {
+          return false;
+        }
+        Alert.alert("Подождите!", "Вы уверены, что хотите выйти?", [
+          {
+            text: "Закрыть",
+            onPress: () => null,
+            style: "cancel",
+          },
+          {
+            text: "Да",
+            onPress: () => BackHandler.exitApp(),
+          },
+        ]);
+        return true;
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+      );
+
+      return () => {
+        backHandler.remove();
+      };
+    }, [isFocused]);
     return (
       <>
         <ImageBackground

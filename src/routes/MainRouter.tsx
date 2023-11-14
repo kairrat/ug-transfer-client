@@ -10,9 +10,9 @@ import { SlideMenu } from "@components/menus/SlideMenu";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { SubscriptionScreen } from "@screens/subscription/Subscription";
 import { CreateProfileScreen } from "@screens/profile/CreateProfile";
-import { CreateProfileCompleteScreen } from "../screens/profile/CreateProfileComplete";
-import { OrdersScreen } from "../screens/orders/Orders";
-import { OrderDetailsScreen } from "../screens/orderDetails/OrderDetails";
+import { CreateProfileCompleteScreen } from "@screens/profile/CreateProfileComplete";
+import { OrdersScreen } from "@screens/orders/Orders";
+import { OrderDetailsScreen } from "@screens/orderDetails/OrderDetails";
 
 const Stack = createNativeStackNavigator<StackScreens>();
 const Drawer = createDrawerNavigator();
@@ -23,7 +23,15 @@ export const MainRouter: React.FC = function MainRouter() {
       await RNBootSplash.hide({ fade: true });
     })();
   }, []);
-
+  const shouldShowDrawer = ({ route }: { route: { name: string } }) => {
+    const bannedRoutes = [
+      "Init",
+      "AuthenticationChoice",
+      "PrivacyPolicy",
+      "SmsVerification",
+    ];
+    return !bannedRoutes.includes(route.name);
+  };
   return (
     <NavigationContainer
       theme={{
@@ -32,13 +40,15 @@ export const MainRouter: React.FC = function MainRouter() {
       }}
     >
       <Drawer.Navigator
+        backBehavior="history"
         drawerContent={SlideMenu}
-        screenOptions={{
+        screenOptions={({ route }) => ({
           headerShown: false,
           drawerType: "front",
           overlayColor: "rgba(24, 50, 58, 0.41)",
           drawerStyle: { width: "80%" },
-        }}
+          swipeEnabled: shouldShowDrawer({ route }),
+        })}
       >
         <Stack.Screen name={"Init"} component={InitScreen} />
         <Stack.Screen name={"Subscription"} component={SubscriptionScreen} />
@@ -47,12 +57,10 @@ export const MainRouter: React.FC = function MainRouter() {
           name={"CreateProfileComplete"}
           component={CreateProfileCompleteScreen}
         />
-
         <Stack.Group screenOptions={{ presentation: "transparentModal" }}>
           <Stack.Screen name={"Orders"} component={OrdersScreen} />
           <Stack.Screen name={"OrderDetails"} component={OrderDetailsScreen} />
         </Stack.Group>
-
         {AuthorizationRouter()}
       </Drawer.Navigator>
     </NavigationContainer>

@@ -4,14 +4,14 @@ import { ImageBackground, StyleSheet, Image, View } from "react-native";
 import { sharedStyles } from "@styles";
 import { Distance } from "./ui/Distance";
 import { StackScreens } from "src/routes/types/StackScreens";
-import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AsyncStorakeKeys } from "../../app/types/authorization";
 
 type CompProps = NativeStackScreenProps<StackScreens, "Init">;
 
-export const InitScreen: React.FC<CompProps> = function InitScreen() {
-  const navigation = useNavigation();
+export const InitScreen: React.FC<CompProps> = function InitScreen({
+  navigation,
+}) {
   useEffect(() => {
     const checkAuthorization = async () => {
       return AsyncStorage.getItem(AsyncStorakeKeys.TOKEN);
