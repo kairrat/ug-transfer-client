@@ -2,39 +2,23 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackScreens } from "../../routes/types/StackScreens";
 import { SubscriptionItem } from "./ui/SubscriptionItem";
 import { Image, Platform, SafeAreaView, Text, View } from "react-native";
-import { colors, fonts } from "../../shared/style";
+import { colors, fonts } from "@styles";
 import { SelectSubscription } from "./ui/SelectSubscription";
 import { useState } from "react";
-import { PrimaryButton } from "../../shared/components/button/PrimaryButton";
-import { HeaderWithSteps } from "../../shared/components/header/HeaderWithSteps";
+import { PrimaryButton } from "@components/button/PrimaryButton";
+import { HeaderWithSteps } from "@components/header/HeaderWithSteps";
 import { Subscription } from "../../types/subsciption";
-import { useNavigation } from "@react-navigation/native";
 
 type CompProps = NativeStackScreenProps<StackScreens, "Subscription">;
 export const SubscriptionScreen: React.FC<CompProps> =
-  function SubscriptionScreen() {
+  function SubscriptionScreen({ navigation }) {
     const [selectedSubscrion, setSelectedSubscripion] =
       useState<Subscription>(null);
 
-    const [step, setStep] = useState(0);
-
-    const navigation = useNavigation<any>();
-
-    const handleDecrementStep = () => {
-      if (step === 0) {
-        navigation.navigate("AuthenticationChoice");
-        return;
-      } else {
-        setStep(step - 1);
-      }
-    };
-
-    const handleIncrementStep = () => {
+    const handleButton = () => {
       if (step === 1) {
         navigation.navigate("CreateProfile", { type: selectedSubscrion.role });
         return;
-      } else {
-        setStep(step + 1);
       }
     };
 

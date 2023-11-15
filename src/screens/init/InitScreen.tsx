@@ -8,22 +8,23 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AsyncStorakeKeys } from "../../app/types/authorization";
 
 type CompProps = NativeStackScreenProps<StackScreens, "Init">;
-
+const cases = {
+  CompletedRegistration: "Orders",
+  NotAuthorized: "AuthenticationChoice",
+};
 export const InitScreen: React.FC<CompProps> = function InitScreen({
   navigation,
 }) {
   useEffect(() => {
-    const checkAuthorization = async () => {
+    const checkAuthorization = () => {
       return AsyncStorage.getItem(AsyncStorakeKeys.TOKEN);
     };
+    const navigateToScreen = (token) => {
+      const screenToNavigate = token ? "CreateProfile" : "AuthenticationChoice";
+      navigation.navigate(screenToNavigate);
+    };
 
-    checkAuthorization().then((token) => {
-      if (token) {
-        navigation.navigate("Orders");
-      } else {
-        navigation.navigate("AuthenticationChoice");
-      }
-    });
+    checkAuthorization().then(navigateToScreen);
   }, []);
 
   return (

@@ -1,10 +1,9 @@
 import React from "react";
 import { Control, Controller, FieldValues } from "react-hook-form";
 import { Text, View } from "react-native";
-import { Input } from "../../../shared/components/input/Input";
-import { Dropdown } from "../../../shared/components/dropdown/Dropdown";
+import { Input } from "@components/input/Input";
+import { Dropdown } from "@components/dropdown/Dropdown";
 import { carColors } from "../contants";
-import { colors, fonts } from "../../../shared/style";
 
 interface CompProps {
   control: Control<FieldValues, any>;
