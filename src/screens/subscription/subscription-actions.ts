@@ -4,6 +4,6 @@ export const getSubscriptionActions = async (role?: UserRoleBackend) => {
   const { data } = await subscriptionApi
     .getSubscriptionTypes(role)
     .catch((e) => e);
-  console.log(data, "sendCheckCode");
+  console.log(data, "getSubscriptionActions");
   return data;
 };

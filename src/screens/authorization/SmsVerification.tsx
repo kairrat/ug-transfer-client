@@ -13,6 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import { sendCheckCode, verifyCode } from "./authorization-actions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setProfileData } from "../profile/models/Profile";
+import { UserRole, UserRoleBackend } from "../../types/role";
 
 interface SmsVerificationProps
   extends NativeStackScreenProps<StackScreens, "SmsVerification"> {}
@@ -52,7 +53,9 @@ export const SmsVerification: React.FC<SmsVerificationProps> =
       await AsyncStorage.setItem(AsyncStorakeKeys.TOKEN, token);
       handleProfileData({ phone, subscriptionStatus: subscription_status });
       if (!subscription_status) {
-        navigation.navigate("Subscription");
+        navigation.navigate("CreateProfile", {
+          role: UserRole.DRIVER,
+        });
       }
     };
 
@@ -61,7 +64,7 @@ export const SmsVerification: React.FC<SmsVerificationProps> =
     };
 
     const handleBackPress = () => {
-      navigation.navigate("PrivacyPolicy");
+      navigation.goBack();
     };
 
     return (

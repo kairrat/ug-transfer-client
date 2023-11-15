@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
-import { colors, fonts } from "../../style";
-import { Text } from "react-native";
+import { colors, fonts } from "@styles";
 
 interface CopmProps {
   list: any[];
@@ -35,6 +34,7 @@ export const Dropdown = ({
       arrowIconStyle={{
         width: 24,
         height: 24,
+        backgroundColor: colors.field,
       }}
       listItemLabelStyle={{ paddingStart: 5 }}
       tickIconStyle={{

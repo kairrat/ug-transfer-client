@@ -26,7 +26,6 @@ const CreateForm = ({
   onImagesAttach,
   onHandleSubmit,
 }: CompProps) => {
-  console.log(role);
   return (
     <>
       <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
@@ -48,28 +47,22 @@ const CreateForm = ({
         <UploadPassport />
 
         <PersonalInfo control={control} />
-
-        {role === UserRole.DRIVER ||
-          (role === UserRole.DRIVERCONTROLLER && (
-            <>
-              <View
-                style={{
-                  backgroundColor: colors.gray,
-                  borderRadius: 7,
-                  paddingVertical: 15,
-                  paddingStart: 19,
-                  marginTop: 19,
-                  marginBottom: 60,
-                }}
-              >
-                <Text style={[fonts.description, { color: colors.secondary }]}>
-                  {"Ваше авто"}
-                </Text>
-              </View>
-              <UploadCarImages />
-              <CarInfo control={control} />
-            </>
-          ))}
+        <View
+          style={{
+            backgroundColor: colors.gray,
+            borderRadius: 7,
+            paddingVertical: 15,
+            paddingStart: 19,
+            marginTop: 19,
+            marginBottom: 60,
+          }}
+        >
+          <Text style={[fonts.description, { color: colors.secondary }]}>
+            {"Ваше авто"}
+          </Text>
+        </View>
+        <UploadCarImages />
+        <CarInfo control={control} />
       </ScrollView>
 
       <PrimaryButton
