@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Text, View } from "react-native";
 import { PrimaryButton } from "@components/button/PrimaryButton";
 import { colors, fonts } from "@styles";
@@ -9,6 +9,8 @@ import { Car } from "@components/icons/Car";
 
 export const SubscriptionItem = ({ title, desciption, isActive, price }) => {
   const Icon = Car;
+  const [isSubLoading, setIsSubLoading] = useState(false);
+  const handleGetSubscription = () => {};
   return (
     <>
       <View style={{ paddingHorizontal: "5%" }}>
@@ -72,7 +74,7 @@ export const SubscriptionItem = ({ title, desciption, isActive, price }) => {
                 borderWidth: isActive ? 1 : 0,
                 borderColor: colors.opacity,
               }}
-              onPress={() => {}}
+              onPress={handleGetSubscription}
             />
           </View>
         </View>

@@ -39,7 +39,6 @@ export const SmsVerification: React.FC<SmsVerificationProps> =
     };
 
     const handleCodeConfirm = async (code: string) => {
-      console.log("handleCodeConfirm");
       const data = await verifyCode(phone, code);
       if (!data) {
         setIsCodeCorrect(false);

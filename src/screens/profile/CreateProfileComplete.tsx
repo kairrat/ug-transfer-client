@@ -10,11 +10,9 @@ import { useNavigation } from "@react-navigation/native";
 type CompProps = NativeStackScreenProps<StackScreens, "CreateProfileComplete">;
 
 export const CreateProfileCompleteScreen: React.FC<CompProps> =
-  function CreateProfileCompleteScreen() {
-    const navigation = useNavigation<any>();
-
-    const hanldeButtonPress = () => {
-      navigation.navigate("Orders");
+  function CreateProfileCompleteScreen({ navigation }) {
+    const handleButtonPress = () => {
+      navigation.navigate("AuthenticationChoice");
     };
 
     return (
@@ -43,7 +41,7 @@ export const CreateProfileCompleteScreen: React.FC<CompProps> =
         </Text>
         <PrimaryButton
           text="OK"
-          onPress={hanldeButtonPress}
+          onPress={handleButtonPress}
           containerStyle={{ marginTop: "auto", marginBottom: 35 }}
         />
       </View>
