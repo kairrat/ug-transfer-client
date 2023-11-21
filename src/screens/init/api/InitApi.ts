@@ -1,11 +1,16 @@
 import AbstractApiRepository from "../../../app/api/ApiRepository";
 import { APP_URL, TYPE } from "../../../appConfig";
-import { UsersDriverInfoResponse } from "@screens/init/init-response";
+import { IUsersDriverInfoResponse } from "@screens/init/init-response";
 
 class InitApi extends AbstractApiRepository {
-  usersDriverInfo(string) {
-    return this.apiClient.post<UsersDriverInfoResponse>({
+  usersDriverInfo(token?: string) {
+    return this.apiClient.get<IUsersDriverInfoResponse>({
       url: `${APP_URL}/users/${TYPE}/info`,
+      config: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
     });
   }
 }

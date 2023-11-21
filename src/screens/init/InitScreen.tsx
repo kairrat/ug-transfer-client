@@ -1,11 +1,13 @@
 import React, { useEffect } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ImageBackground, StyleSheet, Image, View } from "react-native";
+import { Image, ImageBackground, StyleSheet, View } from "react-native";
 import { sharedStyles } from "@styles";
 import { Distance } from "./ui/Distance";
 import { StackScreens } from "src/routes/types/StackScreens";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AsyncStorakeKeys } from "../../app/types/authorization";
+import { usersDriverInfo } from "@screens/init/init-actions";
+import { RegComplete } from "@screens/init/init-response";
 
 type CompProps = NativeStackScreenProps<StackScreens, "Init">;
 const cases = {
@@ -19,9 +21,26 @@ export const InitScreen: React.FC<CompProps> = function InitScreen({
     const checkAuthorization = () => {
       return AsyncStorage.getItem(AsyncStorakeKeys.TOKEN);
     };
-    const navigateToScreen = (token) => {
-      const screenToNavigate = token ? "CreateProfile" : "AuthenticationChoice";
-      navigation.navigate(screenToNavigate);
+    const navigateToScreen = async (token) => {
+      if (!token) {
+        return navigation.navigate("AuthenticationChoice");
+      }
+
+      const userInfo = await usersDriverInfo(token);
+      if (!userInfo.subscription_status) {
+        return navigation.navigate("Subscription", {
+          subscription_status: userInfo.subscription_status,
+        });
+      }
+
+      if (
+        userInfo.subscription_status &&
+        userInfo.regComplete === RegComplete.VERIFYING
+      ) {
+        return navigation.navigate("CreateProfileComplete");
+      }
+
+      return navigation.navigate("Orders");
     };
 
     checkAuthorization().then(navigateToScreen);

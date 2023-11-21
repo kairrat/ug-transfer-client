@@ -59,7 +59,6 @@ export const CheckCode = ({
     </SmsLayout>
   );
 };
-console.log("height", height);
 const compStyles = StyleSheet.create({
   title: {
     marginBottom: "5%",

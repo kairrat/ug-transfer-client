@@ -49,7 +49,6 @@ export const ResendCode = ({
   }, [isCodeResended, timer, onResend]);
 
   const onPressResend = () => {
-    console.log("Перезвонить повторно");
     setCodeInput("");
     changeIsCodeCorrect(false);
     setIsCodeResended(true);

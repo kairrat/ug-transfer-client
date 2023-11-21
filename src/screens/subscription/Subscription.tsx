@@ -20,6 +20,7 @@ import { subscriptions } from "./contants";
 import { SubscriptionExpire } from "./ui/SubscriptionExpire";
 import { getSubscriptionActions } from "./subscription-actions";
 import { ISubscriptionType } from "./subscription-response";
+import { UserRole, UserRoleBackend } from "../../types/role";
 
 type CompProps = NativeStackScreenProps<StackScreens, "Subscription">;
 
@@ -37,7 +38,6 @@ export const SubscriptionScreen: React.FC<CompProps> =
         try {
           const data = await getSubscriptionActions();
           if (data) {
-            console.log(data.data);
             setSubscriptionData(data.data);
           }
         } catch (error) {
@@ -49,7 +49,9 @@ export const SubscriptionScreen: React.FC<CompProps> =
     }, []);
 
     const handleNextButton = () => {
-      navigation.navigate("CreateProfile");
+      navigation.navigate("CreateProfile", {
+        type: UserRole.DRIVER,
+      });
     };
 
     const handleBackButton = () => {
