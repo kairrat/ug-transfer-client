@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, View } from "react-native";
-import { colors, fonts } from "../../../shared/style";
+import { colors, fonts } from "@styles";
 import { OrderHeader } from "./OrderHeader";
 import { OrderDestination } from "./OrderDestination";
 import { OrderInfo } from "./OrderInfo";
@@ -58,9 +58,9 @@ export const Order = ({
       style={[
         calculateStyles(),
         {
-          paddingHorizontal: 15,
-          paddingBottom: 20,
-          paddingTop: 10,
+          paddingHorizontal: "5%",
+          paddingBottom: "7%",
+          paddingTop: "3%",
         },
       ]}
     >

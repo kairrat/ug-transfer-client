@@ -11,9 +11,9 @@ import {
 } from "react-native";
 import { sharedStyles, colors } from "@styles";
 import { TouchableOpacity } from "react-native-gesture-handler";
+// @ts-ignore
 import ArrowLeftIcon from "@assets/img/arrowLeft.svg";
 import { scale } from "../../../helpers/scale";
-import { ResendCode } from "@screens/authorization/ui/ResendCode";
 
 interface CompProps {
   children: ReactNode;

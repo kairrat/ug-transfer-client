@@ -6,9 +6,9 @@ import {
   StyleProp,
   ViewStyle,
 } from "react-native";
+// @ts-ignore
 import ArrowLeftIcon from "@assets/img/arrowLeft.svg";
 import { fonts, colors } from "@styles";
-import { isVisible } from "react-native-bootsplash";
 
 interface CompProps {
   title: string;
@@ -64,7 +64,7 @@ export const HeaderWithSteps = ({
       >
         <Text
           style={[
-            fonts.label,
+            fonts.text,
             {
               color: colors.primary,
             },

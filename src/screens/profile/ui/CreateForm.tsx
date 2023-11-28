@@ -28,7 +28,13 @@ const CreateForm = ({
 }: CompProps) => {
   return (
     <>
-      <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
+      <ScrollView
+        contentContainerStyle={{
+          paddingTop: "auto",
+          paddingBottom: "auto",
+          paddingHorizontal: "5%",
+        }}
+      >
         <View
           style={{
             backgroundColor: colors.gray,
@@ -47,29 +53,32 @@ const CreateForm = ({
         <UploadPassport />
 
         <PersonalInfo control={control} />
-        <View
-          style={{
-            backgroundColor: colors.gray,
-            borderRadius: 7,
-            paddingVertical: 15,
-            paddingStart: 19,
-            marginTop: 19,
-            marginBottom: 60,
-          }}
-        >
-          <Text style={[fonts.description, { color: colors.secondary }]}>
-            {"Ваше авто"}
-          </Text>
-        </View>
-        <UploadCarImages />
-        <CarInfo control={control} />
+        <>
+          <View
+            style={{
+              backgroundColor: colors.gray,
+              borderRadius: 7,
+              paddingVertical: 15,
+              paddingStart: 19,
+              marginTop: 19,
+              marginBottom: 60,
+            }}
+          >
+            <Text style={[fonts.description, { color: colors.secondary }]}>
+              {"Ваше авто"}
+            </Text>
+          </View>
+          <UploadCarImages />
+          <CarInfo control={control} />
+        </>
       </ScrollView>
-
-      <PrimaryButton
-        containerStyle={{ marginBottom: 40, marginTop: 10 }}
-        onPress={() => onHandleSubmit(handleSubmit())}
-        text="Далее"
-      />
+      <View style={{ paddingHorizontal: "5%" }}>
+        <PrimaryButton
+          containerStyle={{ marginBottom: 40, marginTop: 10 }}
+          onPress={() => onHandleSubmit(handleSubmit())}
+          text="Далее"
+        />
+      </View>
     </>
   );
 };

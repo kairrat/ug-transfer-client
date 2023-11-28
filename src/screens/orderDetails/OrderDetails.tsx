@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { colors, fonts } from "../../shared/style";
+import { colors, fonts } from "@styles";
 import CrossIcon from "@assets/img/cross.svg";
 import { useNavigation } from "@react-navigation/native";
 

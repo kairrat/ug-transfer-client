@@ -16,14 +16,25 @@ class SubscriptionApi extends AbstractApiRepository {
     const headers: AxiosRequestConfig["headers"] = {
       Authorization: `Bearer ${token}`,
     };
-    const resp = await this.apiClient.get<IGetSubscriptionTypes>({
+    return this.apiClient.get<IGetSubscriptionTypes>({
       url: `${APP_URL}/subscription/types?role=driver`,
       config: {
         headers,
         params: role,
       },
     });
-    return resp;
+  }
+  async subscriptionSubscribe() {
+    const token = await checkAuthorization();
+    const headers: AxiosRequestConfig["headers"] = {
+      Authorization: `Bearer ${token}`,
+    };
+    return this.apiClient.post<any>({
+      url: `${APP_URL}/subscription/subscribe`,
+      config: {
+        headers,
+      },
+    });
   }
 }
 

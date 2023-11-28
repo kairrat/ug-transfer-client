@@ -5,8 +5,6 @@ import { APP_URL, TYPE } from "../../../appConfig";
 class AuthorizationApi extends AbstractApiRepository {
   sendCheckCode(phone: string) {
     const url = `${APP_URL}/users/${TYPE}/make-call`;
-    console.log(url);
-    console.log(phone);
     return this.apiClient.post<CallResponse>({
       url,
       data: { phone },

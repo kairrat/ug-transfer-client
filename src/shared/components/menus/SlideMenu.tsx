@@ -42,6 +42,5 @@ const compStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    paddingTop: Platform.OS === "android" ? 55 : 65,
   },
 });

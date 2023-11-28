@@ -6,7 +6,6 @@ import QuestionIcon from "@assets/img/question.svg";
 import { Car } from "../icons/Car";
 import { MenuItemProps } from "./types";
 import { UserRole } from "../../../types/role";
-import { Controller } from "../icons/Controller";
 import { Telegram } from "../icons/Telegram";
 
 export const menuItems: MenuItemProps[] = [
@@ -22,13 +21,7 @@ export const menuItems: MenuItemProps[] = [
   {
     title: "Заказы водителя",
     icon: Car,
-    route: "DriverOrders",
-    hasUpdates: false,
-  },
-  {
-    title: "Заказы диспетчера",
-    icon: Controller,
-    route: "ControllerOrders",
+    route: "Orders",
     hasUpdates: false,
   },
   {
@@ -45,7 +38,7 @@ export const menuItems: MenuItemProps[] = [
     hasUpdates: false,
   },
   {
-    title: "Диспетчер или водитель?",
+    title: "Как стать диспетчером?",
     icon: QuestionIcon,
     route: "Help",
     hasUpdates: false,

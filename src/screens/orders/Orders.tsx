@@ -6,7 +6,9 @@ import {
   Animated,
   BackHandler,
   Dimensions,
+  SafeAreaView,
   ScrollView,
+  Text,
   View,
 } from "react-native";
 import { OrdersHeader } from "./ui/OrdersHeader";
@@ -21,6 +23,7 @@ import { useEvent, useStore } from "effector-react";
 import { $profile, setProfileData } from "../profile/models/Profile";
 import { SubRole, UserRole } from "../../types/role";
 import { useIsFocused } from "@react-navigation/native";
+import DringendOrders from "@screens/orders/ui/DringendOrders";
 
 type CompProps = NativeStackScreenProps<StackScreens, "Orders">;
 const { width } = Dimensions.get("window");
@@ -30,9 +33,10 @@ export const OrdersScreen: React.FC<CompProps> = function OrdersScreen({
 }) {
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    { key: "first", title: "Общие" },
-    { key: "second", title: "Активные" },
-    { key: "third", title: "Архив" },
+    { key: "first", title: "Срочные" },
+    { key: "second", title: "Общие" },
+    { key: "third", title: "Активные" },
+    { key: "fourth", title: "Архив" },
   ]);
   const {
     data,
@@ -59,14 +63,16 @@ export const OrdersScreen: React.FC<CompProps> = function OrdersScreen({
   const renderScene = ({ route }) => {
     switch (route.key) {
       case "first":
+        return <DringendOrders />;
+      case "second":
         return (
           <CommonOrders
             role={role === UserRole.DRIVERCONTROLLER ? subRole : role}
           />
         );
-      case "second":
-        return <ActiveOrders />;
       case "third":
+        return <ActiveOrders />;
+      case "fourth":
         return <ArchiveOrders />;
       default:
         return null;
@@ -106,20 +112,21 @@ export const OrdersScreen: React.FC<CompProps> = function OrdersScreen({
   }, [isFocused]);
   return (
     <>
-      <View
-        style={{ flex: 1, backgroundColor: colors.background, paddingTop: 60 }}
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: colors.background,
+          paddingTop: "2%",
+        }}
       >
         <OrdersHeader title={"Заказы"} />
-        <Animated.View style={{ height: "100%", marginTop: 25 }}>
+        <Animated.View style={{ height: "100%", paddingTop: "1%" }}>
           <TabView
             navigationState={{ index, routes }}
             renderScene={(route) => (
               <ScrollView
-                contentContainerStyle={{
-                  paddingHorizontal: 20,
-                  marginTop: 20,
-                  paddingBottom: 230,
-                }}
+                style={{ height: "100%" }}
+                contentContainerStyle={{ paddingBottom: 100 }}
               >
                 {renderScene(route)}
               </ScrollView>
@@ -136,14 +143,7 @@ export const OrdersScreen: React.FC<CompProps> = function OrdersScreen({
             swipeEnabled={false}
           />
         </Animated.View>
-      </View>
-      {role === UserRole.DRIVERCONTROLLER && (
-        <BottomMenu
-          onToggleActive={(selectedSubRole) =>
-            handleProfileData({ ...data, subRole: selectedSubRole })
-          }
-        />
-      )}
+      </SafeAreaView>
     </>
   );
 };

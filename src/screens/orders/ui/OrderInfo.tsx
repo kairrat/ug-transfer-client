@@ -38,13 +38,19 @@ export const OrderInfo = ({ aditionalInfo, type, discount, price }: Order) => {
         }}
       >
         {aditionalInfo.length > 0 ? (
-          <>
+          <View style={{ flexDirection: "column" }}>
             {aditionalInfo?.map((info) => (
-              <Text key={info} style={[fonts.info, { color: colors.white }]}>
+              <Text
+                key={info}
+                style={[
+                  fonts.info,
+                  { color: colors.white, flexWrap: "wrap", width: "95%" },
+                ]}
+              >
                 {info}
               </Text>
             ))}
-          </>
+          </View>
         ) : (
           <Text
             style={[
