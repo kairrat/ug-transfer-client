@@ -12,7 +12,7 @@ interface CompProps {
 export const CarInfo = ({ control }: CompProps) => {
   return (
     <View>
-      <View style={{ gap: 10, marginTop: 30 }}>
+      <View style={{ gap: 10, marginTop: "10%" }}>
         <Controller
           control={control}
           render={({ field: { onChange, value } }) => (
@@ -27,7 +27,7 @@ export const CarInfo = ({ control }: CompProps) => {
         />
         <Controller
           control={control}
-          defaultValue={"65036cc3dda044ecb92c4191"}
+          defaultValue={""}
           render={({ field: { onChange, value } }) => (
             <Input
               onChangeText={(value) => onChange(value)}

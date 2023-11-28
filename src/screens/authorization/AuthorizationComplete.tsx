@@ -4,14 +4,11 @@ import { StackScreens } from "../../routes/types/StackScreens";
 import { SmsLayout } from "./ui/SmsLayout";
 import { StyleSheet, Text } from "react-native";
 import { fonts, colors } from "@styles";
-import { useNavigation } from "@react-navigation/native";
 
 type CompProps = NativeStackScreenProps<StackScreens, "AuthorizationComplete">;
 
 export const AuthorizationComplete: React.FC<CompProps> =
-  function AuthorizationCompleteScreen() {
-    const navigation = useNavigation();
-
+  function AuthorizationCompleteScreen({ navigation }) {
     const handleButtonPress = () => {
       navigation.navigate("Subscription");
     };

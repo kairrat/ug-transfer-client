@@ -13,6 +13,7 @@ import { CreateProfileScreen } from "@screens/profile/CreateProfile";
 import { CreateProfileCompleteScreen } from "@screens/profile/CreateProfileComplete";
 import { OrdersScreen } from "@screens/orders/Orders";
 import { OrderDetailsScreen } from "@screens/orderDetails/OrderDetails";
+import { Wallet } from "@screens/wallet/Wallet";
 
 const Stack = createNativeStackNavigator<StackScreens>();
 const Drawer = createDrawerNavigator();
@@ -57,6 +58,7 @@ export const MainRouter: React.FC = function MainRouter() {
           name={"CreateProfileComplete"}
           component={CreateProfileCompleteScreen}
         />
+        <Stack.Screen name={"Wallet"} component={Wallet} />
         <Stack.Group screenOptions={{ presentation: "transparentModal" }}>
           <Stack.Screen name={"Orders"} component={OrdersScreen} />
           <Stack.Screen name={"OrderDetails"} component={OrderDetailsScreen} />

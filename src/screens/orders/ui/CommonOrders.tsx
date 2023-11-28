@@ -1,11 +1,12 @@
 import React from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { Order } from "./Order";
 import { PrimaryButton } from "../../../shared/components/button/PrimaryButton";
 import { orders } from "../contants";
 import { UserRole } from "../../../types/role";
 import { colors } from "../../../shared/style";
 import { useNavigation } from "@react-navigation/native";
+import FilterButton from "@screens/orders/ui/FilterButton";
 
 interface CompProps {
   role: UserRole;
@@ -13,12 +14,12 @@ interface CompProps {
 
 export const CommonOrders = ({ role }) => {
   const navigation = useNavigation<any>();
-
   const handleOrderDetailsPress = (orderId: string) => {
     navigation.navigate("OrderDetails", { id: orderId });
   };
   return (
-    <View style={{ gap: 15 }}>
+    <View style={{ gap: 15, paddingHorizontal: "5%", paddingTop: "5%" }}>
+      <FilterButton />
       {orders.map((order) => (
         <Order
           key={order.id}
@@ -27,36 +28,16 @@ export const CommonOrders = ({ role }) => {
           showDestinationMoreInfo={false}
         >
           <View style={{ alignSelf: "center", width: "80%" }}>
-            {role === UserRole.DRIVER ? (
-              <PrimaryButton
-                text="Принять заказ"
-                onPress={() => {}}
-                containerStyle={{
-                  marginTop: 29,
-                }}
-              />
-            ) : (
-              <PrimaryButton
-                text="Подробнее"
-                backgroundColorStyle={colors.background}
-                textColor={colors.white}
-                onPress={() => handleOrderDetailsPress(order.id)}
-                containerStyle={{
-                  marginTop: 29,
-                  borderWidth: 1,
-                  borderColor: colors.white,
-                }}
-              />
-            )}
+            <PrimaryButton
+              text="Принять заказ"
+              onPress={() => {}}
+              containerStyle={{
+                marginTop: 29,
+              }}
+            />
           </View>
         </Order>
       ))}
-
-      {/* <View style={{ flex: 1, alignItems: "center", marginTop: 250 }}>
-      
-        <Car fillColor={"#2D2D2D"} size={150} />
-        <Text style={[fonts.text, { color: colors.opacity }]}>Заказы</Text>
-      </View> */}
     </View>
   );
 };

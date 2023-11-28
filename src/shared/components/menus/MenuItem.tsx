@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { colors, fonts } from "@styles";
 import { MenuItemProps } from "./types";
+import { Linking } from "react-native";
 
 interface CompProps extends MenuItemProps {
   onPress: (route: string) => void;
@@ -26,7 +27,11 @@ export const MenuItem = ({
           borderBottomColor: backgroundColor ?? colors.line,
         },
       ]}
-      onPress={() => onPress(route)}
+      onPress={() => {
+        route !== "Help"
+          ? onPress(route)
+          : Linking.openURL("https://example.com");
+      }}
     >
       <Icon />
       <Text style={[fonts.text_semiBold, { color: textColor ?? "white" }]}>

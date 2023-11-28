@@ -1,15 +1,19 @@
 import React, { useState } from "react";
 import { Image, Platform, Text, TouchableOpacity, View } from "react-native";
+
+// @ts-ignore
 import ProfileIcon from "@assets/img/profile.svg";
-import { openPicker } from "@baronha/react-native-multiple-image-picker";
-import { colors } from "../../../shared/style";
+// @ts-ignore
 import EditIcon from "@assets/img/edit.svg";
+
+import { openPicker } from "@baronha/react-native-multiple-image-picker";
+import { colors } from "@styles";
 
 export const AvatarChange = () => {
   const [image, setImage] = useState("");
 
   const handleProfileClick = async () => {
-    const response = (await openPicker({ singleSelectedMode: true })) as any;
+    const response = (await openPicker({})) as any;
 
     const path =
       Platform.OS === "ios"

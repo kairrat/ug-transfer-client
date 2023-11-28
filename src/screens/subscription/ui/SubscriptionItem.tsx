@@ -1,16 +1,34 @@
 import React, { useState } from "react";
-import { Text, View } from "react-native";
+import { Alert, Text, View } from "react-native";
 import { PrimaryButton } from "@components/button/PrimaryButton";
 import { colors, fonts } from "@styles";
 import { InactiveSubscription } from "./InactiveSubscription";
-import { UrgentOrdersWarning } from "./UrgentOrdersWarning";
 import { SubscriptionExpire } from "./SubscriptionExpire";
 import { Car } from "@components/icons/Car";
-
-export const SubscriptionItem = ({ title, desciption, isActive, price }) => {
+import { subscriptionSubscribe } from "@screens/subscription/subscription-actions";
+export const SubscriptionItem = ({
+  title,
+  desciption,
+  isActive,
+  price,
+  handleChangeSubscriptionStatusToTrue,
+}) => {
   const Icon = Car;
-  const [isSubLoading, setIsSubLoading] = useState(false);
-  const handleGetSubscription = () => {};
+
+  const handleGetSubscription = async () => {
+    const data = await subscriptionSubscribe();
+    if (data?.data) {
+      //   should show a modal which allows to pay for subscription
+      Alert.alert(
+        "Подписка",
+        "Должна отображаться модалка, которая позволяет оплатить подписку"
+      );
+      handleChangeSubscriptionStatusToTrue();
+
+      // navigation.navigate('SubscribeModal',{url:data.data.data});
+    }
+  };
+
   return (
     <>
       <View style={{ paddingHorizontal: "5%" }}>
@@ -74,12 +92,11 @@ export const SubscriptionItem = ({ title, desciption, isActive, price }) => {
                 borderWidth: isActive ? 1 : 0,
                 borderColor: colors.opacity,
               }}
-              onPress={handleGetSubscription}
+              onPress={() => handleGetSubscription()}
             />
           </View>
         </View>
       </View>
-      {/* <UrgentOsrdersWarning /> */}
     </>
   );
 };

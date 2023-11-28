@@ -34,7 +34,7 @@ export const Dropdown = ({
       arrowIconStyle={{
         width: 24,
         height: 24,
-        backgroundColor: colors.field,
+        borderColor: colors.white,
       }}
       listItemLabelStyle={{ paddingStart: 5 }}
       tickIconStyle={{
@@ -53,6 +53,12 @@ export const Dropdown = ({
       }}
       setOpen={setOpen}
       setItems={setItems}
+      dropDownDirection="TOP"
+      theme="DARK"
+      scrollViewProps={{
+        nestedScrollEnabled: true,
+      }}
+      listMode="SCROLLVIEW"
       selectedItemContainerStyle={{ backgroundColor: "#3C3C3C" }}
       hideSelectedItemIcon={true}
       placeholder={placeholder}

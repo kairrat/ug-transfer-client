@@ -9,6 +9,7 @@ import {
 import { Route, TabBarProps } from "react-native-tab-view";
 import React, { useRef, useEffect } from "react";
 import { colors, fonts } from "../../../shared/style";
+import { fontScale } from "../../../helpers/scale";
 
 interface OrdersTabsProps {
   tabProps: TabBarProps<Route>;
@@ -26,31 +27,32 @@ export const OrdersTabs = ({
   useEffect(() => {
     Animated.timing(animation, {
       toValue: tabProps.navigationState.index,
-      duration: 200, // duration of animation
+      duration: 100, // duration of animation
       useNativeDriver: true, // leverage native driver for better performance
     }).start();
   }, [tabProps.navigationState.index]);
 
   const translateX = translateValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, Dimensions.get("window").width / 3],
+    outputRange: [0, Dimensions.get("window").width / 4],
   });
-
+  const currentIndex = tabProps.navigationState.index;
   return (
     <View style={compStyles.tabs}>
       <Animated.View
         style={[
           compStyles.activeTab,
           {
-            left: tabProps.navigationState.index === 0 ? 20 : 0,
-            width: "33%",
+            left: currentIndex === 0 ? "5%" : "3%",
+            width: "23%",
             transform: [{ translateX }],
+            borderBottomColor:
+              currentIndex === 0 ? colors.secondary : colors.primary,
           },
         ]}
       />
       {tabProps.navigationState.routes.map((route, index) => {
-        const isFocused = tabProps.navigationState.index === index;
-
+        const isFocused = currentIndex === index;
         return (
           <TouchableOpacity
             key={index}
@@ -61,7 +63,10 @@ export const OrdersTabs = ({
               style={[
                 compStyles.tabText,
                 fonts.text_semiBold,
-                isFocused && compStyles.activeTabText,
+                { fontSize: fontScale(11) },
+                isFocused && currentIndex === 0
+                  ? compStyles.dringendTabText
+                  : isFocused && compStyles.activeTabText,
               ]}
             >
               {route.title}
@@ -96,6 +101,9 @@ const compStyles = StyleSheet.create({
   },
   tabText: {
     color: colors.opacity,
+  },
+  dringendTabText: {
+    color: colors.secondary,
   },
   activeTabText: {
     color: colors.primary,

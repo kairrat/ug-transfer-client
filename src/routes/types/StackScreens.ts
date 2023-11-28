@@ -16,4 +16,9 @@ export type StackScreens = {
   OrderDetails: {
     id: string;
   };
+  SubscribeModal: {
+    url: string;
+  };
+  AuthorizationComplete: undefined;
+  Wallet: undefined;
 };
