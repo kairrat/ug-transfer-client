@@ -38,7 +38,7 @@ export const fonts = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
   },
   text_semiBold: {
-    fontSize: fontScale(16),
+    fontSize: fontScale(12),
     fontWeight: "500",
     fontFamily: "Montserrat-Medium",
   },

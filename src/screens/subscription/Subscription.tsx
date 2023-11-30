@@ -77,7 +77,7 @@ export const SubscriptionScreen: React.FC<CompProps> =
             />
           )}
         ></FlatList>
-        <View style={{ paddingHorizontal: "5%" }}>
+        <View style={{ paddingHorizontal: "5%", marginVertical: '10%' }}>
           {subscriptionStatus && (
             <PrimaryButton
               text="Далее"
