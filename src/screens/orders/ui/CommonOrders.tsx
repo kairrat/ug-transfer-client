@@ -12,14 +12,17 @@ interface CompProps {
   role: UserRole;
 }
 
-export const CommonOrders = ({ role }) => {
+export const CommonOrders = ({ role, }) => {
   const navigation = useNavigation<any>();
   const handleOrderDetailsPress = (orderId: string) => {
     navigation.navigate("OrderDetails", { id: orderId });
   };
+  const handleFindOrderRoute = () => {
+    navigation.navigate("FindOrderRoute");
+  }
   return (
     <View style={{ gap: 15, paddingHorizontal: "5%", paddingTop: "5%" }}>
-      <FilterButton />
+      <FilterButton onPress={handleFindOrderRoute}/>
       {orders.map((order) => (
         <Order
           key={order.id}

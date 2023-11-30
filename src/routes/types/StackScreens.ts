@@ -13,6 +13,7 @@ export type StackScreens = {
   };
   CreateProfileComplete: undefined;
   Orders: undefined;
+  FindOrderRoute: undefined;
   OrderDetails: {
     id: string;
   };
