@@ -1,12 +1,13 @@
 import React from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Image, ScrollView, Text, View } from "react-native";
 import { Order } from "./Order";
 import { PrimaryButton } from "../../../shared/components/button/PrimaryButton";
 import { orders } from "../contants";
 import { UserRole } from "../../../types/role";
-import { colors } from "../../../shared/style";
+import { colors, fonts } from "../../../shared/style";
 import { useNavigation } from "@react-navigation/native";
 import FilterButton from "@screens/orders/ui/FilterButton";
+import CarShadow from '@assets/img/car-shadow.png';
 
 interface CompProps {
   role: UserRole;
@@ -20,10 +21,20 @@ export const CommonOrders = ({ role, }) => {
   const handleFindOrderRoute = () => {
     navigation.navigate("FindOrderRoute");
   }
+
+  const handleAcceptOrder = () => {
+    navigation.navigate("OrderConfirmPopup", { type: "topupBalance"})
+  }
+
   return (
-    <View style={{ gap: 15, paddingHorizontal: "5%", paddingTop: "5%" }}>
+    <View style={{ flexGrow: 1, gap: 15, paddingHorizontal: "5%", paddingTop: "5%" }}>
       <FilterButton onPress={handleFindOrderRoute}/>
-      {orders.map((order) => (
+      {(!orders || orders?.length === 0) &&
+      <View style={{flexGrow: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <Image source={CarShadow}/>
+          <Text style={[fonts.label, { color: colors.opacity}]}>Заказы</Text>
+      </View>}
+      {orders?.map((order) => (
         <Order
           key={order.id}
           {...order}
@@ -33,7 +44,7 @@ export const CommonOrders = ({ role, }) => {
           <View style={{ alignSelf: "center", width: "80%" }}>
             <PrimaryButton
               text="Принять заказ"
-              onPress={() => {}}
+              onPress={handleAcceptOrder}
               containerStyle={{
                 marginTop: 29,
               }}

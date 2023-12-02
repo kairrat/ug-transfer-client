@@ -15,6 +15,10 @@ export const OrdersHeader = ({ title }: CompProps) => {
   const handleMenuOpen = () => {
     navigation.dispatch(DrawerActions.openDrawer());
   };
+
+  const handleMoveToWallet = () => {
+    navigation.navigate("Wallet");
+  }
   return (
     <View
       style={{
@@ -36,6 +40,7 @@ export const OrdersHeader = ({ title }: CompProps) => {
 
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
         <TouchableOpacity
+          onPress={handleMoveToWallet}
           style={{ flexDirection: "row", alignItems: "center" }}
         >
           <Text style={{ color: colors.primary, fontSize: 30 }}>+</Text>

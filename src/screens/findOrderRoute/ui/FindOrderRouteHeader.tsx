@@ -11,7 +11,8 @@ export const FindOrderRouteHeader = ({onBack}) => {
             justifyContent: 'space-between',
             alignItems: 'center',
             paddingHorizontal: 14,
-            paddingVertical: 14
+            paddingBottom: 14,
+            paddingTop: 18
         }}>
             <TouchableOpacity onPress={onBack}>
                 <Close />

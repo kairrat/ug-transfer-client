@@ -9,12 +9,17 @@ import { AuthorizationRouter } from "./AuthorizationRouter";
 import { SlideMenu } from "@components/menus/SlideMenu";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { SubscriptionScreen } from "@screens/subscription/Subscription";
-import { CreateProfileScreen } from "@screens/profile/CreateProfile";
-import { CreateProfileCompleteScreen } from "@screens/profile/CreateProfileComplete";
+
+import { CreateProfileCompleteScreen } from "../fearures/create-profile/CreateProfileComplete";
 import { OrdersScreen } from "@screens/orders/Orders";
 import { OrderDetailsScreen } from "@screens/orderDetails/OrderDetails";
-import { Wallet } from "@screens/wallet/Wallet";
+import { Wallet } from "../screens/wallet";
 import { FindOrderRoute } from "../screens/findOrderRoute";
+import { OrderConfirmPopup } from "../screens/OrderConfirmPopup";
+import { CreateProfileScreen } from "../fearures/create-profile/CreateProfile";
+import { Profile } from "../screens/profile";
+import { SubscribeRemind } from "../screens/subscribeRemind";
+import { ConfirmDeleteAccount } from "../screens/confirmDeleteAccount";
 
 const Stack = createNativeStackNavigator<StackScreens>();
 const Drawer = createDrawerNavigator();
@@ -60,12 +65,16 @@ export const MainRouter: React.FC = function MainRouter() {
           component={CreateProfileCompleteScreen}
         />
         <Stack.Screen name={"Wallet"} component={Wallet} />
+        <Stack.Screen name={"Profile"} component={Profile} />
+        <Stack.Screen name={"SubscribeRemind"} component={SubscribeRemind} />
+        <Stack.Screen name={"ConfirmDeleteAccount"} component={ConfirmDeleteAccount} />
         <Stack.Group screenOptions={{ presentation: "transparentModal" }}>
           <Stack.Screen name={"FindOrderRoute"} component={FindOrderRoute} />
           <Stack.Screen name={"Orders"} component={OrdersScreen} />
           <Stack.Screen name={"OrderDetails"} component={OrderDetailsScreen} />
+          <Stack.Screen name={"OrderConfirmPopup"} component={OrderConfirmPopup} />
         </Stack.Group>
-        {/* {AuthorizationRouter()} */}
+        {AuthorizationRouter()}
       </Drawer.Navigator>
     </NavigationContainer>
   );

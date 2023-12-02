@@ -12,7 +12,7 @@ import { CheckCode } from "./ui/CheckCode";
 import { useNavigation } from "@react-navigation/native";
 import { sendCheckCode, verifyCode } from "./authorization-actions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { setProfileData } from "../profile/models/Profile";
+import { setProfileData } from "../../fearures/create-profile/models/Profile";
 import { UserRole, UserRoleBackend } from "../../types/role";
 
 interface SmsVerificationProps

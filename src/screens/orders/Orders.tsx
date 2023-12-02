@@ -20,10 +20,11 @@ import { TabView } from "react-native-tab-view";
 import { OrdersTabs } from "./ui/OrdersTabs";
 import { BottomMenu } from "@components/bottomMenu/BottomMenu";
 import { useEvent, useStore } from "effector-react";
-import { $profile, setProfileData } from "../profile/models/Profile";
+import { $profile, setProfileData } from "../../fearures/create-profile/models/Profile";
 import { SubRole, UserRole } from "../../types/role";
 import { useIsFocused } from "@react-navigation/native";
 import DringendOrders from "@screens/orders/ui/DringendOrders";
+import { orders } from "./contants";
 
 type CompProps = NativeStackScreenProps<StackScreens, "Orders">;
 const { width } = Dimensions.get("window");
@@ -120,13 +121,13 @@ export const OrdersScreen: React.FC<CompProps> = function OrdersScreen({
         }}
       >
         <OrdersHeader title={"Заказы"} />
-        <Animated.View style={{ height: "100%", paddingTop: "1%" }}>
+        <Animated.View style={{ flex: 1, paddingTop: "1%" }}>
           <TabView
             navigationState={{ index, routes }}
             renderScene={(route) => (
               <ScrollView
-                style={{ height: "100%" }}
-                contentContainerStyle={{ paddingBottom: 100 }}
+                style={{ flex: 1 }}
+                contentContainerStyle={{ paddingBottom: 100, flex: orders?.length > 0 ? 0 : 1}}
               >
                 {renderScene(route)}
               </ScrollView>

@@ -2,14 +2,16 @@ import { useNavigation } from "@react-navigation/core";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Modal, ScrollView, StyleSheet, Text, View } from "react-native";
 import { StackScreens } from "../../../routes/types/StackScreens";
-import { colors } from "../../../shared/style";
+import { colors, fonts } from "../../../shared/style";
 import { FindOrderRouteHeader } from "./FindOrderRouteHeader";
-import { Button } from "../../../shared/components";
 import LocationMark from '@assets/img/LocationMark.svg';
-import BoArrowDown from '@assets/img/BoArrowDown.svg';
 import { Dropdown } from "../../../shared/components/dropdown/Dropdown";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { PrimaryButton } from "../../../shared/components/button/PrimaryButton";
+import { Datepicker } from "../../../shared/components/datepicker/Datepicker";
+
 
 type CompProps = NativeStackScreenProps<StackScreens, "FindOrderRoute">;
 
@@ -29,6 +31,8 @@ export const FindOrderRoute: React.FC<CompProps> = () => {
     const [carType, setCarType] = useState<string>(null);
     const [price, setPrice] = useState<number | string>(null);
     const [openDropdown, setOpenDropdown] = useState<string>(null);
+    const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
+    const [date, setDate] = useState<Date | null>(null);
 
     const handleDepartureCityChange = (e: string) => {
         setDepartureCity(e);
@@ -46,6 +50,18 @@ export const FindOrderRoute: React.FC<CompProps> = () => {
         setPrice(e);
     }
 
+    const handleResetFilter = () => {
+        setDepartureCity(null);
+        setArrivalCity(null);
+        setCarType(null);
+        setPrice(null);
+        setDate(null);
+    }
+    
+    const handleApplyFilter = () => {
+        navigation.navigate('Orders');
+    }
+
     return (
         <>
         <SafeAreaView
@@ -57,7 +73,7 @@ export const FindOrderRoute: React.FC<CompProps> = () => {
         >
             <FindOrderRouteHeader onBack={handleMoveBack}/>
             <ScrollView style={{ padding: 10 }}>
-                <View style={{position: 'relative', marginVertical: 10}}>
+                <View style={{position: 'relative', marginVertical: 5}}>
                     <View style={{position: 'absolute', left: 20, top: 10, zIndex: 6000}}>
                         <LocationMark />
                     </View>
@@ -74,7 +90,7 @@ export const FindOrderRoute: React.FC<CompProps> = () => {
                         setOpenName={setOpenDropdown}/>
                 </View>
 
-                <View style={{position: 'relative', marginVertical: 10}}>
+                <View style={{position: 'relative', marginVertical: 5}}>
                     <View style={{position: 'absolute', left: 20, top: 10, zIndex: 6000}}>
                         <LocationMark />
                     </View>
@@ -93,7 +109,7 @@ export const FindOrderRoute: React.FC<CompProps> = () => {
 
                 <View style={styles.divide_line} />
                 
-                <View style={{position: 'relative', marginVertical: 10}}>
+                <View style={{position: 'relative', marginVertical: 5}}>
                     <View style={{position: 'absolute', left: 20, top: 10, zIndex: 6000}}>
                         <LocationMark />
                     </View>
@@ -110,7 +126,7 @@ export const FindOrderRoute: React.FC<CompProps> = () => {
                         setOpenName={setOpenDropdown}/>
                 </View>
 
-                <View style={{position: 'relative', marginVertical: 10}}>
+                <View style={{position: 'relative', marginVertical: 5}}>
                     <View style={{position: 'absolute', left: 20, top: 10, zIndex: 6000}}>
                         <LocationMark />
                     </View>
@@ -126,8 +142,27 @@ export const FindOrderRoute: React.FC<CompProps> = () => {
                         openDropdown={openDropdown}
                         setOpenName={setOpenDropdown}/>
                 </View>
+                <View>
+                    <Text style={{color: colors.white, marginTop: 10}}>Время подачи</Text>
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                        <Datepicker 
+                            placeholder="Укажите дату" 
+                            value={date} 
+                            onChangeDate={setDate}/>
+                        <TouchableOpacity onPress={handleResetFilter}>  
+                            <Text style={{textDecorationLine: 'underline',  color: colors.white}}>Очистить фильтр</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={[fonts.description, {color: colors.opacity}]}>Выставлено ближайшее время по умолчанию</Text>
+                </View>
 
             </ScrollView>
+            <View style={{paddingHorizontal: 20, paddingVertical: 30}}>
+                <PrimaryButton 
+                    text="Применить фильтр"
+                    onPress={handleApplyFilter}
+                />
+            </View>
         </SafeAreaView>
         </>
     )

@@ -8,7 +8,7 @@ import { MenuItem } from "./MenuItem";
 import { menuItems } from "./contants";
 import { useNavigation } from "@react-navigation/native";
 import { useStore } from "effector-react";
-import { $profile } from "@screens/profile/models/Profile";
+import { $profile } from "../../../fearures/create-profile/models/Profile";
 
 export const SlideMenu = () => {
   const navigation = useNavigation<any>();
@@ -26,7 +26,7 @@ export const SlideMenu = () => {
 
   return (
     <DrawerContentScrollView contentContainerStyle={compStyles.container}>
-      <MenuProfileItem title={firstName} icon={ProfileIcon} />
+      <MenuProfileItem title={firstName} icon={ProfileIcon} onPress={handleMenuItemPress}/>
       {filteredMenus.map((menuItem) => (
         <MenuItem
           key={menuItem.route}

@@ -17,9 +17,17 @@ export type StackScreens = {
   OrderDetails: {
     id: string;
   };
+  OrderConfirmPopup: {
+    id: string;
+    from: string;
+    to: string;
+  };
   SubscribeModal: {
     url: string;
   };
   AuthorizationComplete: undefined;
   Wallet: undefined;
+  Profile: undefined;
+  SubscribeRemind: undefined;
+  ConfirmDeleteAccount: undefined;
 };

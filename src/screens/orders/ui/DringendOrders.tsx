@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useStore } from "effector-react";
-import { $profile } from "@screens/profile/models/Profile";
+import { $profile } from "../../../fearures/create-profile/models/Profile";
 import { Text, View } from "react-native";
 
 const DringendOrders = () => {

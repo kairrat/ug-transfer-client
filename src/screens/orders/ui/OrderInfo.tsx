@@ -37,7 +37,7 @@ export const OrderInfo = ({ aditionalInfo, type, discount, price }: Order) => {
           gap: 7,
         }}
       >
-        {aditionalInfo.length > 0 ? (
+        {aditionalInfo?.length > 0 ? (
           <View style={{ flexDirection: "column" }}>
             {aditionalInfo?.map((info) => (
               <Text

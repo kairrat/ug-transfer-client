@@ -50,15 +50,16 @@ export const Dropdown = ({
     <DropDownPicker
       dropDownContainerStyle={{
         backgroundColor: colors.field,
-        borderWidth: 0,
-        zIndex: open ? zIndex : 1
+        borderWidth: 1,
+        borderColor: colors.line,
+        zIndex: open ? zIndex : 1,
       }}
       style={{
         borderRadius: 7,
         backgroundColor: colors.field,
-        borderWidth: open ? 0 : 1,
+        borderWidth: open ? 1 : 1,
         paddingStart: icon ? '15%' : 16,
-        borderColor: open ? colors.field : colors.stroke,
+        borderColor: open ? colors.line : colors.stroke,
       }}
       arrowIconStyle={{
         width: 24,
