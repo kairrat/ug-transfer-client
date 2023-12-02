@@ -34,7 +34,6 @@ export const PrimaryButton = ({
   const compStyles = StyleSheet.create({
     text: {
       width: "100%",
-      paddingVertical: paddingVertical ?? 15,
     },
   });
   return (
@@ -52,7 +51,7 @@ export const PrimaryButton = ({
       ]}
       onPress={onPress}
     >
-      <Text style={[fonts.text_semiBold, { color: textColor ?? colors.black }]}>
+      <Text style={[fonts.text_semiBold, { color: textColor ?? colors.black, paddingVertical: 12 }]}>
         {text}
       </Text>
     </TouchableOpacity>
