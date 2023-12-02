@@ -22,7 +22,7 @@ export const TopupBalance = ({topupBalance, goBack}) => {
             </View>
             <View style={styles.buttons_container}>
                 <Button projectType="secondary" onPress={goBack}>
-                    <Text style={[{color: colors.white, textAlign: 'center'}, fonts.text_Bold]}>
+                    <Text style={[{color: colors.white, textAlign: 'center'}, fonts.info]}>
                         Назад
                     </Text>
                 </Button>
