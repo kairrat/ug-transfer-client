@@ -5,4 +5,5 @@ export enum AuthorizationType {
 
 export enum AsyncStorakeKeys {
   TOKEN = "token",
+  SETTINGS = "settings"
 }

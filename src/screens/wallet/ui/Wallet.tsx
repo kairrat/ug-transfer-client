@@ -5,10 +5,11 @@ import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "r
 import { colors, fonts } from "@styles";
 import { DrawerActions } from "@react-navigation/native";
 import Logo from '@assets/img/logo.png';
-import { BalanceContainer } from "./BalanceContainer";
-import { WalletHeader } from "./WalletHeader";
-import { WithdrawInput } from './WithdrawInput';
+import { $wallet, BalanceContainer } from "../../../fearures/wallet";
+import { WalletHeader } from "../../../fearures/wallet";
+import { WithdrawInput } from '../../../fearures/wallet';
 import { PrimaryButton } from "../../../shared/components/button/PrimaryButton";
+import { useStore } from "effector-react";
 
 
 type CompProps = NativeStackScreenProps<StackScreens, "Wallet">;
@@ -18,6 +19,7 @@ export const Wallet: React.FC<CompProps> = function Wallet({
   route,
 }) {
   const [withdrawAmount, setWithdrawAmount] = useState<string>('');
+  const { amount } = useStore($wallet);
 
   const handleMenuOpen = () => {
     navigation.dispatch(DrawerActions.openDrawer());
@@ -40,7 +42,7 @@ export const Wallet: React.FC<CompProps> = function Wallet({
             source={Logo}
             style={styles.logo_img}/>
         </View>
-        <BalanceContainer amount={"20000"}/>
+        <BalanceContainer amount={amount}/>
         <WithdrawInput value={withdrawAmount} onChange={handleWithdrawAmountChange}/>
         <PrimaryButton 
           onPress={() => {}}

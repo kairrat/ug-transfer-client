@@ -2,6 +2,7 @@ import { authorizationApi } from "./api/AuthorizationApi";
 
 export const sendCheckCode = async (phone: string) => {
   const { data } = await authorizationApi.sendCheckCode(phone).catch((e) => e);
+  console.log(data);
   return data;
 };
 

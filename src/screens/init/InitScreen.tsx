@@ -23,23 +23,23 @@ export const InitScreen: React.FC<CompProps> = function InitScreen({
       return AsyncStorage.getItem(AsyncStorakeKeys.TOKEN);
     };
     const navigateToScreen = async (token) => {
-      if (!token) {
-        return navigation.navigate("AuthenticationChoice");
-      }
+      // if (!token) {
+      //   return navigation.navigate("AuthenticationChoice");
+      // }
 
-      const userInfo = await usersDriverInfo(token);
-      if (!userInfo.subscription_status) {
-        return navigation.navigate("Subscription", {
-          subscription_status: userInfo.subscription_status,
-        });
-      }
+      // const userInfo = await usersDriverInfo(token);
+      // if (!userInfo.subscription_status) {
+      //   return navigation.navigate("Subscription", {
+      //     subscription_status: userInfo.subscription_status,
+      //   });
+      // }
 
-      if (
-        userInfo.subscription_status &&
-        userInfo.regComplete === RegComplete.VERIFYING
-      ) {
-        return navigation.navigate("CreateProfileComplete");
-      }
+      // if (
+      //   userInfo.subscription_status &&
+      //   userInfo.regComplete === RegComplete.VERIFYING
+      // ) {
+      //   return navigation.navigate("CreateProfileComplete");
+      // }
 
       return navigation.navigate("Orders");
     };

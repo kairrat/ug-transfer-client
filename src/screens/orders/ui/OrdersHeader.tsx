@@ -4,6 +4,8 @@ import WalletIcon from "@assets/img/wallet.svg";
 import { colors, fonts } from "../../../shared/style";
 import MenuIcon from "@assets/img/menu.svg";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
+import { $wallet } from "../../../fearures/wallet";
+import { useStore } from "effector-react";
 
 interface CompProps {
   title: string;
@@ -11,6 +13,7 @@ interface CompProps {
 
 export const OrdersHeader = ({ title }: CompProps) => {
   const navigation = useNavigation<any>();
+  const { amount } = useStore($wallet);
 
   const handleMenuOpen = () => {
     navigation.dispatch(DrawerActions.openDrawer());
@@ -53,7 +56,7 @@ export const OrdersHeader = ({ title }: CompProps) => {
             { color: colors.primary, position: "relative", top: 2 },
           ]}
         >
-          0 р
+          {amount} р
         </Text>
       </View>
     </View>
