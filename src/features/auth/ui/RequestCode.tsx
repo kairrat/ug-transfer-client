@@ -1,0 +1,108 @@
+import axios from "axios";
+import { useEvent, useUnit } from "effector-react";
+import { FC, useState } from "react";
+import { Image, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Button } from "src/shared/components/Button";
+import { Input } from "src/shared/components/Input";
+import { ScreenHeader } from "src/shared/components/ScreenHeader";
+import { ArrowLeftIcon, Logo, PhoneRoundedIcon } from "src/shared/img";
+import { colors, fonts } from "src/shared/style";
+import { requestCode } from "../model/auth-actions";
+import { $auth, setAuthPhone as setAuthStorePhone, setAuthCode as setAuthStoreCode } from "../model/AuthStore";
+
+interface IRequestCodeProps {
+    type: 'sign-in' | 'sign-up',
+    onVerifyCode: () => void;
+}
+
+export const RequestCode: FC<IRequestCodeProps> = ({
+    type = 'sign-in',
+    onVerifyCode
+}) => {
+    const [loading, setLoading] = useState<boolean>(false);
+    const [phone, setPhone] = useState<string>("");
+
+    const [authStore, setAuthPhone] = useUnit([$auth, setAuthStorePhone]);
+    const phoneNumberRegex = /^\+(?:[0-9] ?){6,14}[0-9]$/;
+    const handleRequestCode = async () => {
+        if (phone === "") return;
+        setAuthPhone(phone);
+        onVerifyCode();
+        // try {
+        //     setLoading(true);
+        //     const data: any = await requestCode(phone);
+        //     if (data && data.success) {
+        //         setAuthPhone(phone);
+        //         onVerifyCode();
+        //     }
+        // } catch (err) {
+        //     console.error('Failed to request code', err);
+        // } finally {
+        //     setLoading(false);
+        // }
+    }
+
+    return(
+        <SafeAreaView style={styles.layout}>
+            <ScreenHeader leftIcon={<ArrowLeftIcon />} leftIconStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}/>
+            <View style={styles.body}>
+                <Image source={Logo} style={styles.logo}/>
+                <View>
+                    <Text style={[fonts.regular, styles.title]}>{type === 'sign-in' ? "Вход" : "Регистрация"}</Text>
+                    <Text style={[fonts.regular, styles.title]}>по номеру телефона</Text>
+                </View>
+                <Input placeholder="Телефон" value={phone} onChange={setPhone} leftIcon={<PhoneRoundedIcon />} keyboardType="phone-pad"/>
+                <Text style={[fonts.regular, styles.description]}>
+                    Наш автоответчик Вам перезвонит, введите пожалуйста 
+                        <Text style={{color: colors.green}}>
+                            {' '}4 последние{' '}
+                        </Text>
+                    цифры номера телефона нашего автоответчика
+                </Text>
+            </View>
+            <View style={styles.button_holder}>
+                <Button projectType="primary" onPress={handleRequestCode} disabled={phoneNumberRegex.test(phone) ? loading : false}>
+                    <Text style={[fonts.regular, styles.button_text]}>Вход</Text>
+                </Button>
+            </View>
+        </SafeAreaView>
+    );
+};
+
+const styles = StyleSheet.create({
+    layout: {
+        flex: 1,
+        backgroundColor: colors.background
+    },
+    body: {
+        flexGrow: 1,
+        flexDirection: 'column',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        rowGap: 30
+    },
+    logo: {
+        width: '55%',
+        objectFit: 'contain',
+        marginVertical: 40
+    },
+    title: {
+        fontSize: 18,
+        color: colors.white,
+        textAlign: 'center'
+    },
+    description: {
+        fontSize: 16,
+        color: colors.white,
+        textAlign: 'center'
+    },
+    button_holder: {
+        paddingHorizontal: 20,
+        paddingVertical: 20
+    },
+    button_text: {
+        color: colors.black,
+        textAlign: 'center',
+        fontSize: 16
+    }
+});

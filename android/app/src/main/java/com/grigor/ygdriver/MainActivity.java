@@ -12,7 +12,7 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected String getMainComponentName() {
-    return "YG-Driver";
+    return "YG-Client";
   }
 
   @Override
