@@ -3,5 +3,8 @@ export type StackScreens = {
   Auth: undefined;
   Profile: undefined;
   Trips: undefined;
+  TripDetails: {
+    id: string;
+  };
   Main: undefined;
 };

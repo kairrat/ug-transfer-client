@@ -1,8 +1,7 @@
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import React, { useMemo, useState } from "react";
-import { Modal, StyleSheet } from "react-native";
-import { colors } from "src/shared/style";
-import { PAYMENT_METHODS } from "../model/constants";
+import React, { useEffect, useState } from "react";
+import { Modal } from "react-native";
+import { CARS_CLASSES, PAYMENT_METHODS } from "../model/constants";
 import { IAddress } from "../types/findTaxiSchemas";
 import { PaymentMethodEnum } from "../types/paymentMethod.enum";
 import { ArrivalAddress } from "./arrivalAddress/ArrivalAddress";
@@ -11,37 +10,49 @@ import { PaymentMethod } from "./PaymentMethod";
 import { SetAddress } from "./SetAddress";
 import { BottomSheetContext } from "../context/BottomSheetContext";
 import { Details } from "./Details";
-import { Portal } from "@gorhom/portal";
+import { OrderParams } from "../types/order";
+import {  Order} from 'src/types/order';
+import { OrderProcess } from "./OrderProcess";
+import dayjs from 'dayjs';
+import { useUnit } from "effector-react";
+import { $profile } from "src/features/profile";
 
 interface IFindTaxiProps {
     sheetModalRef: React.RefObject<BottomSheetModalMethods>,
-    setSnapPoints: (newState: string[]) => void;
+    setSnapPoints: (newState: (string | number)[]) => void;
+    setLocation: (location: any) => void;
+    onClearArrivalAddress: () => void;
 }
 
 enum SheetState {
     SET_ADDRESS = 'set_address',
     DEFINED_PAYMENT_METHOD = 'define_payment_method',
     SET_DEPARTURE_ADDRESS = 'set_departure_address',
-    SET_ARRIVAL_ADDRESS = 'set_arrival_address'
+    SET_ARRIVAL_ADDRESS = 'set_arrival_address',
+    ORDER_PROCESS = 'order_process'
 }
 
 type IComponentsByState = {
     [key in SheetState]: {
-        // component: React.JSX.Element,
         component: React.ReactElement,
-        snapPoints: string[],
-        snapToPosition: string
+        snapPoints: (string | number)[],
+        snapToPosition: string | number
     }
 }
 
-export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints}) => {
+export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints, setLocation, onClearArrivalAddress}) => {
+    const { profile } = useUnit($profile);
     const [loading, setLoading] = useState<boolean>(false);
     const [modalState, setModalState] = useState<SheetState>(SheetState.SET_ADDRESS);
-    const [departureAddress, setDepartureAddress] = useState<IAddress>({ city: "", address: "" });
-    const [arrivalAddress, setArrivalAddress] = useState<IAddress>({ city: "", address: "" });
-    const [activeCarClass, setActiveCarClass] = useState<number>(0);
-    const [paymentMethod, setPaymentMethod] = useState<PaymentMethodEnum>(PaymentMethodEnum.CASH);
-    const [shipDate, setShipDate] = useState(new Date());
+    const [address, setAddress] = useState<{ departure: IAddress, arrival: IAddress }>({
+        departure: { city: "", address: "" },
+        arrival: { city: "", address: "" }
+    });
+    const [orderParams, setOrderParams] = useState<OrderParams>({
+        activeCarClass: 0,
+        shipDate: new Date(),
+        paymentMethod: PaymentMethodEnum.CASH,
+    });
     const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
     const [detailsData, setDetailsData] = useState({ 
         baggage: "", 
@@ -51,12 +62,13 @@ export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints
             buster: false,
             animalTransfer: false
         },
-        comment: ""
+        comment: "",
+        price: null
     });
-
+    const [orderStatus, setOrderStatus] = useState<'received' | 'seeking' | null>(null);
 
     const handleChangePaymentMethod = (method: PaymentMethodEnum) => {
-        setPaymentMethod(method);
+        setOrderParams(prev => ({...prev, paymentMethod: method}));
         handleChangeModalState(SheetState.SET_ADDRESS)
     }
 
@@ -65,61 +77,91 @@ export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints
         setModalState(state);
         setSnapPoints(snapPoints);
         sheetModalRef.current?.snapToPosition(snapToPosition);
-        sheetModalRef.current?.snapToIndex(index);
+        console.log('Setting position');
+        // sheetModalRef.current?.snapToIndex(index);
     }
 
     const handleApplyDetails = (details: any) => {
         setDetailsData(details);
         setDetailsOpen(false);
     }
-    
 
-    const componentsByState: IComponentsByState = useMemo(() => ({
+    const handleFindTaxi = () => {
+        setOrderStatus("received");
+        handleChangeModalState(SheetState.ORDER_PROCESS);
+    }
+
+    const handleClearArrivalAddress = () => {
+        onClearArrivalAddress();
+        setAddress(prev => ({...prev, arrival: {city: "", address: ""}}));
+    }
+
+    useEffect(() => {
+        const { snapPoints, snapToPosition} = componentsByState[modalState];
+        setSnapPoints(snapPoints);
+        sheetModalRef.current?.snapToPosition(snapToPosition);
+    }, []);
+
+    useEffect(() => {
+        if (address.arrival && address.departure) {
+            setDetailsData(prev => ({...prev, price: 2000}))
+        }
+        else {
+            setDetailsData(prev => ({...prev, price: null}))
+        }
+    }, [address]);
+
+    const componentsByState: IComponentsByState = {
         [SheetState.DEFINED_PAYMENT_METHOD]: {
-            component: <PaymentMethod value={paymentMethod} onChange={handleChangePaymentMethod} />,
+            component: <PaymentMethod value={orderParams.paymentMethod} onChange={handleChangePaymentMethod} />,
             snapPoints: ['22%'],
             snapToPosition: '22%',
         },
         [SheetState.SET_ADDRESS]: {
-            component: <SetAddress 
-                departureAddress={departureAddress}
-                arrivalAddress={arrivalAddress}
-                paymentMethod={paymentMethod || PaymentMethodEnum.CASH}
-                PaymentIcon={PAYMENT_METHODS[paymentMethod || PaymentMethodEnum.CASH].Icon}
-                activeCarClass={activeCarClass} 
-                shipDate={shipDate}
-                setActiveCarClass={setActiveCarClass} 
-                setDepartureAddress={setDepartureAddress}
+            component: <SetAddress
+                address={address}
+                paymentIcon={PAYMENT_METHODS[orderParams.paymentMethod].Icon}
+                orderParams={orderParams}
+                orderPrice={detailsData.price}
+                setOrderParams={setOrderParams}
+                findTaxi={handleFindTaxi}
                 onPaymentPress={() => handleChangeModalState(SheetState.DEFINED_PAYMENT_METHOD)}
-                setShipDate={setShipDate}
                 onDepartureAddressEdit={() => handleChangeModalState(SheetState.SET_DEPARTURE_ADDRESS)}
                 onArrivalAddressEdit={() => handleChangeModalState(SheetState.SET_ARRIVAL_ADDRESS)}
-                onClearArriveAddress={() => setArrivalAddress({city: "", address: ""})}
+                onClearArriveAddress={handleClearArrivalAddress}
                 onEditDetails={() => setDetailsOpen(true)}/>,
-            snapPoints: ['25%', '83%'],
-            snapToPosition: '83%',
+            snapPoints: [177, 623],
+            snapToPosition: 623,
         },
         [SheetState.SET_ARRIVAL_ADDRESS]: {
             component: <ArrivalAddress 
+                setLocation={setLocation}
                 onClose={() => handleChangeModalState(SheetState.SET_ADDRESS)}
-                applyAddress={(selectedAddress: string) => setArrivalAddress(prev => ({...prev, address: selectedAddress}))}
-                applyCity={(selectedCity: string) => setArrivalAddress(prev => ({...prev, city: selectedCity}))}
-                address={arrivalAddress.address}
-                city={arrivalAddress.city}/>,
-            snapPoints: ['40%'],
-            snapToPosition: '40%',
+                applyAddress={(address: string) => setAddress(prev => ({...prev, arrival: { ...prev.arrival, address }}))}
+                applyCity={(city: string) => setAddress(prev => ({...prev, arrival: { ...prev.arrival, city }}))}
+                defaultAddress={address.arrival}/>,
+            snapPoints: [295],
+            snapToPosition: 295,
         },
         [SheetState.SET_DEPARTURE_ADDRESS]: {
             component: <DepartureAddress 
+                setLocation={setLocation}
                 onClose={() => handleChangeModalState(SheetState.SET_ADDRESS)}
-                applyAddress={(selectedAddress: string) => setDepartureAddress(prev => ({...prev, address: selectedAddress}))}
-                applyCity={(selectedCity: string) => setDepartureAddress(prev => ({...prev, city: selectedCity}))}
-                city={departureAddress.city}
-                address={departureAddress.address}/>,
-            snapPoints: ['40%'],
-            snapToPosition: '40%',
+                applyAddress={(address: string) => setAddress(prev => ({...prev, departure: { ...prev.departure, address }}))}
+                applyCity={(city: string) => setAddress(prev => ({...prev, departure: { ...prev.departure, city }}))}
+                defaultAddress={address.departure}/>,
+            snapPoints: [295],
+            snapToPosition: 295,
         },
-    }), [departureAddress, arrivalAddress]);
+        [SheetState.ORDER_PROCESS]: {
+            component: <OrderProcess 
+                status={orderStatus} 
+                onReceivedDismiss={() => setOrderStatus("seeking")} 
+                onSeekingDismiss={() => handleChangeModalState(SheetState.SET_ADDRESS)}/>,
+            snapPoints: [40, 192],
+            snapToPosition: 192
+        }
+    }
 
     return(
         <BottomSheetContext.Provider value={{
@@ -143,45 +185,3 @@ export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints
         </BottomSheetContext.Provider>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        paddingHorizontal: 20
-    },
-    address_holder: {
-        flexDirection: 'column',
-        rowGap: 10,
-        marginVertical: 20
-    },
-    carOptions_holder: {
-
-    },
-    carOption_title: {
-        color: colors.white,
-        fontSize: 16
-    },
-    carClass_list: {
-        columnGap: 10
-    },
-    carClass_item: {
-        paddingTop: 20,
-        paddingBottom: 10,
-        paddingHorizontal: 10,
-        borderRadius: 6,
-        marginVertical: 5,
-        borderWidth: 1,
-        borderColor: 'transparent'
-    },
-    activeCarClass: {
-        borderColor: colors.stroke,
-    },
-    carClass_img: {
-        width: 100,
-        height: 50,
-        objectFit: "contain"
-    },
-    carClass_text: {
-        color: colors.white,
-        textAlign: 'center'
-    }
-});

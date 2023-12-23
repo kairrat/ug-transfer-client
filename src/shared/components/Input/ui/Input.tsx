@@ -45,7 +45,7 @@ export const Input: React.FC<IInputProps> = ({
                 onChangeText={onChange} 
                 placeholder={placeholder}
                 style={[inputStyles[inputStyleKey], inputStyles.initial]}
-                enabled={!disabled}
+                editable={!disabled}
                 placeholderTextColor={colors.opacity}
                 keyboardType={keyboardType}
                 textAlign={textAlign}
@@ -72,19 +72,32 @@ const containerStyles = StyleSheet.create({
         borderColor: colors.stroke,
         borderRadius: 7,
         backgroundColor: colors.gray,
-        paddingVertical: 15,
+        paddingVertical: 12,
         paddingHorizontal: 10
     },
     rightButton: {
         backgroundColor: 'transparent',
+    },
+    profile_phone: {
+        borderWidth: 1,
+        borderColor: colors.stroke,
+        borderRadius: 7,
+        backgroundColor: colors.gray,
+        paddingVertical: 12,
+        paddingHorizontal: 10
     }
 });
 const inputStyles = StyleSheet.create({
     initial: {
         flexGrow: 1,
-        color: colors.white
+        
     },
     default: {
-        padding: 0
+        padding: 0,
+        color: colors.white
+    },
+    profile_phone: {
+        padding: 0,
+        color: colors.green
     }
 });

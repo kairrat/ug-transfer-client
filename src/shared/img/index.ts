@@ -29,6 +29,8 @@ import PhoneRoundedIcon from './phone-rounded-icon.svg';
 import ArrowDownIcon from './arrowDown-icon.svg';
 import AddGreenIcon from './add-green-icon.svg';
 import LightLogo from './light-logo.png';
+import StartLocationMarker from './start-location.png';
+import EndLocationMarker from './end-location.png';
 
 export {
     MenuIcon,
@@ -60,5 +62,7 @@ export {
     PhoneRoundedIcon,
     ArrowDownIcon,
     AddGreenIcon,
-    LightLogo
+    LightLogo,
+    StartLocationMarker,
+    EndLocationMarker
 };

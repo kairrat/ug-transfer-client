@@ -43,7 +43,7 @@ export const DrawerContent: React.FC<IDrawerContentProps> = () => {
                 </View>
                 <View style={styles.footer}>
                     <TouchableOpacity 
-                        onPress={() => {}}>
+                        onPress={() => Linking.openURL("https://t.me")}>
                         <Text style={[fonts.regular, styles.footer_text]}>Помощь</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 

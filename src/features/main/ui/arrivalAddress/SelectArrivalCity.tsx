@@ -1,23 +1,27 @@
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { DimensionValue, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useKeyboardVisibility } from "src/features/useKeyboardVisibility";
 import { Button } from "src/shared/components/Button";
 import { Input } from "src/shared/components/Input";
 import { BuildingIcon, CrossIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
 import { ICity } from "src/types/city";
-// import { ICity } from "src/shared/types/city";
-import { getCities } from "../../model/main-actions";
+import { BottomSheetContext } from "../../context/BottomSheetContext";
 
 interface ISelectArrivalCityProps {
+    snapPosition: number;
     onClose: () => void;
     debounceCb: (city: string) => Promise<ICity[]>;
     setDepartureCity: (city: string) => void;
 };
 
-export const SelectArrivalCity: React.FC<ISelectArrivalCityProps> = ({ onClose, setDepartureCity, debounceCb }) => {
+export const SelectArrivalCity: React.FC<ISelectArrivalCityProps> = ({ onClose, setDepartureCity, debounceCb, snapPosition: defaultSnapPosition }) => {
+    const { modalRef, setSnapPoints } = useContext(BottomSheetContext);
     const [ city, setCity ] = useState<string>("");
     const [ foundCities, setFoundCities ] = useState<ICity[]>([]);
+    const [ snapPosition, setSnapPosition ] = useState<number>(defaultSnapPosition);
+    const isKeyboardVisible = useKeyboardVisibility();
 
     const handleSearchCities = () => {
         if (city === "") {
@@ -25,6 +29,7 @@ export const SelectArrivalCity: React.FC<ISelectArrivalCityProps> = ({ onClose, 
         }
         debounceCb(city).then((res: ICity[]) => {
             setFoundCities(res);
+            console.log(res);
         }).catch(err => {
             console.error(err);
         });
@@ -39,18 +44,30 @@ export const SelectArrivalCity: React.FC<ISelectArrivalCityProps> = ({ onClose, 
 
     useEffect(() => {
         if (foundCities.length === 0) {
-            // setSnapPoints(['35%']);
-            // setSnapPosition('35%');
+            setSnapPoints([defaultSnapPosition]);
+            modalRef.current?.snapToPosition(defaultSnapPosition);
+            setSnapPosition(defaultSnapPosition);
         }
-        else if (foundCities.length > 1 && foundCities.length < 4) {
-            // setSnapPoints(['60%']);
-            // setSnapPosition('60%');
+        else if (foundCities.length > 0 && foundCities.length < 4) {
+            setSnapPoints(['60%']);
+            modalRef.current?.snapToPosition('60%');
+            setSnapPosition(60);
         }
         else {
-            // setSnapPoints(['90%']);
-            // setSnapPosition('90%');
+            setSnapPoints(['90%']);
+            modalRef.current?.snapToPosition('90%');
+            setSnapPosition(90);
         }
     }, [foundCities]);
+
+    useEffect(() => {
+        if (isKeyboardVisible) {
+            modalRef.current?.snapToPosition(snapPosition + 260);
+        }
+        else {
+            modalRef.current?.snapToPosition(snapPosition);
+        }
+    }, [isKeyboardVisible]);
 
     const handleGetDropdownHeight = (): DimensionValue => {
         if (foundCities.length === 0) {
@@ -70,7 +87,7 @@ export const SelectArrivalCity: React.FC<ISelectArrivalCityProps> = ({ onClose, 
                     style={styles.close_button}>
                         <CrossIcon />
                 </TouchableOpacity>
-                <Text style={[fonts.medium, styles.header_title]}>С какого города едем?</Text>
+                <Text style={[fonts.medium, styles.header_title]}>В какой город едем?</Text>
             </View>
             <View style={styles.body}>
                 <Input

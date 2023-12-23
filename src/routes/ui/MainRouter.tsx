@@ -11,6 +11,8 @@ import { DrawerContent } from "src/widgets/Drawer";
 import { Init } from "src/screens/Init";
 import { StackScreens } from "../types/StackScreens";
 import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
+import { TripDetails } from "src/screens/TripDetails";
+import { Trips } from "src/screens/Trips";
 
 type CustomStackNavigationOptions = NativeStackNavigationOptions & {
   unmountOnBlur?: boolean;
@@ -28,7 +30,8 @@ export const MainRouter: React.FC = function MainRouter() {
   const shouldShowDrawer = ({ route }: { route: { name: string } }) => {
     const bannedRoutes = [
       "Init",
-      "Auth"
+      "Auth",
+      "TripDetails"
     ];
     return !bannedRoutes.includes(route.name);
   };
@@ -51,10 +54,11 @@ export const MainRouter: React.FC = function MainRouter() {
         })}
       >
         <Stack.Screen name={"Init"} component={Init} />
-        <Stack.Screen name={"Auth"} component={Auth} />
+        <Stack.Screen name={"Auth"} component={Auth} options={{unmountOnBlur: true} as CustomStackNavigationOptions}/>
         <Stack.Screen name={"Main"} component={Main} />
+        <Stack.Screen name={"Trips"} component={Trips} />
+        <Stack.Screen name={"TripDetails"} component={TripDetails} />
         <Stack.Screen name={"Profile"} component={Profile} />
-        {/* {AuthorizationRouter()} */}
       </Drawer.Navigator>
     </NavigationContainer>
   );

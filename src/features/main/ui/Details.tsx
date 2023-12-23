@@ -67,25 +67,31 @@ export const Details: React.FC<IDetailsProps> = ({
                         keyboardType="numeric"
                         leftIcon={<UserIcon />}/>
                     <View style={styles.option_holder}>
-                        <Checkbox
-                            value={options.babyChair}
-                            onValueChange={(newValue) => setOptions(prev => ({...prev, babyChair: newValue}))}
-                            tintColors={{ true: colors.primary, false: colors.primary }}/>
-                        <Text style={styles.option_text}>Детское кресло</Text>
+                        <TouchableOpacity style={styles.option_button} onPress={() => setOptions(prev => ({...prev, babyChair: !prev.babyChair}))}>
+                            <Checkbox
+                                value={options.babyChair}   
+                                onValueChange={() => setOptions(prev => ({...prev, babyChair: !prev.babyChair}))}
+                                tintColors={{ true: colors.primary, false: colors.primary }}/>
+                            <Text style={styles.option_text}>Детское кресло</Text>
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.option_holder}>
-                        <Checkbox
-                            value={options.buster}
-                            onValueChange={(newValue) => setOptions(prev => ({...prev, buster: newValue}))}
-                            tintColors={{ true: colors.primary, false: colors.primary }}/>
-                        <Text style={styles.option_text}>Бустер</Text>
+                        <TouchableOpacity style={styles.option_button} onPress={() => setOptions(prev => ({...prev, buster: !prev.buster}))}>
+                            <Checkbox
+                                value={options.buster}
+                                tintColors={{ true: colors.primary, false: colors.primary }}
+                                onValueChange={() => setOptions(prev => ({...prev, buster: !prev.buster}))}/>
+                            <Text style={styles.option_text}>Бустер</Text>
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.option_holder}>
-                        <Checkbox
-                            value={options.animalTransfer}
-                            onValueChange={(newValue) => setOptions(prev => ({...prev, animalTransfer: newValue}))}
-                            tintColors={{ true: colors.primary, false: colors.primary }}/>
-                        <Text style={styles.option_text}>Перевозка животных</Text>
+                        <TouchableOpacity style={styles.option_button} onPress={() => setOptions(prev => ({...prev, animalTransfer: !prev.animalTransfer}))}>
+                            <Checkbox
+                                value={options.animalTransfer}
+                                onValueChange={() => () => setOptions(prev => ({...prev, animalTransfer: !prev.animalTransfer}))}
+                                tintColors={{ true: colors.primary, false: colors.primary }}/>
+                            <Text style={styles.option_text}>Перевозка животных</Text>
+                        </TouchableOpacity>
                     </View>
                     <Input 
                         placeholder="Пожелания к заказу"
@@ -144,6 +150,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         columnGap: 10,
+    },
+    option_button: {
+        flexDirection: 'row', 
+        alignItems: 'center'
     },
     option_text: {
         fontSize: 16,

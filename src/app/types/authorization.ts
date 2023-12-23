@@ -3,7 +3,7 @@ export enum AuthorizationType {
   REGISTER = "Register",
 }
 
-export enum AsyncStorakeKeys {
+export enum AsyncStorageKeys {
   TOKEN = "token",
   SETTINGS = "settings"
 }

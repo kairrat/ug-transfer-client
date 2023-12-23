@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import { Image, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { FileHelper } from "src/features/file-picker/model/FileHelper";
+import { FileHelper } from "src/features/file";
 import { AddGreenIcon, PhoneRoundedIcon, UnknownUser, UserIcon } from "src/shared/img";
 import { Asset } from 'react-native-image-picker';
 import { useUnit } from "effector-react";
@@ -10,8 +10,11 @@ import { Button } from "src/shared/components/Button";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ConfirmDeleteAccount } from "./ConfirmDeleteAccount";
 import { PrivacyPolicy } from "src/features/privacy-policy";
-import { AsyncStorakeKeys } from "src/app/types/authorization";
+import { AsyncStorageKeys } from "src/app/types/authorization";
 import { colors } from "src/shared/style";
+import { $profile, updateProfile } from "..";
+import { useToast } from "react-native-toast-notifications";
+import { fileService } from "src/features/file/model/file-service";
 // import { PrivacyPolicy } from "src/features/privacy-policy";
 
 interface IProfileFormProps {
@@ -19,26 +22,61 @@ interface IProfileFormProps {
 }
 
 export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
-    const [{profile, phone}, handleChangeLoggedState] = useUnit([$auth, setLoggedState]);
-    const [newAvatar, setNewAvatar] = useState<any>(null);
-    const [personalData, setPersonalData] = useState({firstName: profile?.firstName || "", phone});
+    const toast = useToast();
+    const [, handleChangeLoggedState] = useUnit([$auth, setLoggedState]);
+    const [{profile}] = useUnit([$profile]);
+    const [newAvatar, setNewAvatar] = useState<any>(profile.img || null);
+    const [personalData, setPersonalData] = useState({full_name: profile?.full_name || "", phone: profile.phone_number || ""});
     const [changed, setChanged] = useState<boolean>(false);
     const [openDeleteAccount, setOpenDeleteAccount] = useState<boolean>(false);
     const [openPrivacy, setOpenPrivacy] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
     
     const handleSelectAvatar = async () => {
         try {
             const res: Asset[] | false = await FileHelper.pickFile({ limit: 1 });
             if (res && res.length > 0) {
                 setNewAvatar({ uri: res[0].uri, name: res[0].fileName || 'avatar', type: res[0].type || 'image/jpg'});
+                !changed && setChanged(true);
             }
         } catch (err) {
             console.error('Failed to select avatar', err);
         }
     }
 
+    const handleChangeName = (full_name: string) => {
+        setPersonalData(prev => ({...prev, full_name}));
+        !changed && setChanged(true);
+    }
+
+    const handleSaveChanged = async () => {
+        
+        try {
+            setLoading(true);
+            const updateData = { name: personalData.full_name };
+            if (newAvatar) {
+                const formData: FormData = new FormData();
+                formData.append('avatar_link', newAvatar);
+                const uploadResponse: any = await fileService.uploadFiles(formData);
+                updateData['img'] = uploadResponse.avatar_link;
+            }
+            const data: any = await updateProfile(updateData);
+            if (data && data.message) {
+                toast.show('Сохранено', {
+                    type: "success",
+                    placement: "top"
+                });
+            }
+            setChanged(false);
+        } catch (err) {
+            console.error('Failed to update profile', err);
+        } finally {
+            setLoading(false);
+        }
+    }
+
     const handleLogout = async () => {
-        await AsyncStorage.removeItem(AsyncStorakeKeys.TOKEN);
+        await AsyncStorage.removeItem(AsyncStorageKeys.TOKEN);
         handleChangeLoggedState(false);
         navigateToAuth();
     }
@@ -46,7 +84,7 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
     const handleDeleteAccount = async () => {
         setOpenDeleteAccount(false);
     }
-
+    
     return(
         <>
             <Modal visible={openDeleteAccount} children={<ConfirmDeleteAccount onClose={() => setOpenDeleteAccount(false)} onConfirm={handleDeleteAccount} />}/>
@@ -61,7 +99,7 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
                             <Image source={newAvatar} style={styles.avatar}/>
                             :
                             <Image 
-                                source={profile?.avatar || UnknownUser}
+                                source={profile?.img ? { uri: profile.img } : UnknownUser}
                                 style={styles.avatar}/>
                         }
                         <TouchableOpacity 
@@ -73,16 +111,18 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
                     <Input 
                         leftIcon={<UserIcon />}
                         placeholder="Имя"
-                        value={personalData.firstName} 
-                        onChange={(firstName: string) => setPersonalData(prev => ({...prev, firstName}))}/>
+                        value={personalData.full_name} 
+                        onChange={handleChangeName}/>
                     <Input 
+                        projectType="profile_phone"
                         leftIcon={<PhoneRoundedIcon />}
                         placeholder="Номер телефона"
                         keyboardType="phone-pad"
                         value={personalData.phone}
-                        onChange={(phone: string) => setPersonalData(prev => ({...prev, phone}))}/>
+                        onChange={(phone: string) => setPersonalData(prev => ({...prev, phone}))}
+                        disabled={true}/>
                     <Button 
-                        onPress={() => {}} 
+                        onPress={handleSaveChanged}
                         projectType="primary"
                         disabled={!changed}>
                             <Text style={styles.button_text}>Сохранить</Text>

@@ -11,5 +11,5 @@ export const CARS_CLASSES = [
 
 export const PAYMENT_METHODS = {
     [PaymentMethodEnum.CASH]: { label: "Наличные", Icon: WhiteWalletIcon },
-    [PaymentMethodEnum.CARD]: { label: "Карта", Icon: WhiteCreditCardIcon },
+    [PaymentMethodEnum.CARD]: { label: "Перевод", Icon: WhiteCreditCardIcon },
 }

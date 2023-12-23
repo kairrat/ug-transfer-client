@@ -77,7 +77,10 @@ export default class AxiosClient implements IApiClient {
 
     this.api.interceptors.request.use(
       async (config) => {
-        config.headers.set("Content-Type", "application/json");
+        config.headers.set(
+          'Content-Type',
+          config.headers['Content-Type'] || 'application/json',
+        );
         config.headers.set("Accept-Timezone", timeZone);
 
         return { ...config, headers: config.headers };

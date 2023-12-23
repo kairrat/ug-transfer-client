@@ -15,7 +15,7 @@ export const Button = forwardRef<any, IButtonProps>(({ onPress, children, projec
     return (
         <TouchableOpacity 
             onPress={onPress} 
-            style={[styles[styleKey], style]}
+            style={[styles[styleKey], style, disabled && styles.disabled]}
             disabled={disabled}>
             {children}
         </TouchableOpacity>
@@ -25,11 +25,14 @@ export const Button = forwardRef<any, IButtonProps>(({ onPress, children, projec
 const styles = StyleSheet.create({
     default: {
     },
+    disabled: {
+        opacity: .4
+    },
     primary: {
         width: '100%',
         backgroundColor: colors.primary,
         paddingHorizontal: 20,
-        paddingVertical: 15,
+        paddingVertical: 12,
         borderRadius: 9
     },
     secondary: {
@@ -37,7 +40,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.stroke,
         paddingHorizontal: 20,
-        paddingVertical: 15,
+        paddingVertical: 12,
         borderRadius: 9
     },
     address_input: {
@@ -45,7 +48,7 @@ const styles = StyleSheet.create({
         borderRadius: 7,
         borderWidth: 1,
         borderColor: colors.stroke,
-        padding: 15,
+        padding: 12,
         alignItems: 'center',
         columnGap: 10,
         backgroundColor: colors.gray

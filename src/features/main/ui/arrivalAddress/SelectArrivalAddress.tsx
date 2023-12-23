@@ -1,47 +1,32 @@
-import React, { useEffect, useState } from "react";
-import { DimensionValue, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Button } from "src/shared/components/Button";
 import { Input } from "src/shared/components/Input";
 import { BuildingIcon, CrossIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
-import { getCities } from "../../model/main-actions";
+import { useKeyboardVisibility } from "src/features/useKeyboardVisibility";
+import { BottomSheetContext } from "../../context/BottomSheetContext";
 
 interface ISelectArrivalAddressProps {
+    snapPosition: number;
     onClose: () => void;
     setDepartureAddress: (address: string) => void;
 };
 
-export const SelectArrivalAddress: React.FC<ISelectArrivalAddressProps> = ({ onClose, setDepartureAddress }) => {
+export const SelectArrivalAddress: React.FC<ISelectArrivalAddressProps> = ({ onClose, setDepartureAddress, snapPosition: defaultSnapPosition }) => {
+    const { modalRef } = useContext(BottomSheetContext);
     const [ address, setAddress ] = useState<string>("");
-    const [ foundCities, setFoundCities ] = useState<string[]>([]);
-
-    const handleSearchCities = () => {
-        if (address === "") {
-            return;
-        }
-        // (city).then((res: ICity[]) => {
-        //     setFoundCities(res);
-        // }).catch(err => {
-        //     console.error(err);
-        // });
-    }
+    const isKeyboardVisible = useKeyboardVisibility();
+    const [ snapPosition, setSnapPosition ] = useState<number>(defaultSnapPosition);
 
     useEffect(() => {
-        const getData = setTimeout(handleSearchCities, 2000);
-        return () => {
-            clearTimeout(getData);
-        };
-    }, [address]);
-
-    const handleGetDropdownHeight = (): DimensionValue => {
-        if (foundCities.length === 0) {
-            return 20;
+        if (isKeyboardVisible) {
+            modalRef.current?.snapToPosition(snapPosition + 260);
         }
-        else if (foundCities.length < 4) {
-            return 220;
+        else {
+            modalRef.current?.snapToPosition(snapPosition);
         }
-        return 430;
-    }
+    }, [isKeyboardVisible]);
 
     return(
         <View style={styles.container}>
@@ -51,7 +36,7 @@ export const SelectArrivalAddress: React.FC<ISelectArrivalAddressProps> = ({ onC
                     style={styles.close_button}>
                         <CrossIcon />
                 </TouchableOpacity>
-                <Text style={[fonts.medium, styles.header_title]}>В какой адреса едем?</Text>
+                <Text style={[fonts.medium, styles.header_title]}>В какой адрес едем?</Text>
             </View>
             <View style={styles.body}>
                 <Input
@@ -61,19 +46,6 @@ export const SelectArrivalAddress: React.FC<ISelectArrivalAddressProps> = ({ onC
                     placeholder="Адрес"
                     rightIcon={address !== "" && <CrossIcon width={30} />}
                     onRightIconPress={() => setAddress("")}/>
-                <ScrollView contentContainerStyle={[styles.dropdown, { height: handleGetDropdownHeight()  }]}>
-                    {
-                        foundCities.length > 0 &&
-                        foundCities.map((address, i: number) => (
-                            <TouchableOpacity 
-                                onPress={() => setDepartureAddress(address)}
-                                key={i}
-                                style={i === 0 ? styles.dropdown_item_first : styles.dropdown_item}>
-                                    <Text style={[fonts.regular, styles.dropdown_item_text]}>{address}</Text>
-                            </TouchableOpacity>
-                        ))
-                    }
-                </ScrollView>
                 <View style={styles.button_holder}>
                     <Button onPress={() => setDepartureAddress(address)} projectType="primary">
                         <Text style={[fonts.medium, styles.button_text]}>Применить</Text>
@@ -135,7 +107,8 @@ const styles = StyleSheet.create({
         fontSize: 16
     },
     button_holder: {
-        marginVertical: 20
+        marginVertical: 20,
+        marginTop: 50
     },
     button_text: {
         textAlign: 'center',

@@ -33,11 +33,11 @@ export const DepartureAddressMenu: React.FC<IDepartureAddressMenu> = ({
             </View>
             <View style={styles.container_body}>
                 <Button onPress={onSelectCity} projectType="address_input">
-                    <BuildingIcon width={25}/>
+                    <BuildingIcon width={25} height={20}/>
                     <Text style={[fonts.regular, styles.button_text]}>{city || "Выберите город"}</Text>
                 </Button>
                 <Button onPress={onSelectAddress} projectType="address_input">
-                    <LocationMarkIcon width={25}/>
+                    <LocationMarkIcon width={25} height={20}/>
                     <Text style={[fonts.regular, styles.button_text]}>{address || "Адрес"}</Text>
                 </Button>
             </View>

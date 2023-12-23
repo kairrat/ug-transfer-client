@@ -1,50 +1,46 @@
-import React, { useState, VoidFunctionComponent } from "react";
-import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Image } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 import { CARS_CLASSES, PAYMENT_METHODS } from "../model/constants";
 import { ArrowRightPrimaryIcon, ClockIcon, CrossIcon, EditOptionsIcon, LocationMarkIcon, WhiteWalletIcon } from "src/shared/img";
-import { Input } from "src/shared/components/Input";
 import { colors, fonts } from "src/shared/style";
 import { IAddress } from "../types/findTaxiSchemas";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { PaymentMethodEnum } from "../types/paymentMethod.enum";
 import DatePicker from "react-native-date-picker";
 import dayjs from 'dayjs';
 import { Button } from "src/shared/components/Button";
+import { OrderParams } from "../types/order";
 
+type OrderParamsCb = (prev: OrderParams) => OrderParams
 interface ISetAddress {
-    paymentMethod: PaymentMethodEnum;
-    PaymentIcon: any;
-    departureAddress: IAddress;
-    arrivalAddress: IAddress;
-    activeCarClass: number;
-    shipDate: Date;
-    setDepartureAddress: (cb: ((prev: IAddress) => IAddress)) => void;
-    setActiveCarClass: (newState: number) => void;
+    paymentIcon: any;
+    orderParams: OrderParams;
+    orderPrice?: number;
+    address: { departure: IAddress, arrival: IAddress };
+    setOrderParams: (OrderParamsCb) => void;
     onPaymentPress: () => void;
-    setShipDate: (newState: Date) => void;
     onDepartureAddressEdit: () => void;
     onArrivalAddressEdit: () => void;
     onClearArriveAddress: () => void;
     onEditDetails: () => void;
+    findTaxi: () => void;
 }
 
 export const SetAddress: React.FC<ISetAddress> = ({ 
-    departureAddress, 
-    arrivalAddress,
-    activeCarClass,
-    paymentMethod, 
-    PaymentIcon,
-    shipDate,
-    setDepartureAddress, 
-    setActiveCarClass, 
+    address,
+    paymentIcon: PaymentIcon,
+    orderParams,
+    orderPrice,
+    setOrderParams,
     onPaymentPress,
-    setShipDate,
     onDepartureAddressEdit,
     onArrivalAddressEdit,
     onClearArriveAddress,
-    onEditDetails
+    onEditDetails,
+    findTaxi,
 }) => {
+    const { shipDate, activeCarClass, paymentMethod } = orderParams;
     const [datePickerOpen, setDatePickerOpen] = useState<boolean>(false);
+    const { departure: departureAddress, arrival: arrivalAddress } = address;
     const getDepartureAddressButton = () => {
         if (departureAddress.address === "" || departureAddress.city === "") {
             return "Откуда едем?";
@@ -85,7 +81,7 @@ export const SetAddress: React.FC<ISetAddress> = ({
                             CARS_CLASSES.map(({label, img}, index) => (
                                 <TouchableOpacity 
                                     key={index} 
-                                    onPress={() => setActiveCarClass(index)}
+                                    onPress={() => setOrderParams(prev => ({...prev, activeCarClass: index}))}
                                     style={[styles.carClass_item, index === activeCarClass && styles.activeCarClass]}>
                                         <Image source={img} style={styles.carClass_img}/>
                                         <Text style={styles.carClass_text}>{label}</Text>
@@ -123,7 +119,7 @@ export const SetAddress: React.FC<ISetAddress> = ({
                     open={datePickerOpen} 
                     onConfirm={(date) => {
                         setDatePickerOpen(false);
-                        setShipDate(date);
+                        setOrderParams(prev => ({...prev, shipDate: date}))
                     }}
                     onCancel={() => setDatePickerOpen(false)}
                     confirmText="Выбрать"
@@ -131,14 +127,14 @@ export const SetAddress: React.FC<ISetAddress> = ({
                     title="Выберите дату и время"/>
             </View>
             <View style={styles.price_holder}>
-                <Text style={[fonts.medium, styles.price_text]}>Цена: 2000р</Text>
+                <Text style={[fonts.medium, styles.price_text]}>{orderPrice && `Цена: ${orderPrice}р`}</Text>
             </View>
             <View style={styles.button_holder}>
                 <Button projectType="secondary" onPress={onEditDetails}>
                     <Text style={[fonts.medium, styles.secondary_button_text]}>Дополнительно</Text>
                 </Button>
-                <Button projectType="primary" onPress={() => {}}>
-                    <Text style={[fonts.medium, styles.primary_button_text]}>Применить</Text>
+                <Button projectType="primary" onPress={findTaxi}>
+                    <Text style={[fonts.medium, styles.primary_button_text]}>Заказать авто</Text>
                 </Button>
             </View>
         </>
@@ -161,7 +157,6 @@ const styles = StyleSheet.create({
     },
     carOptions_holder: {
         marginBottom: 2,
-        marginTop: 10,
         height: 140
     },
     carOption_title: {

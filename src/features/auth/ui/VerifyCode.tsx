@@ -1,43 +1,62 @@
 import { useUnit } from "effector-react";
 import { FC, useEffect, useState } from "react";
 import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { AuthCredentials } from "src/screens/Auth/types/authCredentials";
 import { Button } from "src/shared/components/Button";
 import { PincodeInput } from "src/shared/components/PincodeInput";
 import { ScreenHeader } from "src/shared/components/ScreenHeader";
 import { ArrowLeftIcon, Logo } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
-import { verifyCode } from "../model/auth-actions";
+import { Profile } from "src/types/profile";
+import { requestCode, verifyCode } from "../model/auth-actions";
 import { $auth, setLoggedState } from "../model/AuthStore";
+import { RequestCodeResponse, VerifyCodeResponse } from "../types/AuthResponse";
 
 interface IVerifyCodeProps {
+    credentials: AuthCredentials
     onBack: () => void;
-    onSuccessVerify: () => Promise<void>;
+    onSuccessVerify: (token: string, profile: Profile) => Promise<void>;
+    onCodeChange: (code: string) => void;
 };
 
-export const VerifyCode: FC<IVerifyCodeProps> = ({ onBack, onSuccessVerify }) => {
-    const [ authStore, handleSetLoggedState ] = useUnit([$auth, setLoggedState]);
-    const [ code, setCode ] = useState<string>("");
+export const VerifyCode: FC<IVerifyCodeProps> = ({ 
+    credentials,
+    onBack, 
+    onSuccessVerify,
+    onCodeChange
+}) => {
+    const [ _, handleSetLoggedState ] = useUnit([$auth, setLoggedState]);
     const [ error, setError ] = useState<boolean>(false);
     const [ resendCodeParams, setResendCodeParams ] = useState({ resended: false, timer: 59});
     const [loading, setLoading] = useState<boolean>(false);
 
-    const handleResendCode = () => {
-        setResendCodeParams(prev => ({...prev, resended: true}));
+    const handleResendCode = async () => {
+        try {
+            const data: RequestCodeResponse =  await requestCode(credentials.phone);
+            if (data && data.success) {
+                setResendCodeParams(prev => ({...prev, resended: true}));
+            }
+        } catch (err) {
+            console.error('Failed to resend code');
+        }
     }
 
     const handleVerifyCode = async () => {
         handleSetLoggedState(true);
-        onSuccessVerify();
-        // try {
-        //     setLoading(true);
-        //     const res = await verifyCode(authStore.phone, code);
-        //     console.log(res);
-        // } catch (err) {
-        //     console.error('Failed to verify code', err);
-        //     console.log(err.response.data);
-        // } finally {
-        //     setLoading(false);
-        // }
+        try {
+            setLoading(true);
+            error && setError(false);
+            const res: VerifyCodeResponse = await verifyCode(credentials.phone, credentials.code) as VerifyCodeResponse;
+            console.log('Verify code response: ', res);
+            if (res && res.token) {
+                onSuccessVerify(res.token, res.user_data);
+            }
+        } catch (err) {
+            console.error('Failed to verify code', err);
+            setError(true);
+        } finally {
+            setLoading(false);
+        }
     }
 
     useEffect(() => {
@@ -79,8 +98,8 @@ export const VerifyCode: FC<IVerifyCodeProps> = ({ onBack, onSuccessVerify }) =>
                     textStyle={styles.codeText}
                     codeLength={4}
                     cellSpacing={13}
-                    value={code}
-                    onTextChange={setCode}
+                    value={credentials.code}
+                    onTextChange={onCodeChange}
                     error={error}
                 />
                 <Text style={[styles.description]}>
@@ -113,7 +132,7 @@ export const VerifyCode: FC<IVerifyCodeProps> = ({ onBack, onSuccessVerify }) =>
                 <Button 
                     projectType="primary" 
                     onPress={handleVerifyCode}
-                    disabled={code.length < 4 ? true : loading }>
+                    disabled={credentials.code.length < 4 ? true : loading }>
                     <Text style={styles.button_text}>Далее</Text>
                 </Button>
             </View>

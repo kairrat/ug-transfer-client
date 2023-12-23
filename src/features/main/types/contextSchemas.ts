@@ -3,5 +3,5 @@ import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/typ
 
 export interface IBottomSheetContext {
     modalRef: React.RefObject<BottomSheetModalMethods> | null;
-    setSnapPoints: ((points: string[]) => void) | null;
+    setSnapPoints: ((points: (string | number)[]) => void) | null;
 }
