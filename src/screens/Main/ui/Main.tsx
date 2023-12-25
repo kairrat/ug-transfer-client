@@ -95,7 +95,7 @@ export const Main: FC<MainProps> = ({ navigation }) => {
             }
             <View style={[styles.header, Platform.OS === "ios" && { marginTop: 50 }]}>
                 <TouchableOpacity 
-                    style={styles.menu_button}
+                    style={[styles.menu_button, Platform.OS === "ios" && { padding: 10 }]}
                     onPress={handleOpenDrawer}>
                     <MenuIcon />
                 </TouchableOpacity>

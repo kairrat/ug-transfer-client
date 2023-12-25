@@ -48,7 +48,6 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
         setPersonalData(prev => ({...prev, full_name}));
         !changed && setChanged(true);
     }
-    console.log('Toast: ', toast);
     const handleSaveChanged = async () => {
         
         try {
@@ -58,7 +57,6 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
                 const formData: FormData = new FormData();
                 formData.append('avatar_link', newAvatar);
                 const uploadResponse: any = await fileService.uploadFiles(formData);
-                console.log("Upload response: ", uploadResponse);
                 updateData['img'] = uploadResponse.avatar_link;
             }
             const data: any = await updateProfile(updateData);
@@ -86,8 +84,6 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
     const handleDeleteAccount = async () => {
         setOpenDeleteAccount(false);
     }
-
-    console.log(profile.img);
     
     return(
         <>
