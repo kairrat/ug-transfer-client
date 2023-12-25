@@ -27,11 +27,17 @@ export const ArriveAddressMenu: React.FC<IArriveAddressMenu> = ({ onClose, onSel
             <View style={styles.container_body}>
                 <Button onPress={onSelectCity} projectType="address_input">
                     <BuildingIcon width={25}/>
-                    <Text style={[fonts.regular, styles.button_text]}>{city || "Выберите город"}</Text>
+                    <Text 
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                        style={[fonts.regular, styles.button_text]}>{city || "Выберите город"}</Text>
                 </Button>
                 <Button onPress={onSelectAddress} projectType="address_input">
                     <LocationMarkIcon width={25}/>
-                    <Text style={[fonts.regular, styles.button_text]}>{address || "Адрес"}</Text>
+                    <Text 
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                        style={[fonts.regular, styles.button_text]}>{address || "Адрес"}</Text>
                 </Button>
             </View>
             <View style={styles.buttons_holder}>
@@ -66,7 +72,8 @@ export const styles = StyleSheet.create({
     },
     button_text: {
         fontSize: 16,
-        color: colors.white
+        color: colors.white,
+        width: '90%'
     },
     container_body: {
         marginVertical: 35,

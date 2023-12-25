@@ -48,7 +48,6 @@ export const SetAddress: React.FC<ISetAddress> = ({
         return departureAddress.city + ', ' + departureAddress.address;
     }
     const getArrivalAddressButton = () => {
-        console.log('ArriveButton: ');
         if (arrivalAddress.address === "" || arrivalAddress.city === "") {
             return "Куда едем?";
         }
@@ -60,12 +59,18 @@ export const SetAddress: React.FC<ISetAddress> = ({
                 <View style={styles.address_holder}>
                     <Button onPress={onDepartureAddressEdit} projectType="address_input">
                         <LocationMarkIcon />
-                        <Text style={[fonts.regular, styles.address_input_text]}>{getDepartureAddressButton()}</Text>
+                        <Text 
+                            numberOfLines={1}
+                            style={[fonts.regular, styles.address_input_text]} 
+                            ellipsizeMode="tail">{getDepartureAddressButton()}</Text>
                         <EditOptionsIcon />
                     </Button>
                     <Button onPress={onArrivalAddressEdit} projectType="address_input">
                         <ArrowRightPrimaryIcon style={{ marginHorizontal: 8 }} />
-                        <Text style={[fonts.regular, styles.address_input_text]}>{getArrivalAddressButton()}</Text>
+                        <Text 
+                            numberOfLines={1}
+                            style={[fonts.regular, styles.address_input_text]} 
+                            ellipsizeMode="tail">{getArrivalAddressButton()}</Text>
                         <TouchableOpacity onPress={(e) => {
                             e.stopPropagation();
                             onClearArriveAddress();
@@ -171,7 +176,8 @@ const styles = StyleSheet.create({
     address_input_text: {
         fontSize: 16,
         color: colors.opacity,
-        flexGrow: 1
+        flexGrow: 1,
+        width: '90%'
     },
     carOptions_holder: {
         marginBottom: 2,

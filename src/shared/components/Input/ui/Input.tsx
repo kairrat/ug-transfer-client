@@ -70,7 +70,8 @@ const containerStyles = StyleSheet.create({
     initial: {
         flexDirection: 'row',
         alignItems: 'center',
-        columnGap: 10
+        columnGap: 10,
+        overflow: 'hidden'
     },
     default: {
         borderWidth: 1,
@@ -95,7 +96,7 @@ const containerStyles = StyleSheet.create({
 const inputStyles = StyleSheet.create({
     initial: {
         flexGrow: 1,
-        
+        width: '90%'
     },
     default: {
         padding: 0,
