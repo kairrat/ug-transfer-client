@@ -1,7 +1,8 @@
-import { FC } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { FC, useContext, useEffect } from "react";
+import { Platform, StyleSheet, Text, View } from "react-native";
 import { Button } from "src/shared/components/Button";
 import { colors } from "src/shared/style";
+import { BottomSheetContext } from "../context/BottomSheetContext";
 
 type OrderProcessProps = {
     status: 'received' | 'seeking' | null;
@@ -10,6 +11,17 @@ type OrderProcessProps = {
 }
 
 export const OrderProcess: FC<OrderProcessProps> = ({ status, onReceivedDismiss, onSeekingDismiss }) => {
+    const { modalRef, setSnapPoints } = useContext(BottomSheetContext);
+    useEffect(() => {
+        if (Platform.OS === "ios") {
+            setSnapPoints([325]);
+            modalRef.current?.snapToPosition(235);
+        }
+        else {
+            setSnapPoints([295]);
+            modalRef.current?.snapToPosition(295);
+        }
+    }, []);
     return(
         <View style={styles.container}>
             <Text style={styles.title}>{status == "received" ? "Ваш заказ принят" : "Водитель ищется..."}</Text>

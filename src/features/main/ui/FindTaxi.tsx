@@ -1,6 +1,6 @@
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import React, { useEffect, useState } from "react";
-import { Modal, Platform } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Modal, Platform, StyleSheet } from "react-native";
 import { CARS_CLASSES, PAYMENT_METHODS } from "../model/constants";
 import { IAddress } from "../types/findTaxiSchemas";
 import { PaymentMethodEnum } from "../types/paymentMethod.enum";
@@ -17,10 +17,10 @@ import dayjs from 'dayjs';
 import { useUnit } from "effector-react";
 import { $profile } from "src/features/profile";
 import { getModalHeight } from "../model/modalHeightHelper";
+import { colors } from "src/shared/style";
+import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 interface IFindTaxiProps {
-    sheetModalRef: React.RefObject<BottomSheetModalMethods>,
-    setSnapPoints: (newState: (string | number)[]) => void;
     setLocation: (location: any) => void;
     onClearArrivalAddress: () => void;
 }
@@ -35,18 +35,18 @@ enum SheetState {
 
 type IComponentsByState = {
     [key in SheetState]: {
-        component: React.ReactElement,
-        snapPoints: (string | number)[],
-        snapToPosition: string | number
+        component: React.ReactElement
     }
 }
 
 
 
-export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints, setLocation, onClearArrivalAddress}) => {
+export const FindTaxi: React.FC<IFindTaxiProps> = ({ setLocation, onClearArrivalAddress}) => {
     const { profile } = useUnit($profile);
     const [loading, setLoading] = useState<boolean>(false);
     const [modalState, setModalState] = useState<SheetState>(SheetState.SET_ADDRESS);
+    const [snapPoints, setSnapPoints] = useState<(string | number)[]>(Platform.OS === "ios" ? [207, 653] : [177, 623]);
+    const sheetModalRef = useRef<BottomSheetModal>(null);
     const [address, setAddress] = useState<{ departure: IAddress, arrival: IAddress }>({
         departure: { city: "", address: "" },
         arrival: { city: "", address: "" }
@@ -75,13 +75,19 @@ export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints
         handleChangeModalState(SheetState.SET_ADDRESS)
     }
 
+    const statesSnapPoints = {
+        [SheetState.SET_ADDRESS]: Platform.OS === "ios" ? [197, 653] : [177, 623],
+        [SheetState.DEFINED_PAYMENT_METHOD]: Platform.OS === "ios" ? [325] : [295],
+        [SheetState.SET_ARRIVAL_ADDRESS]: Platform.OS === "ios" ? [325] : [295],
+        [SheetState.SET_DEPARTURE_ADDRESS]: Platform.OS === "ios" ? [325] : [295],
+        [SheetState.ORDER_PROCESS]: Platform.OS === "ios" ? [325] : [295],
+    }
+
     const handleChangeModalState = (state: SheetState, index: number = 0) => {
-        const { snapPoints, snapToPosition} = componentsByState[state];
+        const points = statesSnapPoints[state]; 
         setModalState(state);
-        setSnapPoints(snapPoints);
-        sheetModalRef.current?.snapToPosition(snapToPosition);
-        console.log('Setting position');
-        // sheetModalRef.current?.snapToIndex(index);
+        setSnapPoints(points);
+        sheetModalRef.current?.snapToPosition(points[points.length - 1]);
     }
 
     const handleApplyDetails = (details: any) => {
@@ -100,14 +106,6 @@ export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints
     }
 
     useEffect(() => {
-        const { snapPoints, snapToPosition} = componentsByState[modalState];
-        setSnapPoints(snapPoints);
-        console.log('Snap points: ', snapPoints);
-        console.log('Snap position: ', snapToPosition);
-        sheetModalRef.current?.snapToPosition(snapToPosition);
-    }, []);
-
-    useEffect(() => {
         if (address.arrival && address.departure) {
             setDetailsData(prev => ({...prev, price: 2000}))
         }
@@ -116,13 +114,13 @@ export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints
         }
     }, [address]);
 
-    console.log(modalState);
+    useEffect(() => {
+        handleChangeModalState(modalState);
+    }, []);
 
     const componentsByState: IComponentsByState = {
         [SheetState.DEFINED_PAYMENT_METHOD]: {
             component: <PaymentMethod value={orderParams.paymentMethod} onChange={handleChangePaymentMethod} />,
-            snapPoints: getModalHeight([295]) as (number | string)[],
-            snapToPosition: getModalHeight('22%') as string,
         },
         [SheetState.SET_ADDRESS]: {
             component: <SetAddress
@@ -136,9 +134,7 @@ export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints
                 onDepartureAddressEdit={() => handleChangeModalState(SheetState.SET_DEPARTURE_ADDRESS)}
                 onArrivalAddressEdit={() => handleChangeModalState(SheetState.SET_ARRIVAL_ADDRESS)}
                 onClearArriveAddress={handleClearArrivalAddress}
-                onEditDetails={() => setDetailsOpen(true)}/>,
-            snapPoints: getModalHeight([177, 623]) as (number | string)[],
-            snapToPosition: getModalHeight(623) as number,
+                onEditDetails={() => setDetailsOpen(true)}/>
         },
         [SheetState.SET_ARRIVAL_ADDRESS]: {
             component: <ArrivalAddress 
@@ -146,9 +142,7 @@ export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints
                 onClose={() => handleChangeModalState(SheetState.SET_ADDRESS)}
                 applyAddress={(address: string) => setAddress(prev => ({...prev, arrival: { ...prev.arrival, address }}))}
                 applyCity={(city: string) => setAddress(prev => ({...prev, arrival: { ...prev.arrival, city }}))}
-                defaultAddress={address.arrival}/>,
-            snapPoints: getModalHeight([295]) as (number | string)[],
-            snapToPosition: getModalHeight(295) as number,
+                defaultAddress={address.arrival}/>
         },
         [SheetState.SET_DEPARTURE_ADDRESS]: {
             component: <DepartureAddress 
@@ -156,17 +150,13 @@ export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints
                 onClose={() => handleChangeModalState(SheetState.SET_ADDRESS)}
                 applyAddress={(address: string) => setAddress(prev => ({...prev, departure: { ...prev.departure, address }}))}
                 applyCity={(city: string) => setAddress(prev => ({...prev, departure: { ...prev.departure, city }}))}
-                defaultAddress={address.departure}/>,
-            snapPoints: getModalHeight([295]) as (number | string)[],
-            snapToPosition: getModalHeight(295) as number,
+                defaultAddress={address.departure}/>
         },
         [SheetState.ORDER_PROCESS]: {
             component: <OrderProcess 
                 status={orderStatus} 
                 onReceivedDismiss={() => setOrderStatus("seeking")} 
-                onSeekingDismiss={() => handleChangeModalState(SheetState.SET_ADDRESS)}/>,
-            snapPoints: getModalHeight([295]) as (number | string)[],
-            snapToPosition: getModalHeight(192) as number
+                onSeekingDismiss={() => handleChangeModalState(SheetState.SET_ADDRESS)}/>
         }
     }
 
@@ -176,7 +166,6 @@ export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints
             setSnapPoints: setSnapPoints
         }}>
             <Modal
-
                 visible={detailsOpen} 
                 children={<Details 
                     onApply={handleApplyDetails} 
@@ -186,9 +175,35 @@ export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints
                     defaultOptions={detailsData.options}
                     defaultComment={detailsData.comment}/>}
                 />
-            {
-                componentsByState[modalState].component
-            }
+            
+            <BottomSheet
+                ref={sheetModalRef}
+                index={1}
+                snapPoints={statesSnapPoints[modalState]}
+                backgroundStyle={styles.bottomSheetBackground}
+                handleIndicatorStyle={styles.bottomSheetHandleIndicator}
+                // enableContentPanningGesture={sheetModalResizing.content}
+                // enableHandlePanningGesture={sheetModalResizing.handle}
+                enableContentPanningGesture={false}
+                enableHandlePanningGesture={true}
+                onChange={(e) => {
+                    e === -1 && sheetModalRef.current?.snapToIndex(0);
+                    console.log( e);
+                }}>
+                    {
+                        componentsByState[modalState].component
+                    }
+                </BottomSheet>
         </BottomSheetContext.Provider>
     );
 };
+
+const styles = StyleSheet.create({
+    bottomSheetBackground: {
+        backgroundColor: colors.background
+    },
+    bottomSheetHandleIndicator: {
+        width: '10%',
+        backgroundColor: colors.opacity
+    }
+});

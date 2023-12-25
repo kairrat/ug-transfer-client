@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { Button } from 'src/shared/components/Button';
 import { BuildingIcon, CrossIcon, LocationMarkIcon } from 'src/shared/img';
 import { colors, fonts } from 'src/shared/style';
+import { BottomSheetContext } from '../../context/BottomSheetContext';
 
 interface IArriveAddressMenu {
     onClose: () => void;
@@ -14,6 +15,7 @@ interface IArriveAddressMenu {
 };
 
 export const ArriveAddressMenu: React.FC<IArriveAddressMenu> = ({ onClose, onSelectCity, onSelectAddress, onApply, city, address }) => {
+    const { modalRef, setSnapPoints } = useContext(BottomSheetContext);
     return(
         <View style={styles.container}>
             <View style={styles.container_header}>

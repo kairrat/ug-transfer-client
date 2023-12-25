@@ -5,11 +5,12 @@ import { StyleSheet, SafeAreaView, View, TouchableOpacity, Platform, StatusBar, 
 import { StackScreens } from "src/routes";
 import { MenuIcon, StatusBarBackground } from "src/shared/img";
 import { colors } from "src/shared/style";
-import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
+
 import { check, PERMISSIONS, request, RESULTS } from "react-native-permissions";
-import { GpsModalSheet } from "src/features/main/ui/GpsModalSheet";
 import { FindTaxi } from "src/features/main/ui/FindTaxi";
 import { Map } from "src/features/map";
+import { $gps, GpsEnableModal, setGpsEnabled } from "src/features/gps";
+import { useUnit } from "effector-react";
 
 type MainProps = NativeStackScreenProps<StackScreens, "Main">;
 enum SheetModalStates {
@@ -26,11 +27,9 @@ enum SheetModalStates {
 
 export const Main: FC<MainProps> = ({ navigation }) => {
     const [sheetModalState, setSheetModalState] = useState<SheetModalStates>(SheetModalStates.LOADING);
-    const [sheetModalResizing, setSheetModalResizing] = useState<{ handle: boolean, content: boolean }>({ handle: true, content: true });
-    const [enabledGps, setEnabledGps] = useState<boolean>(false);
-    const [snapPoints, setSnapPoints] = useState<(string | number)[]>([Platform.OS === "ios" ? 440 : 410]);
-    const sheetModalRef = useRef<BottomSheetModal>(null);
     const [location, setLocation] = useState({ departure: null, arrival: null, default: { lat: 55.75333, lon: 37.62176 } });
+
+    const [_, handleSetGpsEnabled] = useUnit([$gps, setGpsEnabled])
 
     const handleLoadSheetModalState = async () => {
         await handleCheckGpsPermission();
@@ -43,8 +42,8 @@ export const Main: FC<MainProps> = ({ navigation }) => {
     const handleCheckGpsPermission = async () => {
         try {
             const result = await check(Platform.OS === "android" ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-            if (result === RESULTS.GRANTED) {
-                setEnabledGps(true);
+            if (result !== RESULTS.GRANTED) {
+                handleSetGpsEnabled(true);
                 handleSetFindTaxiState();
             }
             else {
@@ -62,21 +61,6 @@ export const Main: FC<MainProps> = ({ navigation }) => {
 
     const handleSetEnableGpsState = () => {
         setSheetModalState(SheetModalStates.ENABLE_GPS);
-        setSnapPoints([Platform.OS === "ios" ? 440 : 410]);
-        sheetModalRef.current.snapToIndex(0);
-    }
-
-    const handleEnableGps = async () => {
-        try {
-            const result = await request(Platform.OS === "android" ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-            if (result === RESULTS.GRANTED) {
-                setEnabledGps(true);
-            }
-        } catch (err) {
-            console.error('Failed to requetst permission', err);
-        } finally {
-            handleSetFindTaxiState();
-        }
     }
 
     const handleClearArrivalLocation = () => {
@@ -101,33 +85,16 @@ export const Main: FC<MainProps> = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
             <Map location={location} clearPrice={() => {}} setPrice={(distance) => {}}/>
-            <BottomSheet 
-                ref={sheetModalRef}
-                index={0}
-                snapPoints={snapPoints}
-                backgroundStyle={styles.bottomSheetBackground}
-                handleIndicatorStyle={styles.bottomSheetHandleIndicator}
-                // enableContentPanningGesture={sheetModalResizing.content}
-                // enableHandlePanningGesture={sheetModalResizing.handle}
-                enableContentPanningGesture={false}
-                enableHandlePanningGesture={true}
-                onChange={(e) => {
-                    e === -1 && sheetModalRef.current?.snapToIndex(0);
-                    console.log( e);
-                }}>
-                    {
-                        sheetModalState === SheetModalStates.ENABLE_GPS &&
-                        <GpsModalSheet onAccept={handleEnableGps} onDecline={handleSetFindTaxiState}/>
-                    }
-                    {
-                        sheetModalState === SheetModalStates.FIND_TAXI &&
-                        <FindTaxi 
-                            sheetModalRef={sheetModalRef} 
-                            setSnapPoints={setSnapPoints} 
-                            setLocation={setLocation}
-                            onClearArrivalAddress={handleClearArrivalLocation}/>
-                    }
-            </BottomSheet>
+            {
+                sheetModalState === SheetModalStates.ENABLE_GPS &&
+                <GpsEnableModal setFindTaxiState={handleSetFindTaxiState} />
+            }
+            {
+                sheetModalState === SheetModalStates.FIND_TAXI &&
+                <FindTaxi
+                    setLocation={setLocation}
+                    onClearArrivalAddress={handleClearArrivalLocation}/>
+            }
         </View>
     );
 };
@@ -157,11 +124,5 @@ const styles = StyleSheet.create({
         backgroundColor: colors.black,
         borderRadius: 12
     },
-    bottomSheetBackground: {
-        backgroundColor: colors.background
-    },
-    bottomSheetHandleIndicator: {
-        width: '10%',
-        backgroundColor: colors.opacity
-    }
+    
 });

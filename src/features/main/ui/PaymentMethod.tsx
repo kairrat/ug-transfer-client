@@ -1,10 +1,11 @@
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useContext, useEffect } from "react";
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Input } from "src/shared/components/Input";
 import { CheckedGreenIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
 import { PAYMENT_METHODS } from "../model/constants";
 import { PaymentMethodEnum } from "../types/paymentMethod.enum";
+import { BottomSheetContext } from "../context/BottomSheetContext";
 
 interface IPaymentMethodProps {
     value: PaymentMethodEnum | null;
@@ -12,6 +13,17 @@ interface IPaymentMethodProps {
 }
 
 export const PaymentMethod: React.FC<IPaymentMethodProps> = ({ value: paymentValue, onChange }) => {
+    const { modalRef, setSnapPoints } = useContext(BottomSheetContext);
+    useEffect(() => {
+        if (Platform.OS === "ios") {
+            setSnapPoints([325]);
+            modalRef.current.snapToPosition(325);
+        }
+        else {
+            setSnapPoints([295]);
+            modalRef.current.snapToPosition(295);
+        }
+    }, []);
     return (
         <View style={styles.container}>
             <Text style={[fonts.medium, styles.title]}>Споспоб оплаты</Text>

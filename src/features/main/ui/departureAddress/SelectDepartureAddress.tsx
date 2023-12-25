@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useKeyboardVisibility } from "src/features/useKeyboardVisibility";
 import { Button } from "src/shared/components/Button";
 import { Input } from "src/shared/components/Input";
@@ -14,17 +14,19 @@ interface ISelectDepartureAddressProps {
 };
 
 export const SelectDepartureAddress: React.FC<ISelectDepartureAddressProps> = ({ onClose, setDepartureAddress, snapPosition: defaultSnapPosition }) => {
-    const { modalRef } = useContext(BottomSheetContext);
+    const { modalRef, setSnapPoints } = useContext(BottomSheetContext);
     const [ address, setAddress ] = useState<string>("");
     const [ snapPosition, setSnapPosition ] = useState<number>(defaultSnapPosition);
     const isKeyboardVisible = useKeyboardVisibility();
 
     useEffect(() => {
-        if (isKeyboardVisible) {
-            modalRef.current?.snapToPosition(snapPosition + 320);
+        if (Platform.OS === "ios") {
+            modalRef.current?.snapToPosition(isKeyboardVisible ? 605 : 285);
+            setSnapPoints(isKeyboardVisible ? [605] : [285]);
         }
         else {
-            modalRef.current?.snapToPosition(snapPosition);
+            modalRef.current?.snapToPosition(isKeyboardVisible ? 575 : 255);
+            setSnapPoints(isKeyboardVisible ? [575] : [255]);
         }
     }, [isKeyboardVisible]);
 

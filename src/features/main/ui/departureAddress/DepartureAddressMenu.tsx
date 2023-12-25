@@ -1,8 +1,9 @@
-import React from "react";
-import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
+import React, { useContext, useEffect } from "react";
+import { StyleSheet, View, TouchableOpacity, Text, Platform } from "react-native";
 import { Button } from "src/shared/components/Button";
 import { BuildingIcon, CrossIcon, LocationMarkIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
+import { BottomSheetContext } from "../../context/BottomSheetContext";
 
 interface IDepartureAddressMenu {
     onSelectCity: () => void;
@@ -21,6 +22,17 @@ export const DepartureAddressMenu: React.FC<IDepartureAddressMenu> = ({
     city, 
     address
 }) => {
+    const { modalRef, setSnapPoints } = useContext(BottomSheetContext);
+    useEffect(() => {
+        if (Platform.OS === "ios") {
+            setSnapPoints([325]);
+            modalRef.current?.snapToPosition(325);
+        }
+        else {
+            setSnapPoints([295]);
+            modalRef.current?.snapToPosition(295);
+        }
+    }, []);
     return(
         <View style={styles.container}>
             <View style={styles.container_header}>

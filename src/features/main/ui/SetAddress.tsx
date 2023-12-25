@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Platform } from "react-native";
 import { CARS_CLASSES, PAYMENT_METHODS } from "../model/constants";
 import { ArrowRightPrimaryIcon, ClockIcon, CrossIcon, EditOptionsIcon, LocationMarkIcon, WhiteWalletIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
 import { IAddress } from "../types/findTaxiSchemas";
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { BottomSheetScrollView, useBottomSheet } from "@gorhom/bottom-sheet";
 import DatePicker from "react-native-date-picker";
 import dayjs from 'dayjs';
 import { Button } from "src/shared/components/Button";
 import { OrderParams } from "../types/order";
+import { BottomSheetContext } from "../context/BottomSheetContext";
 
 type OrderParamsCb = (prev: OrderParams) => OrderParams
 interface ISetAddress {
@@ -38,6 +39,8 @@ export const SetAddress: React.FC<ISetAddress> = ({
     onEditDetails,
     findTaxi,
 }) => {
+    const { modalRef, setSnapPoints } = useContext(BottomSheetContext);
+    const { expand, collapse } = useBottomSheet();
     const { shipDate, activeCarClass, paymentMethod } = orderParams;
     const [datePickerOpen, setDatePickerOpen] = useState<boolean>(false);
     const { departure: departureAddress, arrival: arrivalAddress } = address;
@@ -53,6 +56,21 @@ export const SetAddress: React.FC<ISetAddress> = ({
         }
         return arrivalAddress.city + ', ' + arrivalAddress.address;
     }
+
+    useEffect(() => {
+        console.log('Setting snap points');
+        if (Platform.OS === "ios") {
+            setSnapPoints([197, 653]);
+            setTimeout(() => modalRef.current?.snapToPosition(653));
+        }
+        else {
+            setSnapPoints([177, 623]);
+            setTimeout(() => modalRef.current?.snapToPosition(623));
+        };
+        
+        // setTimeout(expand);
+    }, []);
+
     return(
         <>
             <View style={styles.container}>
@@ -80,7 +98,7 @@ export const SetAddress: React.FC<ISetAddress> = ({
                     </Button>
                 </View>
                 <View style={styles.carOptions_holder}>
-                    <Text style={[fonts.regular, styles.carOption_title]}>Класс авто</Text>
+                    <Text style={[fonts.regular, styles.carOption_title, Platform.OS === "ios" && {marginTop: 20}]}>Класс авто</Text>
                     {
                         Platform.OS === "ios"
                         ?

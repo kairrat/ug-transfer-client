@@ -26,8 +26,6 @@ enum ModalStateEnum {
 type IComponentsByState = {
     [key in ModalStateEnum]: {
         component: React.ReactElement,
-        snapPoints: number[],
-        snapToPosition: number
     }   
 }
 
@@ -50,16 +48,7 @@ export const ArrivalAddress: React.FC<IArrivalAddressProps> = ({
     }
 
     const handleChangeModalState = (state: ModalStateEnum, index?: number) => {
-        const { snapPoints, snapToPosition } = componentsByState[state];
-        if (setSnapPoints) {
-            setModalState(state);
-            setSnapPoints(snapPoints);
-            modalRef?.current?.snapToPosition(snapToPosition);
-            modalRef?.current?.snapToPosition(snapToPosition);
-            if (index !== undefined) {
-                modalRef?.current?.snapToIndex(index);
-            }
-        }
+        setModalState(state);
     };
 
     useEffect(() => {
@@ -85,8 +74,6 @@ export const ArrivalAddress: React.FC<IArrivalAddressProps> = ({
                 address={address.address}
                 city={address.city} 
                 onClose={onClose}/>,
-            snapPoints: getModalHeight([295]) as number[],
-            snapToPosition: getModalHeight(295) as number,
         },
         [ModalStateEnum.SELECT_ADDRESS]: {
             component: <SelectArrivalAddress 
@@ -96,8 +83,6 @@ export const ArrivalAddress: React.FC<IArrivalAddressProps> = ({
                     setAddress(prev => ({...prev, address}));
                     handleChangeModalState(ModalStateEnum.MENU);
                 }}/>,
-            snapPoints: getModalHeight([260]) as number[],
-            snapToPosition: getModalHeight(260) as number,
         },
         [ModalStateEnum.SELECT_CITY]: {
             component: <SelectArrivalCity 
@@ -108,8 +93,6 @@ export const ArrivalAddress: React.FC<IArrivalAddressProps> = ({
                     setAddress(prev => ({...prev, city}))
                     handleChangeModalState(ModalStateEnum.MENU);
                 }}/>,
-            snapPoints: getModalHeight([260]) as number[],
-            snapToPosition: getModalHeight(260) as number,
         }
     };
 

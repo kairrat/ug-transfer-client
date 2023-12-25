@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Button } from "src/shared/components/Button";
 import { Input } from "src/shared/components/Input";
 import { BuildingIcon, CrossIcon } from "src/shared/img";
@@ -14,17 +14,19 @@ interface ISelectArrivalAddressProps {
 };
 
 export const SelectArrivalAddress: React.FC<ISelectArrivalAddressProps> = ({ onClose, setDepartureAddress, snapPosition: defaultSnapPosition }) => {
-    const { modalRef } = useContext(BottomSheetContext);
+    const { modalRef, setSnapPoints } = useContext(BottomSheetContext);
     const [ address, setAddress ] = useState<string>("");
     const isKeyboardVisible = useKeyboardVisibility();
     const [ snapPosition, setSnapPosition ] = useState<number>(defaultSnapPosition);
 
     useEffect(() => {
-        if (isKeyboardVisible) {
-            modalRef.current?.snapToPosition(snapPosition + 320);
+        if (Platform.OS === "ios") {
+            modalRef.current?.snapToPosition(isKeyboardVisible ? 605 : 285);
+            setSnapPoints(isKeyboardVisible ? [605] : [285]);
         }
         else {
-            modalRef.current?.snapToPosition(snapPosition);
+            modalRef.current?.snapToPosition(isKeyboardVisible ? 575 : 255);
+            setSnapPoints(isKeyboardVisible ? [575] : [255]);
         }
     }, [isKeyboardVisible]);
 

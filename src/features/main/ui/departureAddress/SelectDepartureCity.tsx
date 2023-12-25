@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { DimensionValue, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { DimensionValue, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useKeyboardVisibility } from "src/features/useKeyboardVisibility";
 import { Button } from "src/shared/components/Button";
 import { Input } from "src/shared/components/Input";
@@ -59,11 +59,13 @@ export const SelectDepartureCity: React.FC<ISelectDepartureCityProps> = ({ onClo
     }, [foundCities]);
 
     useEffect(() => {
-        if (isKeyboardVisible) {
-            modalRef.current?.snapToPosition(snapPosition + 320);
+        if (Platform.OS === "ios") {
+            modalRef.current?.snapToPosition(isKeyboardVisible ? 605 : 285);
+            setSnapPoints(isKeyboardVisible ? [605] : [285]);
         }
         else {
-            modalRef.current?.snapToPosition(snapPosition);
+            modalRef.current?.snapToPosition(isKeyboardVisible ? 575 : 255);
+            setSnapPoints(isKeyboardVisible ? [575] : [255]);
         }
     }, [isKeyboardVisible]);
 
