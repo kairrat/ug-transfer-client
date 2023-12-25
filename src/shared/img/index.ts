@@ -31,6 +31,8 @@ import AddGreenIcon from './add-green-icon.svg';
 import LightLogo from './light-logo.png';
 import StartLocationMarker from './start-location.png';
 import EndLocationMarker from './end-location.png';
+import StatusBarBackground from './gradient.png';
+import AboutLinkIcon from './about-link-icon.svg';
 
 export {
     MenuIcon,
@@ -64,5 +66,7 @@ export {
     AddGreenIcon,
     LightLogo,
     StartLocationMarker,
-    EndLocationMarker
+    EndLocationMarker,
+    StatusBarBackground,
+    AboutLinkIcon
 };

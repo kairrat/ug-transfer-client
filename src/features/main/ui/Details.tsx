@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Keyboard, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { Button } from "src/shared/components/Button";
 import { Input } from "src/shared/components/Input";
 import { BaggageIcon, CrossIcon, UserIcon } from "src/shared/img";
@@ -52,61 +52,75 @@ export const Details: React.FC<IDetailsProps> = ({
                 </TouchableOpacity>
                 <Text style={[fonts.medium, styles.header_title]}>Дополнительно</Text>
             </View>
-            <View style={styles.content}>
-                <View style={styles.body}>
-                    <Input 
-                        placeholder="Багаж" 
-                        value={baggage}
-                        onChange={setBaggage}
-                        keyboardType="numeric"
-                        leftIcon={<BaggageIcon />}/>
-                    <Input 
-                        placeholder="Количество человек" 
-                        value={passangersAmount}
-                        onChange={setPassangersAmount}
-                        keyboardType="numeric"
-                        leftIcon={<UserIcon />}/>
-                    <View style={styles.option_holder}>
-                        <TouchableOpacity style={styles.option_button} onPress={() => setOptions(prev => ({...prev, babyChair: !prev.babyChair}))}>
-                            <Checkbox
-                                value={options.babyChair}   
-                                onValueChange={() => setOptions(prev => ({...prev, babyChair: !prev.babyChair}))}
-                                tintColors={{ true: colors.primary, false: colors.primary }}/>
-                            <Text style={styles.option_text}>Детское кресло</Text>
-                        </TouchableOpacity>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={styles.content}>
+                    <View style={styles.body}>
+                        <Input 
+                            placeholder="Багаж" 
+                            value={baggage}
+                            onChange={setBaggage}
+                            keyboardType="numeric"
+                            leftIcon={<BaggageIcon />}/>
+                        <Input 
+                            placeholder="Количество человек" 
+                            value={passangersAmount}
+                            onChange={setPassangersAmount}
+                            keyboardType="numeric"
+                            leftIcon={<UserIcon />}/>
+                        <View style={styles.option_holder}>
+                            <TouchableOpacity style={styles.option_button} onPress={(e) => setOptions(prev => ({...prev, babyChair: !prev.babyChair}))}>
+                                <Checkbox
+                                    value={options.babyChair}   
+                                    onValueChange={() => Platform.OS !== "ios" && setOptions(prev => ({...prev, babyChair: !prev.babyChair}))}
+                                    tintColor={colors.primary}
+                                    boxType="square"
+                                    tintColors={{ true: colors.primary, false: colors.primary }}
+                                    onCheckColor={colors.primary}
+                                    onTintColor={colors.primary}/>
+                                <Text style={styles.option_text}>Детское кресло</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.option_holder}>
+                            <TouchableOpacity style={styles.option_button} onPress={(e) => setOptions(prev => ({...prev, buster: !prev.buster}))}>
+                                <Checkbox
+                                    value={options.buster}
+                                    tintColors={{ true: colors.primary, false: colors.primary }}
+                                    tintColor={colors.primary}
+                                    boxType="square"
+                                    onValueChange={(e) => Platform.OS !== "ios" && setOptions(prev => ({...prev, buster: !prev.buster}))}
+                                    onCheckColor={colors.primary}
+                                    onTintColor={colors.primary}/>
+                                <Text style={styles.option_text}>Бустер</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.option_holder}>
+                            <TouchableOpacity style={styles.option_button} onPress={(e) => setOptions(prev => ({...prev, animalTransfer: !prev.animalTransfer}))}>
+                                <Checkbox
+                                    value={options.animalTransfer}
+                                    onValueChange={() => Platform.OS !== "ios" && setOptions(prev => ({...prev, animalTransfer: !prev.animalTransfer}))}
+                                    boxType="square"
+                                    tintColors={{ true: colors.primary, false: colors.primary }}
+                                    tintColor={colors.primary}
+                                    onCheckColor={colors.primary}
+                                    onTintColor={colors.primary}/>
+                                <Text style={styles.option_text}>Перевозка животных</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <Input 
+                            placeholder="Пожелания к заказу"
+                            value={comment} 
+                            onChange={setComment} 
+                            textAlignVertical="top"
+                            multiline 
+                            numberOfLines={3}/>
                     </View>
-                    <View style={styles.option_holder}>
-                        <TouchableOpacity style={styles.option_button} onPress={() => setOptions(prev => ({...prev, buster: !prev.buster}))}>
-                            <Checkbox
-                                value={options.buster}
-                                tintColors={{ true: colors.primary, false: colors.primary }}
-                                onValueChange={() => setOptions(prev => ({...prev, buster: !prev.buster}))}/>
-                            <Text style={styles.option_text}>Бустер</Text>
-                        </TouchableOpacity>
+                    <View style={styles.button_holder}>
+                        <Button onPress={handleApplyChanges} projectType="primary">
+                            <Text style={[fonts.medium, styles.button_text]}>Применить</Text>
+                        </Button>
                     </View>
-                    <View style={styles.option_holder}>
-                        <TouchableOpacity style={styles.option_button} onPress={() => setOptions(prev => ({...prev, animalTransfer: !prev.animalTransfer}))}>
-                            <Checkbox
-                                value={options.animalTransfer}
-                                onValueChange={() => () => setOptions(prev => ({...prev, animalTransfer: !prev.animalTransfer}))}
-                                tintColors={{ true: colors.primary, false: colors.primary }}/>
-                            <Text style={styles.option_text}>Перевозка животных</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <Input 
-                        placeholder="Пожелания к заказу"
-                        value={comment} 
-                        onChange={setComment} 
-                        textAlignVertical="top"
-                        multiline 
-                        numberOfLines={3}/>
                 </View>
-                <View style={styles.button_holder}>
-                    <Button onPress={handleApplyChanges} projectType="primary">
-                        <Text style={[fonts.medium, styles.button_text]}>Применить</Text>
-                    </Button>
-                </View>
-            </View>
+            </TouchableWithoutFeedback>
         </SafeAreaView>
     );
 };
@@ -153,7 +167,8 @@ const styles = StyleSheet.create({
     },
     option_button: {
         flexDirection: 'row', 
-        alignItems: 'center'
+        alignItems: 'center',
+        columnGap: Platform.OS === "ios" ? 10 : 0
     },
     option_text: {
         fontSize: 16,

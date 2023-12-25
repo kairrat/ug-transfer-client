@@ -1,6 +1,15 @@
 import { useUnit } from "effector-react";
 import { FC, useEffect, useState } from "react";
-import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { 
+    Image, 
+    Keyboard, 
+    SafeAreaView, 
+    StyleSheet, 
+    Text, 
+    TouchableOpacity, 
+    TouchableWithoutFeedback, 
+    View 
+} from "react-native";
 import { AuthCredentials } from "src/screens/Auth/types/authCredentials";
 import { Button } from "src/shared/components/Button";
 import { PincodeInput } from "src/shared/components/PincodeInput";
@@ -87,32 +96,34 @@ export const VerifyCode: FC<IVerifyCodeProps> = ({
                 leftIcon={<ArrowLeftIcon />} 
                 onLeftIconPress={onBack} 
                 leftIconStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}/>
-            <View style={styles.body}>
-                <Image source={Logo} style={styles.logo}/>
-                <Text style={[fonts.regular, styles.title]}>Проверочные цифры</Text>
-                <PincodeInput
-                    cellStyle={styles.codeChar}
-                    cellStyleFocused={{
-                        borderColor: colors.primary,
-                    }}
-                    textStyle={styles.codeText}
-                    codeLength={4}
-                    cellSpacing={13}
-                    value={credentials.code}
-                    onTextChange={onCodeChange}
-                    error={error}
-                />
-                <Text style={[styles.description]}>
-                    Введите пожалуйста
-                    <Text style={{ color: colors.green }}>
-                        {' '} 4 последние {' '}
-                    </Text>
-                    цифры номера телефона нашего автоответчика
-                </Text>
-                <Text style={styles.error_message}>
-                    {error && "Неправильные цифры"}
-                </Text>
-            </View>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <View style={styles.body}>
+                        <Image source={Logo} style={styles.logo}/>
+                        <Text style={[fonts.regular, styles.title]}>Проверочные цифры</Text>
+                        <PincodeInput
+                            cellStyle={styles.codeChar}
+                            cellStyleFocused={{
+                                borderColor: colors.primary,
+                            }}
+                            textStyle={styles.codeText}
+                            codeLength={4}
+                            cellSpacing={13}
+                            value={credentials.code}
+                            onTextChange={onCodeChange}
+                            error={error}
+                        />
+                        <Text style={[styles.description]}>
+                            Введите пожалуйста
+                            <Text style={{ color: colors.green }}>
+                                {' '} 4 последние {' '}
+                            </Text>
+                            цифры номера телефона нашего автоответчика
+                        </Text>
+                        <Text style={styles.error_message}>
+                            {error && "Неправильные цифры"}
+                        </Text>
+                    </View>
+            </TouchableWithoutFeedback>
             <View style={styles.footer}>
                 {
                     resendCodeParams.resended 

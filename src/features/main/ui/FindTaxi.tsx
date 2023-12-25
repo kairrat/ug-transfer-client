@@ -1,6 +1,6 @@
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import React, { useEffect, useState } from "react";
-import { Modal } from "react-native";
+import { Modal, Platform } from "react-native";
 import { CARS_CLASSES, PAYMENT_METHODS } from "../model/constants";
 import { IAddress } from "../types/findTaxiSchemas";
 import { PaymentMethodEnum } from "../types/paymentMethod.enum";
@@ -16,6 +16,7 @@ import { OrderProcess } from "./OrderProcess";
 import dayjs from 'dayjs';
 import { useUnit } from "effector-react";
 import { $profile } from "src/features/profile";
+import { getModalHeight } from "../model/modalHeightHelper";
 
 interface IFindTaxiProps {
     sheetModalRef: React.RefObject<BottomSheetModalMethods>,
@@ -39,6 +40,8 @@ type IComponentsByState = {
         snapToPosition: string | number
     }
 }
+
+
 
 export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints, setLocation, onClearArrivalAddress}) => {
     const { profile } = useUnit($profile);
@@ -99,6 +102,8 @@ export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints
     useEffect(() => {
         const { snapPoints, snapToPosition} = componentsByState[modalState];
         setSnapPoints(snapPoints);
+        console.log('Snap points: ', snapPoints);
+        console.log('Snap position: ', snapToPosition);
         sheetModalRef.current?.snapToPosition(snapToPosition);
     }, []);
 
@@ -111,11 +116,13 @@ export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints
         }
     }, [address]);
 
+    console.log(modalState);
+
     const componentsByState: IComponentsByState = {
         [SheetState.DEFINED_PAYMENT_METHOD]: {
             component: <PaymentMethod value={orderParams.paymentMethod} onChange={handleChangePaymentMethod} />,
-            snapPoints: ['22%'],
-            snapToPosition: '22%',
+            snapPoints: getModalHeight([295]) as (number | string)[],
+            snapToPosition: getModalHeight('22%') as string,
         },
         [SheetState.SET_ADDRESS]: {
             component: <SetAddress
@@ -130,8 +137,8 @@ export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints
                 onArrivalAddressEdit={() => handleChangeModalState(SheetState.SET_ARRIVAL_ADDRESS)}
                 onClearArriveAddress={handleClearArrivalAddress}
                 onEditDetails={() => setDetailsOpen(true)}/>,
-            snapPoints: [177, 623],
-            snapToPosition: 623,
+            snapPoints: getModalHeight([177, 623]) as (number | string)[],
+            snapToPosition: getModalHeight(623) as number,
         },
         [SheetState.SET_ARRIVAL_ADDRESS]: {
             component: <ArrivalAddress 
@@ -140,8 +147,8 @@ export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints
                 applyAddress={(address: string) => setAddress(prev => ({...prev, arrival: { ...prev.arrival, address }}))}
                 applyCity={(city: string) => setAddress(prev => ({...prev, arrival: { ...prev.arrival, city }}))}
                 defaultAddress={address.arrival}/>,
-            snapPoints: [295],
-            snapToPosition: 295,
+            snapPoints: getModalHeight([295]) as (number | string)[],
+            snapToPosition: getModalHeight(295) as number,
         },
         [SheetState.SET_DEPARTURE_ADDRESS]: {
             component: <DepartureAddress 
@@ -150,16 +157,16 @@ export const FindTaxi: React.FC<IFindTaxiProps> = ({sheetModalRef, setSnapPoints
                 applyAddress={(address: string) => setAddress(prev => ({...prev, departure: { ...prev.departure, address }}))}
                 applyCity={(city: string) => setAddress(prev => ({...prev, departure: { ...prev.departure, city }}))}
                 defaultAddress={address.departure}/>,
-            snapPoints: [295],
-            snapToPosition: 295,
+            snapPoints: getModalHeight([295]) as (number | string)[],
+            snapToPosition: getModalHeight(295) as number,
         },
         [SheetState.ORDER_PROCESS]: {
             component: <OrderProcess 
                 status={orderStatus} 
                 onReceivedDismiss={() => setOrderStatus("seeking")} 
                 onSeekingDismiss={() => handleChangeModalState(SheetState.SET_ADDRESS)}/>,
-            snapPoints: [40, 192],
-            snapToPosition: 192
+            snapPoints: getModalHeight([295]) as (number | string)[],
+            snapToPosition: getModalHeight(192) as number
         }
     }
 

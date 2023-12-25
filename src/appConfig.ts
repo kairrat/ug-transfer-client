@@ -21,4 +21,4 @@ export const appConfig = {
   isIOS: Platform.OS === "ios",
 };
 export const APP_URL = "http://95.163.235.158:3001";
-export const TYPE = "drivers";
+export const VERSION = "1.0.1";

@@ -7,6 +7,7 @@ import { SelectArrivalAddress } from "./SelectArrivalAddress";
 import { SelectArrivalCity } from "./SelectArrivalCity";
 import { IAddress } from "../../types/findTaxiSchemas";
 import { getGeocode } from "src/features/map/model/map-actions";
+import { getModalHeight } from "../../model/modalHeightHelper";
 
 interface IArrivalAddressProps {
     defaultAddress: IAddress;
@@ -84,31 +85,31 @@ export const ArrivalAddress: React.FC<IArrivalAddressProps> = ({
                 address={address.address}
                 city={address.city} 
                 onClose={onClose}/>,
-            snapPoints: [295],
-            snapToPosition: 295,
+            snapPoints: getModalHeight([295]) as number[],
+            snapToPosition: getModalHeight(295) as number,
         },
         [ModalStateEnum.SELECT_ADDRESS]: {
             component: <SelectArrivalAddress 
-                snapPosition={255}
+                snapPosition={getModalHeight(255) as number}
                 onClose={() => handleChangeModalState(ModalStateEnum.MENU)} 
                 setDepartureAddress={(address: string) => {
                     setAddress(prev => ({...prev, address}));
                     handleChangeModalState(ModalStateEnum.MENU);
                 }}/>,
-            snapPoints: [260],
-            snapToPosition: 260,
+            snapPoints: getModalHeight([260]) as number[],
+            snapToPosition: getModalHeight(260) as number,
         },
         [ModalStateEnum.SELECT_CITY]: {
             component: <SelectArrivalCity 
-                snapPosition={255}
+                snapPosition={getModalHeight(255) as number}
                 onClose={() => handleChangeModalState(ModalStateEnum.MENU)}
                 debounceCb={getCities} 
                 setDepartureCity={(city: string) => {
                     setAddress(prev => ({...prev, city}))
                     handleChangeModalState(ModalStateEnum.MENU);
                 }}/>,
-            snapPoints: [260],
-            snapToPosition: 260,
+            snapPoints: getModalHeight([260]) as number[],
+            snapToPosition: getModalHeight(260) as number,
         }
     };
 

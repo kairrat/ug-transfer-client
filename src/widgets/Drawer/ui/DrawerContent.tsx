@@ -1,6 +1,5 @@
-import { DrawerContentScrollView } from "@react-navigation/drawer";
 import React from "react";
-import { Image, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, Linking, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { colors, fonts } from "src/shared/style";
 import { ArrowRightIcon, UnknownUser } from 'src/shared/img';
 import { DRAWER_NAVS } from "../model/drawerNavs";
@@ -12,8 +11,8 @@ export const DrawerContent: React.FC<IDrawerContentProps> = () => {
     const navigation = useNavigation<any>();
     
     return(
-        <DrawerContentScrollView 
-            contentContainerStyle={styles.layout}>
+        <View
+            style={[styles.layout, Platform.OS === "ios" && { paddingTop: 40, paddingBottom: 20 }]}>
                 <View style={styles.content}>
                     <TouchableOpacity 
                         style={styles.profile_button}
@@ -48,11 +47,11 @@ export const DrawerContent: React.FC<IDrawerContentProps> = () => {
                     </TouchableOpacity>
                     <TouchableOpacity 
                         style={styles.footer_button}
-                        onPress={() => {}}>
+                        onPress={() => navigation.navigate("About")}>
                         <Text style={[fonts.regular, styles.footer_text]}>О сервисе</Text>
                     </TouchableOpacity>
                 </View>
-        </DrawerContentScrollView>
+        </View>
     );
 };
 

@@ -7,4 +7,5 @@ export type StackScreens = {
     id: string;
   };
   Main: undefined;
+  About: undefined;
 };

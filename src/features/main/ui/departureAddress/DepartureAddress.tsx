@@ -7,6 +7,7 @@ import { SelectDepartureAddress } from "./SelectDepartureAddress";
 import { SelectDepartureCity } from "./SelectDepartureCity";
 import { IAddress } from "../../types/findTaxiSchemas";
 import { getGeocode } from "src/features/map/model/map-actions";
+import { getModalHeight } from "../../model/modalHeightHelper";
 
 interface IDepartureAddressProps {
     defaultAddress: IAddress;
@@ -82,31 +83,31 @@ export const DepartureAddress: React.FC<IDepartureAddressProps> = ({
                 onClose={onClose}
                 onSelectCity={() => handleChangeModalState(ModalStateEnum.SELECT_CITY, 0)}
                 onSelectAddress={() => handleChangeModalState(ModalStateEnum.SELECT_ADDRESS, 0)}/>,
-            snapPoints: [295],
-            snapToPosition: 295,
+            snapPoints: getModalHeight([295]) as number[],
+            snapToPosition: getModalHeight(295) as number,
         },
         [ModalStateEnum.SELECT_ADDRESS]: {
             component: <SelectDepartureAddress 
-                snapPosition={255}
+                snapPosition={getModalHeight(255) as number}
                 onClose={() => handleChangeModalState(ModalStateEnum.MENU)} 
                 setDepartureAddress={(selectedAddress: string) => {
                     setAddress(prev => ({...prev, address: selectedAddress}));
                     handleChangeModalState(ModalStateEnum.MENU);
                 }}/>,
-            snapPoints: [255],
-            snapToPosition: 255,
+            snapPoints: getModalHeight([255]) as number[],
+            snapToPosition: getModalHeight(255) as number,
         },
         [ModalStateEnum.SELECT_CITY]: {
             component: <SelectDepartureCity 
-                snapPosition={255}
+                snapPosition={getModalHeight(255) as number}
                 onClose={() => handleChangeModalState(ModalStateEnum.MENU)} 
                 debounceCb={getCities} 
                 setDepartureCity={(selectedCity: string) => {
                     setAddress(prev => ({...prev, city: selectedCity}))
                     handleChangeModalState(ModalStateEnum.MENU);
                 }}/>,
-            snapPoints: [255],
-            snapToPosition: 255,
+            snapPoints: ([255]) as number[],
+            snapToPosition: getModalHeight(255) as number,
         }
     }
 

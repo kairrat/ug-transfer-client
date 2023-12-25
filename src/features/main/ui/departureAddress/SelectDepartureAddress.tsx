@@ -21,7 +21,7 @@ export const SelectDepartureAddress: React.FC<ISelectDepartureAddressProps> = ({
 
     useEffect(() => {
         if (isKeyboardVisible) {
-            modalRef.current?.snapToPosition(snapPosition + 260);
+            modalRef.current?.snapToPosition(snapPosition + 320);
         }
         else {
             modalRef.current?.snapToPosition(snapPosition);

@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEvent } from "effector-react";
 import { FC, useEffect, useState } from "react";
-import { ImageBackground, Modal, SafeAreaView, StyleSheet } from "react-native";
+import { ImageBackground, Modal, StyleSheet, View } from "react-native";
 import { AsyncStorageKeys } from "src/app/types/authorization";
 import { RequestCode, VerifyCode } from "src/features/auth";
 import { PrivacyPolicy } from "src/features/privacy-policy";
@@ -13,6 +13,7 @@ import { Profile } from "src/types/profile";
 import { AuthCredentials } from "../types/authCredentials";
 import { AuthStateEnum } from "../types/authEnum";
 import { AuthMenu } from "./AuthMenu";
+import { colors } from "src/shared/style";
 
 type IAuthProps = NativeStackScreenProps<StackScreens, "Auth">;
 type AuthState = {
@@ -82,7 +83,7 @@ export const Auth: FC<IAuthProps> = ({ navigation }) => {
             onCodeChange={handleChangeCode}/>,
     }
     return(
-        <SafeAreaView style={styles.layout}>
+        <View style={styles.layout}>
             {
                 privacyState !== 'closed' &&
                 <Modal children={<PrivacyPolicy onBack={() => setPrivacyState("closed")} onConfirm={handleConfirmPrivacy} type={privacyState}/>}/>
@@ -93,13 +94,14 @@ export const Auth: FC<IAuthProps> = ({ navigation }) => {
                     authComponents[authState.state]
                 }
             </ImageBackground>
-        </SafeAreaView>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     layout: {
-        flex: 1
+        flex: 1,
+        backgroundColor: colors.background,
     },
     backgroundImage: {
         flex: 1

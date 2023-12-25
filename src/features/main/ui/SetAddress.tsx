@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Platform } from "react-native";
 import { CARS_CLASSES, PAYMENT_METHODS } from "../model/constants";
 import { ArrowRightPrimaryIcon, ClockIcon, CrossIcon, EditOptionsIcon, LocationMarkIcon, WhiteWalletIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
@@ -48,6 +48,7 @@ export const SetAddress: React.FC<ISetAddress> = ({
         return departureAddress.city + ', ' + departureAddress.address;
     }
     const getArrivalAddressButton = () => {
+        console.log('ArriveButton: ');
         if (arrivalAddress.address === "" || arrivalAddress.city === "") {
             return "Куда едем?";
         }
@@ -75,20 +76,37 @@ export const SetAddress: React.FC<ISetAddress> = ({
                 </View>
                 <View style={styles.carOptions_holder}>
                     <Text style={[fonts.regular, styles.carOption_title]}>Класс авто</Text>
-                    
-                    <BottomSheetScrollView horizontal contentContainerStyle={styles.carClass_list}>
-                        {
-                            CARS_CLASSES.map(({label, img}, index) => (
-                                <TouchableOpacity 
-                                    key={index} 
-                                    onPress={() => setOrderParams(prev => ({...prev, activeCarClass: index}))}
-                                    style={[styles.carClass_item, index === activeCarClass && styles.activeCarClass]}>
-                                        <Image source={img} style={styles.carClass_img}/>
-                                        <Text style={styles.carClass_text}>{label}</Text>
-                                </TouchableOpacity>
-                            ))
-                        }
-                    </BottomSheetScrollView>
+                    {
+                        Platform.OS === "ios"
+                        ?
+                        <ScrollView horizontal contentContainerStyle={styles.carClass_list}>
+                            {
+                                CARS_CLASSES.map(({label, img}, index) => (
+                                    <TouchableOpacity 
+                                        key={index} 
+                                        onPress={() => setOrderParams(prev => ({...prev, activeCarClass: index}))}
+                                        style={[styles.carClass_item, index === activeCarClass && styles.activeCarClass]}>
+                                            <Image source={img} style={styles.carClass_img}/>
+                                            <Text style={styles.carClass_text}>{label}</Text>
+                                    </TouchableOpacity>
+                                ))
+                            }
+                        </ScrollView>
+                        :
+                        <BottomSheetScrollView horizontal contentContainerStyle={styles.carClass_list}>
+                            {
+                                CARS_CLASSES.map(({label, img}, index) => (
+                                    <TouchableOpacity 
+                                        key={index} 
+                                        onPress={() => setOrderParams(prev => ({...prev, activeCarClass: index}))}
+                                        style={[styles.carClass_item, index === activeCarClass && styles.activeCarClass]}>
+                                            <Image source={img} style={styles.carClass_img}/>
+                                            <Text style={styles.carClass_text}>{label}</Text>
+                                    </TouchableOpacity>
+                                ))
+                            }
+                        </BottomSheetScrollView>
+                    }
                 </View>
             </View>
 

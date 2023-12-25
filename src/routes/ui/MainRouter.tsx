@@ -13,6 +13,7 @@ import { StackScreens } from "../types/StackScreens";
 import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import { TripDetails } from "src/screens/TripDetails";
 import { Trips } from "src/screens/Trips";
+import { About } from "src/screens/About";
 
 type CustomStackNavigationOptions = NativeStackNavigationOptions & {
   unmountOnBlur?: boolean;
@@ -59,6 +60,7 @@ export const MainRouter: React.FC = function MainRouter() {
         <Stack.Screen name={"Trips"} component={Trips} />
         <Stack.Screen name={"TripDetails"} component={TripDetails} />
         <Stack.Screen name={"Profile"} component={Profile} />
+        <Stack.Screen name={"About"} component={About} />
       </Drawer.Navigator>
     </NavigationContainer>
   );

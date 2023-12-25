@@ -1,6 +1,11 @@
 import React from "react";
-import { KeyboardTypeOptions, StyleSheet, View } from "react-native"
-import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
+import { 
+    KeyboardTypeOptions, 
+    StyleSheet, 
+    View, 
+    TextInput, 
+    TouchableOpacity
+} from "react-native"
 import { colors } from "src/shared/style";
 
 interface IInputProps {

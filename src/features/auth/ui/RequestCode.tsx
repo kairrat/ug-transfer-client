@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEvent, useUnit } from "effector-react";
 import { FC, useState } from "react";
-import { Alert, Image, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, Keyboard, SafeAreaView, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
 import { Button } from "src/shared/components/Button";
 import { Input } from "src/shared/components/Input";
 import { ScreenHeader } from "src/shared/components/ScreenHeader";
@@ -46,21 +46,23 @@ export const RequestCode: FC<IRequestCodeProps> = ({
     return(
         <SafeAreaView style={styles.layout}>
             <ScreenHeader leftIcon={<ArrowLeftIcon />} leftIconStyle={{ backgroundColor: 'transparent', borderWidth: 0 }} onLeftIconPress={onBack}/>
-            <View style={styles.body}>
-                <Image source={Logo} style={styles.logo}/>
-                <View>
-                    <Text style={[fonts.regular, styles.title]}>{type === 'sign-in' ? "Вход" : "Регистрация"}</Text>
-                    <Text style={[fonts.regular, styles.title]}>по номеру телефона</Text>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={styles.body}>
+                    <Image source={Logo} style={styles.logo}/>
+                    <View>
+                        <Text style={[fonts.regular, styles.title]}>{type === 'sign-in' ? "Вход" : "Регистрация"}</Text>
+                        <Text style={[fonts.regular, styles.title]}>по номеру телефона</Text>
+                    </View>
+                    <Input placeholder="Телефон" value={phone} onChange={onPhoneChange} leftIcon={<PhoneRoundedIcon />} keyboardType="phone-pad"/>
+                    <Text style={[fonts.regular, styles.description]}>
+                        Наш автоответчик Вам перезвонит, введите пожалуйста 
+                            <Text style={{color: colors.green}}>
+                                {' '}4 последние{' '}
+                            </Text>
+                        цифры номера телефона нашего автоответчика
+                    </Text>
                 </View>
-                <Input placeholder="Телефон" value={phone} onChange={onPhoneChange} leftIcon={<PhoneRoundedIcon />} keyboardType="phone-pad"/>
-                <Text style={[fonts.regular, styles.description]}>
-                    Наш автоответчик Вам перезвонит, введите пожалуйста 
-                        <Text style={{color: colors.green}}>
-                            {' '}4 последние{' '}
-                        </Text>
-                    цифры номера телефона нашего автоответчика
-                </Text>
-            </View>
+            </TouchableWithoutFeedback>
             <View style={styles.button_holder}>
                 <Button projectType="primary" onPress={handleRequestCode} disabled={phoneNumberRegex.test(phone) ? loading : true}>
                     <Text style={[fonts.regular, styles.button_text]}>Вход</Text>

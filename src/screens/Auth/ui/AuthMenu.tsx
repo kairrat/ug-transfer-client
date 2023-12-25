@@ -1,11 +1,8 @@
 import { FC } from "react";
-import { Image, StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { Image, StyleSheet, View, Text, TouchableOpacity, Platform } from "react-native";
 import { Button } from "src/shared/components/Button";
 import { Logo } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
-// import { Button } from "src/shared/components/Button";
-// import { Logo } from "src/shared/img";
-// import { colors, fonts } from "src/shared/styles";
 
 interface IAuthMenuProps {
     onSignin: () => void;
@@ -19,7 +16,7 @@ export const AuthMenu: FC<IAuthMenuProps> = ({
     onPrivacyPolicy
 }) => {
     return(
-        <View style={styles.layout}>
+        <View style={[styles.layout, Platform.OS === "ios" && {paddingBottom: 20}]}>
             <View />
             <Image source={Logo} style={styles.logo}/>
             <View style={styles.footer}>
