@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { Image, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, Keyboard, Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { FileHelper } from "src/features/file";
 import { AddGreenIcon, PhoneRoundedIcon, UnknownUser, UserIcon } from "src/shared/img";
 import { Asset } from 'react-native-image-picker';
@@ -48,7 +48,7 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
         setPersonalData(prev => ({...prev, full_name}));
         !changed && setChanged(true);
     }
-
+    console.log('Toast: ', toast);
     const handleSaveChanged = async () => {
         
         try {
@@ -63,12 +63,13 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
             }
             const data: any = await updateProfile(updateData);
             if (data && data.message) {
-                toast?.show('Сохранено', {
+                setChanged(false);
+                toast.show('Сохранено', {
                     type: "success",
                     placement: "top"
                 });
+                Keyboard.dismiss();
             }
-            setChanged(false);
         } catch (err) {
             console.error('Failed to update profile', err);
         } finally {
@@ -92,57 +93,59 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
         <>
             <Modal visible={openDeleteAccount} children={<ConfirmDeleteAccount onClose={() => setOpenDeleteAccount(false)} onConfirm={handleDeleteAccount} />}/>
             <Modal visible={openPrivacy} children={<PrivacyPolicy type="read" onBack={() => setOpenPrivacy(false)}/>} />
-            <View style={styles.form_holder}>
-                <View />
-                <View style={styles.body}>
-                    <View style={styles.avatar_holder}>
-                        {
-                            newAvatar
-                            ?
-                            <Image source={newAvatar} style={styles.avatar}/>
-                            :
-                            <Image 
-                                source={profile?.img ? { uri: profile.img } : UnknownUser}
-                                style={styles.avatar}/>
-                        }
-                        <TouchableOpacity 
-                            style={styles.add_avatar}
-                            onPress={handleSelectAvatar}>
-                            <AddGreenIcon />
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={styles.form_holder}>
+                    <View />
+                    <View style={styles.body}>
+                        <View style={styles.avatar_holder}>
+                            {
+                                newAvatar
+                                ?
+                                <Image source={newAvatar} style={styles.avatar}/>
+                                :
+                                <Image 
+                                    source={profile?.img ? { uri: profile.img } : UnknownUser}
+                                    style={styles.avatar}/>
+                            }
+                            <TouchableOpacity 
+                                style={styles.add_avatar}
+                                onPress={handleSelectAvatar}>
+                                <AddGreenIcon />
+                            </TouchableOpacity>
+                        </View>
+                        <Input 
+                            leftIcon={<UserIcon />}
+                            placeholder="Имя"
+                            value={personalData.full_name} 
+                            onChange={handleChangeName}/>
+                        <Input 
+                            projectType="profile_phone"
+                            leftIcon={<PhoneRoundedIcon />}
+                            placeholder="Номер телефона"
+                            keyboardType="phone-pad"
+                            value={personalData.phone}
+                            onChange={(phone: string) => setPersonalData(prev => ({...prev, phone}))}
+                            disabled={true}/>
+                        <Button 
+                            onPress={handleSaveChanged}
+                            projectType="primary"
+                            disabled={!changed}>
+                                <Text style={styles.button_text}>Сохранить</Text>
+                        </Button>
+                    </View>
+                    <View style={styles.footer}>
+                        <TouchableOpacity onPress={handleLogout} style={styles.footer_button}>
+                            <Text style={styles.footer_button_text}>Выйти</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setOpenDeleteAccount(true)} style={styles.footer_button}>
+                            <Text style={styles.footer_button_text}>Удалить аккаунт</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setOpenPrivacy(true)} style={styles.footer_button}>
+                            <Text style={styles.footer_button_text}>Политика конфиденциальности</Text>
                         </TouchableOpacity>
                     </View>
-                    <Input 
-                        leftIcon={<UserIcon />}
-                        placeholder="Имя"
-                        value={personalData.full_name} 
-                        onChange={handleChangeName}/>
-                    <Input 
-                        projectType="profile_phone"
-                        leftIcon={<PhoneRoundedIcon />}
-                        placeholder="Номер телефона"
-                        keyboardType="phone-pad"
-                        value={personalData.phone}
-                        onChange={(phone: string) => setPersonalData(prev => ({...prev, phone}))}
-                        disabled={true}/>
-                    <Button 
-                        onPress={handleSaveChanged}
-                        projectType="primary"
-                        disabled={!changed}>
-                            <Text style={styles.button_text}>Сохранить</Text>
-                    </Button>
                 </View>
-                <View style={styles.footer}>
-                    <TouchableOpacity onPress={handleLogout} style={styles.footer_button}>
-                        <Text style={styles.footer_button_text}>Выйти</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setOpenDeleteAccount(true)} style={styles.footer_button}>
-                        <Text style={styles.footer_button_text}>Удалить аккаунт</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setOpenPrivacy(true)} style={styles.footer_button}>
-                        <Text style={styles.footer_button_text}>Политика конфиденциальности</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+            </TouchableWithoutFeedback>
         </>
     );
 };
