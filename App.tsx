@@ -4,8 +4,10 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {Platform, StyleSheet} from 'react-native';
 import {Host} from 'react-native-portalize';
 import { MainRouter } from './src/routes';
-import {createStackNavigator} from "@react-navigation/stack";
-const Stack = createStackNavigator();
+import Orientation from 'react-native-orientation-locker';
+
+Orientation.lockToPortrait();
+
 export const App = () => {
   return (
     <SafeAreaProvider style={styles.container}>

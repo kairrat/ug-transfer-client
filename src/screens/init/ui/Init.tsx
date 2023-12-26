@@ -14,7 +14,6 @@ type InitProps = NativeStackScreenProps<StackScreens, "Init">
 export const Init: React.FC<InitProps> = ({ navigation }) => {
     const handleSetProfile = useEvent(setProfile);
     const handleCheckAuth = async () => {
-        navigation.navigate("Main");
         // const token = await AsyncStorage.getItem(AsyncStorageKeys.TOKEN);
         // if (!token) {
         //     return navigation.navigate("Auth");
@@ -26,7 +25,7 @@ export const Init: React.FC<InitProps> = ({ navigation }) => {
         // } catch (err) {
         //     return navigation.navigate("Auth");
         // }
-        // return navigation.navigate("Main");
+        return navigation.navigate("Main");
     }
     useEffect(() => {
         handleCheckAuth();

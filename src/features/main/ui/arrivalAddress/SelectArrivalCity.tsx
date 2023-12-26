@@ -1,7 +1,7 @@
 import { useBottomSheet } from "@gorhom/bottom-sheet";
 import { useUnit } from "effector-react";
 import React, { useEffect, useState } from "react";
-import { DimensionValue, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { DimensionValue, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useKeyboardVisibility } from "src/features/useKeyboardVisibility";
 import { Button } from "src/shared/components/Button";
 import { Input } from "src/shared/components/Input";
@@ -82,7 +82,12 @@ export const SelectArrivalCity: React.FC<ISelectArrivalCityProps> = ({}) => {
     }, [foundCities]);
 
     useEffect(() => {
-        snapToPosition(keyboardVisible ? snapPos + 280 : snapPos);
+        if (Platform.OS === "ios") {
+            snapToPosition(keyboardVisible ? snapPos + 320 : snapPos);
+        }
+        else {
+            snapToPosition(keyboardVisible ? snapPos + 280 : snapPos);
+        }
     }, [keyboardVisible]);
 
     const handleGetDropdownHeight = (): DimensionValue => {

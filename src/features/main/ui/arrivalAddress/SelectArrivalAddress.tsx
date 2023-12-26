@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Button } from "src/shared/components/Button";
 import { Input } from "src/shared/components/Input";
 import { BuildingIcon, CrossIcon } from "src/shared/img";
@@ -27,16 +27,22 @@ export const SelectArrivalAddress: React.FC<ISelectArrivalAddressProps> = ({}) =
 
     const handleClose = () => {
         handleSetEditingOrder({...editingOrder, arrival: order.arrival});
-        handleSetBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION)
+        handleSetBottomSheetState(BottomSheetStateEnum.SET_ARRIVAL_LOCATION)
     }
 
     const handleApply = () => {
-        handleSetBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION)
+        handleSetBottomSheetState(BottomSheetStateEnum.SET_ARRIVAL_LOCATION)
     }
 
     useEffect(() => {
         const snapPoint = BOTTOM_SHEET_SNAP_POINTS[BottomSheetStateEnum.SET_ARRIVAL_ADDRESS][0];
-        snapToPosition(keyboardVisible ? snapPoint + 280 : snapPoint);
+        if (Platform.OS === "ios") {
+            snapToPosition(keyboardVisible ? snapPoint + 320 : snapPoint);
+        }
+        else {
+
+            snapToPosition(keyboardVisible ? snapPoint + 280 : snapPoint);
+        }
     }, [keyboardVisible]);
 
     return(

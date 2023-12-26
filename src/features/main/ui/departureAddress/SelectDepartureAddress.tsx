@@ -1,7 +1,7 @@
 import { useBottomSheet } from "@gorhom/bottom-sheet";
 import { useUnit } from "effector-react";
 import React, { useEffect } from "react";
-import { Keyboard, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { Keyboard, Platform, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { useKeyboardVisibility } from "src/features/useKeyboardVisibility";
 import { Button } from "src/shared/components/Button";
 import { Input } from "src/shared/components/Input";
@@ -36,7 +36,12 @@ export const SelectDepartureAddress: React.FC<ISelectDepartureAddressProps> = ()
 
     useEffect(() => {
         const snapPoint = BOTTOM_SHEET_SNAP_POINTS[BottomSheetStateEnum.SET_DEPARTURE_ADDRESS][0];
-        snapToPosition(keyboardVisible ? snapPoint + 280 : snapPoint);
+        if (Platform.OS === "ios") {
+            snapToPosition(keyboardVisible ? snapPoint + 320 : snapPoint);
+        }
+        else {
+            snapToPosition(keyboardVisible ? snapPoint + 280 : snapPoint);
+        }
     }, [keyboardVisible]);
 
     return(

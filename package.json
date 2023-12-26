@@ -42,6 +42,7 @@
         "react-native-gesture-handler": "^2.13.2",
         "react-native-image-picker": "^7.1.0",
         "react-native-modalize": "2.1.1",
+        "react-native-orientation-locker": "^1.6.0",
         "react-native-pager-view": "^6.2.2",
         "react-native-permissions": "^4.0.1",
         "react-native-portalize": "1.0.7",

@@ -24,7 +24,7 @@ type AuthState = {
 export const Auth: FC<IAuthProps> = ({ navigation }) => {
     const [authState, setAuthState] = useState<AuthState>({ state: null, type: 'sign-in'});
     const [privacyState, setPrivacyState] = useState<'closed' | 'confirm' | 'read'>('closed');
-    const [credentials, setCredentials] = useState<AuthCredentials>({ phone: "", code: "" });
+    const [credentials, setCredentials] = useState<AuthCredentials>({ phone: "+7", code: "" });
     const handleSetProfile = useEvent(setProfile);
 
     useEffect(() => {
@@ -46,7 +46,9 @@ export const Auth: FC<IAuthProps> = ({ navigation }) => {
     }
 
     const handleChangePhone = (phone: string) => {
-        setCredentials(prev => ({...prev, phone}));
+        if (phone.length > 1) {
+            setCredentials(prev => ({...prev, phone: `+7${phone.slice(2)}` }));
+        }
     }
 
     const handleChangeCode = (code: string) => {
