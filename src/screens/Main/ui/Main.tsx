@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { DrawerActions } from "@react-navigation/routers";
 import { FC, useEffect, useRef } from "react";
-import { StyleSheet, View, TouchableOpacity, Platform, Image } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Platform, Image, Modal } from "react-native";
 import { StackScreens } from "src/routes";
 import { MenuIcon, StatusBarBackground } from "src/shared/img";
 import { colors } from "src/shared/style";
@@ -110,6 +110,9 @@ export const Main: FC<MainProps> = ({ navigation }) => {
                 Platform.OS === "ios" &&
                 <Image source={StatusBarBackground} style={styles.status_bar}/>
             }
+            <Modal visible={orderDetailModal}>
+                <OrderDetails />
+            </Modal>
             <View style={[styles.header, Platform.OS === "ios" && { marginTop: 50 }]}>
                 <TouchableOpacity 
                     style={[styles.menu_button, Platform.OS === "ios" && { padding: 10 }]}
@@ -171,10 +174,7 @@ export const Main: FC<MainProps> = ({ navigation }) => {
                         <PaymentMethod />
                     }
             </BottomSheet>
-            {
-                orderDetailModal && 
-                <OrderDetails />
-            }
+            
         </View>
     );
 };
