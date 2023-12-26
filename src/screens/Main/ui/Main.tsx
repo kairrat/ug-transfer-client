@@ -47,7 +47,7 @@ export const Main: FC<MainProps> = ({ navigation }) => {
     const handleCheckGpsPermission = async () => {
         try {
             const result = await check(Platform.OS === "android" ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-            if (result === RESULTS.GRANTED) {
+            if (result !== RESULTS.GRANTED) {
                 setTimeout(() => {
                     console.log('Time out');
                     handleSetGpsEnabled(true);
