@@ -47,13 +47,13 @@ export const Main: FC<MainProps> = ({ navigation }) => {
     const handleCheckGpsPermission = async () => {
         try {
             const result = await check(Platform.OS === "android" ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-            console.log('Result: ', result);
             if (result === RESULTS.GRANTED) {
                 setTimeout(() => {
                     console.log('Time out');
                     handleSetGpsEnabled(true);
                     handleSetBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
-                }, 50);
+                    sheetModalRef.current?.snapToPosition(Platform.OS === "ios" ? 653 : 623);
+                }, 100);
             }
             else {
                 handleSetBottomSheetState(BottomSheetStateEnum.ENABLE_GPS);
@@ -128,7 +128,6 @@ export const Main: FC<MainProps> = ({ navigation }) => {
                 enableHandlePanningGesture={true}
                 onChange={(e) => {
                     e === -1 && sheetModalRef.current?.snapToIndex(0);
-                    console.log( e);
                 }}>
 
                     {
