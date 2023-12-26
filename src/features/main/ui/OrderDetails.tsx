@@ -5,49 +5,31 @@ import { Input } from "src/shared/components/Input";
 import { BaggageIcon, CrossIcon, UserIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
 import Checkbox from '@react-native-community/checkbox';
+import { useUnit } from "effector-react";
+import { $main, setOrder, setOrderDetailsModal } from "../model/MainStore";
 
 
-interface IDetailsProps {
-    defaultBaggage: string;
-    defaultPassangersAmount: string;
-    defaultOptions: {
-        babyChair: boolean,
-        buster: boolean,
-        animalTransfer: boolean
-    },
-    defaultComment: string;
-    onClose: () => void;
-    onApply: (details: any) => void;
-};
+type OrderDetailsProps = {};
 
-export const Details: React.FC<IDetailsProps> = ({
-    defaultBaggage,
-    defaultPassangersAmount,
-    defaultOptions,
-    defaultComment,
-    onClose,
-    onApply
-}) => {
-    const [baggage, setBaggage] = useState<string>(defaultBaggage);
-    const [passangersAmount, setPassangersAmount] = useState<string>(defaultPassangersAmount);
-    const [options, setOptions] = useState<IDetailsProps['defaultOptions']>(defaultOptions);
-    const [comment, setComment] = useState<string>(defaultComment);
+export const OrderDetails: React.FC<OrderDetailsProps> = () => {
+    const [{order}, handleSetOrder, handleSetOrderDetailsModal] = useUnit([$main, setOrder, setOrderDetailsModal]);
+    const [baggage, setBaggage] = useState<string>(order.baggage);
+    const [passangersAmount, setPassangersAmount] = useState<string>(order.passangersAmount);
+    const [params, setParams] = useState(order.params);
+    const [comment, setComment] = useState<string>(order.comment);
 
     const handleApplyChanges = () => {
-        onApply({
-            baggage,
-            passangersAmount,
-            options,
-            comment
-        });
+        handleSetOrder({...order, baggage, passangersAmount, params, comment});
+        handleSetOrderDetailsModal(false);
     }
+    
 
     return(
         <SafeAreaView style={styles.layout}>
             <View style={styles.header}>
                 <TouchableOpacity 
                     style={styles.close_holder}
-                    onPress={onClose}>
+                    onPress={() => handleSetOrderDetailsModal(false)}>
                         <CrossIcon />
                 </TouchableOpacity>
                 <Text style={[fonts.medium, styles.header_title]}>Дополнительно</Text>
@@ -68,10 +50,10 @@ export const Details: React.FC<IDetailsProps> = ({
                             keyboardType="numeric"
                             leftIcon={<UserIcon />}/>
                         <View style={styles.option_holder}>
-                            <TouchableOpacity style={styles.option_button} onPress={(e) => setOptions(prev => ({...prev, babyChair: !prev.babyChair}))}>
+                            <TouchableOpacity style={styles.option_button} onPress={(e) => setParams(prev => ({...prev, babyChair: !prev.babyChair}))}>
                                 <Checkbox
-                                    value={options.babyChair}   
-                                    onValueChange={() => Platform.OS !== "ios" && setOptions(prev => ({...prev, babyChair: !prev.babyChair}))}
+                                    value={params.babyChair}   
+                                    onValueChange={() => Platform.OS !== "ios" && setParams(prev => ({...prev, babyChair: !prev.babyChair}))}
                                     tintColor={colors.primary}
                                     boxType="square"
                                     tintColors={{ true: colors.primary, false: colors.primary }}
@@ -81,23 +63,23 @@ export const Details: React.FC<IDetailsProps> = ({
                             </TouchableOpacity>
                         </View>
                         <View style={styles.option_holder}>
-                            <TouchableOpacity style={styles.option_button} onPress={(e) => setOptions(prev => ({...prev, buster: !prev.buster}))}>
+                            <TouchableOpacity style={styles.option_button} onPress={(e) => setParams(prev => ({...prev, buster: !prev.buster}))}>
                                 <Checkbox
-                                    value={options.buster}
+                                    value={params.buster}
                                     tintColors={{ true: colors.primary, false: colors.primary }}
                                     tintColor={colors.primary}
                                     boxType="square"
-                                    onValueChange={(e) => Platform.OS !== "ios" && setOptions(prev => ({...prev, buster: !prev.buster}))}
+                                    onValueChange={(e) => Platform.OS !== "ios" && setParams(prev => ({...prev, buster: !prev.buster}))}
                                     onCheckColor={colors.primary}
                                     onTintColor={colors.primary}/>
                                 <Text style={styles.option_text}>Бустер</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.option_holder}>
-                            <TouchableOpacity style={styles.option_button} onPress={(e) => setOptions(prev => ({...prev, animalTransfer: !prev.animalTransfer}))}>
+                            <TouchableOpacity style={styles.option_button} onPress={(e) => setParams(prev => ({...prev, animalTransfer: !prev.animalTransfer}))}>
                                 <Checkbox
-                                    value={options.animalTransfer}
-                                    onValueChange={() => Platform.OS !== "ios" && setOptions(prev => ({...prev, animalTransfer: !prev.animalTransfer}))}
+                                    value={params.animalTransfer}
+                                    onValueChange={() => Platform.OS !== "ios" && setParams(prev => ({...prev, animalTransfer: !prev.animalTransfer}))}
                                     boxType="square"
                                     tintColors={{ true: colors.primary, false: colors.primary }}
                                     tintColor={colors.primary}
@@ -128,7 +110,8 @@ export const Details: React.FC<IDetailsProps> = ({
 const styles = StyleSheet.create({
     layout: {
         flex: 1,
-        backgroundColor: colors.background
+        backgroundColor: colors.background,
+        zIndex: 9999
     },
     header: {
         position: 'relative',

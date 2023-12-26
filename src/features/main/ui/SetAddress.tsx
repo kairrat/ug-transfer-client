@@ -1,81 +1,58 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Platform } from "react-native";
 import { CARS_CLASSES, PAYMENT_METHODS } from "../model/constants";
-import { ArrowRightPrimaryIcon, ClockIcon, CrossIcon, EditOptionsIcon, LocationMarkIcon, WhiteWalletIcon } from "src/shared/img";
+import { ArrowRightPrimaryIcon, ClockIcon, CrossIcon, EditOptionsIcon, LocationMarkIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
-import { IAddress } from "../types/findTaxiSchemas";
 import { BottomSheetScrollView, useBottomSheet } from "@gorhom/bottom-sheet";
 import DatePicker from "react-native-date-picker";
 import dayjs from 'dayjs';
 import { Button } from "src/shared/components/Button";
-import { OrderParams } from "../types/order";
-import { BottomSheetContext } from "../context/BottomSheetContext";
+import { useUnit } from "effector-react";
+import { $main, setOrder, setOrderDetailsModal } from "../model/MainStore";
+import { BOTTOM_SHEET_SNAP_POINTS } from "../constants/SnapPoints";
+import { BottomSheetStateEnum } from "../enums/bottomSheetState.enum";
+import { setBottomSheetState } from "../model/BottomSheetStore";
 
-type OrderParamsCb = (prev: OrderParams) => OrderParams
-interface ISetAddress {
-    paymentIcon: any;
-    orderParams: OrderParams;
-    orderPrice?: number;
-    address: { departure: IAddress, arrival: IAddress };
-    setOrderParams: (OrderParamsCb) => void;
-    onPaymentPress: () => void;
-    onDepartureAddressEdit: () => void;
-    onArrivalAddressEdit: () => void;
-    onClearArriveAddress: () => void;
-    onEditDetails: () => void;
-    findTaxi: () => void;
-}
+interface ISetAddress {}
 
-export const SetAddress: React.FC<ISetAddress> = ({ 
-    address,
-    paymentIcon: PaymentIcon,
-    orderParams,
-    orderPrice,
-    setOrderParams,
-    onPaymentPress,
-    onDepartureAddressEdit,
-    onArrivalAddressEdit,
-    onClearArriveAddress,
-    onEditDetails,
-    findTaxi,
+export const SetAddress: React.FC<ISetAddress> = ({
 }) => {
-    const { modalRef, setSnapPoints } = useContext(BottomSheetContext);
-    const { expand, collapse } = useBottomSheet();
-    const { shipDate, activeCarClass, paymentMethod } = orderParams;
+    const { snapToPosition } = useBottomSheet();
+    const [handleSetBottomSheetState] = useUnit([setBottomSheetState]);
+    const [{ order }, handleSetOrder, handleSetOrderDetailsModal] = useUnit([$main, setOrder, setOrderDetailsModal]);
+    const { carClass, date: shipDate, paymentMethod, price } = order;
+
     const [datePickerOpen, setDatePickerOpen] = useState<boolean>(false);
-    const { departure: departureAddress, arrival: arrivalAddress } = address;
+
     const getDepartureAddressButton = () => {
-        if (departureAddress.address === "" || departureAddress.city === "") {
+        if (order.departure.address === "" || order.departure.city === "") {
             return "Откуда едем?";
         }
-        return departureAddress.city + ', ' + departureAddress.address;
+        return order.departure.city + ', ' + order.departure.address;
     }
     const getArrivalAddressButton = () => {
-        if (arrivalAddress.address === "" || arrivalAddress.city === "") {
+        if (order.arrival.address === "" || order.arrival.city === "") {
             return "Куда едем?";
         }
-        return arrivalAddress.city + ', ' + arrivalAddress.address;
+        return order.arrival.city + ', ' + order.arrival.address;
+    }
+
+    const handleOpenOrderDetails = () => {
+        handleSetOrderDetailsModal(true);
     }
 
     useEffect(() => {
-        console.log('Setting snap points');
-        if (Platform.OS === "ios") {
-            setSnapPoints([197, 653]);
-            setTimeout(() => modalRef.current?.snapToPosition(653));
-        }
-        else {
-            setSnapPoints([177, 623]);
-            setTimeout(() => modalRef.current?.snapToPosition(623));
-        };
-        
-        // setTimeout(expand);
+        snapToPosition(BOTTOM_SHEET_SNAP_POINTS[BottomSheetStateEnum.SET_ADDRESS][1]);
+        // new Promise(res => {
+        //     res(null);
+        // })
     }, []);
 
     return(
         <>
             <View style={styles.container}>
                 <View style={styles.address_holder}>
-                    <Button onPress={onDepartureAddressEdit} projectType="address_input">
+                    <Button onPress={() => handleSetBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION)} projectType="address_input">
                         <LocationMarkIcon />
                         <Text 
                             numberOfLines={1}
@@ -83,7 +60,7 @@ export const SetAddress: React.FC<ISetAddress> = ({
                             ellipsizeMode="tail">{getDepartureAddressButton()}</Text>
                         <EditOptionsIcon />
                     </Button>
-                    <Button onPress={onArrivalAddressEdit} projectType="address_input">
+                    <Button onPress={() => handleSetBottomSheetState(BottomSheetStateEnum.SET_ARRIVAL_LOCATION)} projectType="address_input">
                         <ArrowRightPrimaryIcon style={{ marginHorizontal: 8 }} />
                         <Text 
                             numberOfLines={1}
@@ -91,7 +68,7 @@ export const SetAddress: React.FC<ISetAddress> = ({
                             ellipsizeMode="tail">{getArrivalAddressButton()}</Text>
                         <TouchableOpacity onPress={(e) => {
                             e.stopPropagation();
-                            onClearArriveAddress();
+                            handleSetOrder({...order, arrival: { city: "", address: "" }})
                         }}>
                             <CrossIcon style={{ marginHorizontal: 7 }}/>
                         </TouchableOpacity>
@@ -107,8 +84,8 @@ export const SetAddress: React.FC<ISetAddress> = ({
                                 CARS_CLASSES.map(({label, img}, index) => (
                                     <TouchableOpacity 
                                         key={index} 
-                                        onPress={() => setOrderParams(prev => ({...prev, activeCarClass: index}))}
-                                        style={[styles.carClass_item, index === activeCarClass && styles.activeCarClass]}>
+                                        onPress={() => handleSetOrder({...order, carClass: index})}
+                                        style={[styles.carClass_item, index === carClass && styles.activeCarClass]}>
                                             <Image source={img} style={styles.carClass_img}/>
                                             <Text style={styles.carClass_text}>{label}</Text>
                                     </TouchableOpacity>
@@ -121,8 +98,8 @@ export const SetAddress: React.FC<ISetAddress> = ({
                                 CARS_CLASSES.map(({label, img}, index) => (
                                     <TouchableOpacity 
                                         key={index} 
-                                        onPress={() => setOrderParams(prev => ({...prev, activeCarClass: index}))}
-                                        style={[styles.carClass_item, index === activeCarClass && styles.activeCarClass]}>
+                                        onPress={() => handleSetOrder({...order, carClass: index})}
+                                        style={[styles.carClass_item, index === carClass && styles.activeCarClass]}>
                                             <Image source={img} style={styles.carClass_img}/>
                                             <Text style={styles.carClass_text}>{label}</Text>
                                     </TouchableOpacity>
@@ -136,10 +113,10 @@ export const SetAddress: React.FC<ISetAddress> = ({
             <View style={styles.details}>
                 <TouchableOpacity 
                     style={styles.payment_block}
-                    onPress={onPaymentPress}>
+                    onPress={() => handleSetBottomSheetState(BottomSheetStateEnum.DEFINED_PAYMENT_METHOD)}>
                         <Text style={styles.payment_title}>Оплата</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', columnGap: 10, marginVertical: 5 }}>
-                            <PaymentIcon width={25} style={styles.payment_icon}/>
+                            {PAYMENT_METHODS[paymentMethod].Icon}
                             <Text style={[fonts.regular, styles.payment_text]}>{PAYMENT_METHODS[paymentMethod].label}</Text>
                         </View>
                 </TouchableOpacity>
@@ -160,7 +137,7 @@ export const SetAddress: React.FC<ISetAddress> = ({
                     open={datePickerOpen} 
                     onConfirm={(date) => {
                         setDatePickerOpen(false);
-                        setOrderParams(prev => ({...prev, shipDate: date}))
+                        handleSetOrder({...order, date});
                     }}
                     onCancel={() => setDatePickerOpen(false)}
                     confirmText="Выбрать"
@@ -168,13 +145,13 @@ export const SetAddress: React.FC<ISetAddress> = ({
                     title="Выберите дату и время"/>
             </View>
             <View style={styles.price_holder}>
-                <Text style={[fonts.medium, styles.price_text]}>{orderPrice && `Цена: ${orderPrice}р`}</Text>
+                <Text style={[fonts.medium, styles.price_text]}>{price && `Цена: ${price}р`}</Text>
             </View>
             <View style={styles.button_holder}>
-                <Button projectType="secondary" onPress={onEditDetails}>
+                <Button projectType="secondary" onPress={handleOpenOrderDetails}>
                     <Text style={[fonts.medium, styles.secondary_button_text]}>Дополнительно</Text>
                 </Button>
-                <Button projectType="primary" onPress={findTaxi}>
+                <Button projectType="primary" onPress={() => {}}>
                     <Text style={[fonts.medium, styles.primary_button_text]}>Заказать авто</Text>
                 </Button>
             </View>

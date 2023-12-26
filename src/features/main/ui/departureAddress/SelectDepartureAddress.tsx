@@ -1,59 +1,70 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useBottomSheet } from "@gorhom/bottom-sheet";
+import { useUnit } from "effector-react";
+import React, { useEffect } from "react";
+import { Keyboard, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { useKeyboardVisibility } from "src/features/useKeyboardVisibility";
 import { Button } from "src/shared/components/Button";
 import { Input } from "src/shared/components/Input";
 import { BuildingIcon, CrossIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
-import { BottomSheetContext } from "../../context/BottomSheetContext";
+import { BOTTOM_SHEET_SNAP_POINTS } from "../../constants/SnapPoints";
+import { BottomSheetStateEnum } from "../../enums/bottomSheetState.enum";
+import { setBottomSheetState } from "../../model/BottomSheetStore";
+import { $main, setEditingOrder } from "../../model/MainStore";
 
 interface ISelectDepartureAddressProps {
-    snapPosition: number;
-    onClose: () => void;
-    setDepartureAddress: (address: string) => void;
 };
 
-export const SelectDepartureAddress: React.FC<ISelectDepartureAddressProps> = ({ onClose, setDepartureAddress, snapPosition: defaultSnapPosition }) => {
-    const { modalRef, setSnapPoints } = useContext(BottomSheetContext);
-    const [ address, setAddress ] = useState<string>("");
-    const [ snapPosition, setSnapPosition ] = useState<number>(defaultSnapPosition);
-    const isKeyboardVisible = useKeyboardVisibility();
+export const SelectDepartureAddress: React.FC<ISelectDepartureAddressProps> = () => {
+    const { snapToPosition } = useBottomSheet();
+    const [handleSetBottomSheetState] = useUnit([setBottomSheetState]);
+    const [{editingOrder, order}, handleSetEditingOrder] = useUnit([$main, setEditingOrder])
+    const keyboardVisible = useKeyboardVisibility();
+
+    const handleAddressChange = (address: string) => {
+        handleSetEditingOrder({...editingOrder, departure: { ...editingOrder.departure, address }})
+    }
+
+    const handleClose = () => {
+        handleSetEditingOrder({...editingOrder, departure: order.departure});
+        handleSetBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION);
+    }
+
+    const handleApply = () => {
+        handleSetBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION)
+    }
 
     useEffect(() => {
-        if (Platform.OS === "ios") {
-            modalRef.current?.snapToPosition(isKeyboardVisible ? 605 : 285);
-            setSnapPoints(isKeyboardVisible ? [605] : [285]);
-        }
-        else {
-            modalRef.current?.snapToPosition(isKeyboardVisible ? 575 : 255);
-            setSnapPoints(isKeyboardVisible ? [575] : [255]);
-        }
-    }, [isKeyboardVisible]);
+        const snapPoint = BOTTOM_SHEET_SNAP_POINTS[BottomSheetStateEnum.SET_DEPARTURE_ADDRESS][0];
+        snapToPosition(keyboardVisible ? snapPoint + 280 : snapPoint);
+    }, [keyboardVisible]);
 
     return(
         <View style={styles.container}>
             <View style={styles.container_header}>
                 <TouchableOpacity 
-                    onPress={onClose}
+                    onPress={handleClose}
                     style={styles.close_button}>
                         <CrossIcon />
                 </TouchableOpacity>
                 <Text style={[fonts.medium, styles.header_title]}>С какого адреса едем?</Text>
             </View>
-            <View style={styles.body}>
-                <Input
-                    value={address}
-                    onChange={setAddress}
-                    leftIcon={<BuildingIcon />}
-                    placeholder="Адрес"
-                    rightIcon={address !== "" && <CrossIcon width={30} />}
-                    onRightIconPress={() => setAddress("")}/>
-                <View style={styles.button_holder}>
-                    <Button onPress={() => setDepartureAddress(address)} projectType="primary">
-                        <Text style={[fonts.medium, styles.button_text]}>Применить</Text>
-                    </Button>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={styles.body}>
+                    <Input
+                        value={editingOrder.departure.address}
+                        onChange={handleAddressChange}
+                        leftIcon={<BuildingIcon />}
+                        placeholder="Адрес"
+                        rightIcon={editingOrder.departure.address !== "" && <CrossIcon width={30} />}
+                        onRightIconPress={() => handleAddressChange("")}/>
+                    <View style={styles.button_holder}>
+                        <Button onPress={handleApply} projectType="primary">
+                            <Text style={[fonts.medium, styles.button_text]}>Применить</Text>
+                        </Button>
+                    </View>
                 </View>
-            </View>
+            </TouchableWithoutFeedback>
         </View>
     );
 };

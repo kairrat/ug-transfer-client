@@ -1,33 +1,51 @@
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import React, { useContext, useEffect, useState } from "react";
-import { DimensionValue, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useBottomSheet } from "@gorhom/bottom-sheet";
+import { useUnit } from "effector-react";
+import React, { useEffect, useState } from "react";
+import { DimensionValue, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useKeyboardVisibility } from "src/features/useKeyboardVisibility";
 import { Button } from "src/shared/components/Button";
 import { Input } from "src/shared/components/Input";
 import { BuildingIcon, CrossIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
 import { ICity } from "src/types/city";
-import { BottomSheetContext } from "../../context/BottomSheetContext";
+import { BOTTOM_SHEET_SNAP_POINTS } from "../../constants/SnapPoints";
+import { BottomSheetStateEnum } from "../../enums/bottomSheetState.enum";
+import { $bottomSheet, setBottomSheetState, setSnapPoints } from "../../model/BottomSheetStore";
+import { getCities } from "../../model/main-actions";
+import { $main, setEditingOrder } from "../../model/MainStore";
 
-interface ISelectArrivalCityProps {
-    snapPosition: number;
-    onClose: () => void;
-    debounceCb: (city: string) => Promise<ICity[]>;
-    setDepartureCity: (city: string) => void;
-};
+interface ISelectArrivalCityProps {};
 
-export const SelectArrivalCity: React.FC<ISelectArrivalCityProps> = ({ onClose, setDepartureCity, debounceCb, snapPosition: defaultSnapPosition }) => {
-    const { modalRef, setSnapPoints } = useContext(BottomSheetContext);
-    const [ city, setCity ] = useState<string>("");
+export const SelectArrivalCity: React.FC<ISelectArrivalCityProps> = ({}) => {
+    const { snapToPosition } = useBottomSheet();
+    const [{snapPoints}, handleSetSnapPoints, handleSetBottomSheetState] = useUnit([$bottomSheet, setSnapPoints, setBottomSheetState]);
+    const [{order, editingOrder}, handleSetEditingOrder] = useUnit([$main, setEditingOrder]);
     const [ foundCities, setFoundCities ] = useState<ICity[]>([]);
-    const [ snapPosition, setSnapPosition ] = useState<number>(defaultSnapPosition);
-    const isKeyboardVisible = useKeyboardVisibility();
+    const keyboardVisible = useKeyboardVisibility();
+    const [snapPos, setSnapPos] = useState(BOTTOM_SHEET_SNAP_POINTS[BottomSheetStateEnum.SET_ARRIVAL_CITY][0]);
+    const [city, setCity] = useState(editingOrder.arrival.city);
+
+    const handleClose = () => {
+        handleSetEditingOrder({...editingOrder, arrival: order.arrival});
+        handleSetBottomSheetState(BottomSheetStateEnum.SET_ARRIVAL_LOCATION);
+    }
+
+    const handleSelectCity = (selectedCity: string) => {
+        handleSetEditingOrder({...editingOrder, arrival: {...editingOrder.arrival, city: selectedCity}});
+        handleSetBottomSheetState(BottomSheetStateEnum.SET_ARRIVAL_LOCATION);
+
+    }
+
+    const handleApply = () => {
+        handleSetEditingOrder({...editingOrder, arrival: {...editingOrder.arrival, city}});
+        handleSetBottomSheetState(BottomSheetStateEnum.SET_ARRIVAL_LOCATION);
+    }
 
     const handleSearchCities = () => {
         if (city === "") {
             return;
         }
-        debounceCb(city).then((res: ICity[]) => {
+        getCities(city).then((res: ICity[]) => {
             setFoundCities(res);
             console.log(res);
         }).catch(err => {
@@ -36,6 +54,7 @@ export const SelectArrivalCity: React.FC<ISelectArrivalCityProps> = ({ onClose, 
     }
 
     useEffect(() => {
+        console.log(city);
         const getData = setTimeout(handleSearchCities, 2000);
         return () => {
             clearTimeout(getData);
@@ -43,33 +62,28 @@ export const SelectArrivalCity: React.FC<ISelectArrivalCityProps> = ({ onClose, 
     }, [city]);
 
     useEffect(() => {
+        const points = BOTTOM_SHEET_SNAP_POINTS[BottomSheetStateEnum.SET_ARRIVAL_CITY];
+
         if (foundCities.length === 0) {
-            setSnapPoints([defaultSnapPosition]);
-            modalRef.current?.snapToPosition(defaultSnapPosition);
-            setSnapPosition(defaultSnapPosition);
+            snapToPosition(points[0]);
+            handleSetSnapPoints(points);
+            setSnapPos(points[0]);
         }
         else if (foundCities.length > 0 && foundCities.length < 4) {
-            setSnapPoints(['60%']);
-            modalRef.current?.snapToPosition('60%');
-            setSnapPosition(60);
+            snapToPosition(points[0] + 200);
+            handleSetSnapPoints(points.map(pos => pos + 200));
+            setSnapPos(points[0] + 200);
         }
         else {
-            setSnapPoints(['90%']);
-            modalRef.current?.snapToPosition('90%');
-            setSnapPosition(90);
+            snapToPosition(points[0] + 420);
+            handleSetSnapPoints(points.map(pos => pos + 420));
+            setSnapPos(points[0] + 420);
         }
     }, [foundCities]);
 
     useEffect(() => {
-        if (Platform.OS === "ios") {
-            modalRef.current?.snapToPosition(isKeyboardVisible ? 605 : 285);
-            setSnapPoints(isKeyboardVisible ? [605] : [285]);
-        }
-        else {
-            modalRef.current?.snapToPosition(isKeyboardVisible ? 575 : 255);
-            setSnapPoints(isKeyboardVisible ? [575] : [255]);
-        }
-    }, [isKeyboardVisible]);
+        snapToPosition(keyboardVisible ? snapPos + 280 : snapPos);
+    }, [keyboardVisible]);
 
     const handleGetDropdownHeight = (): DimensionValue => {
         if (foundCities.length === 0) {
@@ -85,7 +99,7 @@ export const SelectArrivalCity: React.FC<ISelectArrivalCityProps> = ({ onClose, 
         <View style={styles.container}>
             <View style={styles.container_header}>
                 <TouchableOpacity 
-                    onPress={onClose}
+                    onPress={handleClose}
                     style={styles.close_button}>
                         <CrossIcon />
                 </TouchableOpacity>
@@ -104,7 +118,7 @@ export const SelectArrivalCity: React.FC<ISelectArrivalCityProps> = ({ onClose, 
                         foundCities.length > 0 &&
                         foundCities.map(({ city: foundCity, id }: ICity, i: number) => (
                             <TouchableOpacity 
-                                onPress={() => setDepartureCity(foundCity)}
+                                onPress={() => handleSelectCity(foundCity)}
                                 key={id}
                                 style={i === 0 ? styles.dropdown_item_first : styles.dropdown_item}>
                                     <Text style={[fonts.regular, styles.dropdown_item_text]}>{foundCity}</Text>
@@ -113,7 +127,7 @@ export const SelectArrivalCity: React.FC<ISelectArrivalCityProps> = ({ onClose, 
                     }
                 </ScrollView>
                 <View style={styles.button_holder}>
-                    <Button onPress={() => setDepartureCity(city)} projectType="primary">
+                    <Button onPress={handleApply} projectType="primary">
                         <Text style={[fonts.medium, styles.button_text]}>Применить</Text>
                     </Button>
                 </View>

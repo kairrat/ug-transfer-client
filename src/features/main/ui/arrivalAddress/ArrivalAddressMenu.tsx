@@ -1,49 +1,61 @@
-import React, { useContext } from 'react';
+import { useBottomSheet } from '@gorhom/bottom-sheet';
+import { useUnit } from 'effector-react';
+import React, { useContext, useEffect } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { Button } from 'src/shared/components/Button';
 import { BuildingIcon, CrossIcon, LocationMarkIcon } from 'src/shared/img';
 import { colors, fonts } from 'src/shared/style';
-import { BottomSheetContext } from '../../context/BottomSheetContext';
+import { BottomSheetStateEnum } from '../../enums/bottomSheetState.enum';
+import { setBottomSheetState } from '../../model/BottomSheetStore';
+import { $main, setEditingOrder, setOrder } from '../../model/MainStore';
 
-interface IArriveAddressMenu {
-    onClose: () => void;
-    city: string;
-    address: string;
-    onSelectCity: () => void;
-    onSelectAddress: () => void;
-    onApply: () => void;
-};
+interface IArriveAddressMenu {};
 
-export const ArriveAddressMenu: React.FC<IArriveAddressMenu> = ({ onClose, onSelectCity, onSelectAddress, onApply, city, address }) => {
-    const { modalRef, setSnapPoints } = useContext(BottomSheetContext);
+export const ArriveAddressMenu: React.FC<IArriveAddressMenu> = ({  }) => {
+    const { snapToIndex } = useBottomSheet();
+    const [handleSetBottomSheetState] = useUnit([setBottomSheetState]);
+    const [{ order, editingOrder }, handleSetOrder, handleSetEditingOrder] = useUnit([$main, setOrder, setEditingOrder]);
+
+    const handleApply = () => {
+        handleSetOrder({...order, arrival: editingOrder.arrival});
+        handleSetBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
+    }
+    const handleClose = () => {
+        handleSetEditingOrder({...editingOrder, arrival: order.arrival});
+        handleSetBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
+    }
+    
+    useEffect(() => {
+        snapToIndex(0);
+    }, []);
     return(
         <View style={styles.container}>
             <View style={styles.container_header}>
                 <TouchableOpacity 
-                    onPress={onClose}
+                    onPress={handleClose}
                     style={styles.close_button}>
                         <CrossIcon />
                 </TouchableOpacity>
                 <Text style={[fonts.medium, styles.header_title]}>Куда едем?</Text>
             </View>
             <View style={styles.container_body}>
-                <Button onPress={onSelectCity} projectType="address_input">
+                <Button onPress={() => handleSetBottomSheetState(BottomSheetStateEnum.SET_ARRIVAL_CITY)} projectType="address_input">
                     <BuildingIcon width={25}/>
                     <Text 
                         numberOfLines={1}
                         ellipsizeMode="tail"
-                        style={[fonts.regular, styles.button_text]}>{city || "Выберите город"}</Text>
+                        style={[fonts.regular, styles.button_text]}>{editingOrder.arrival.city || "Выберите город"}</Text>
                 </Button>
-                <Button onPress={onSelectAddress} projectType="address_input">
+                <Button onPress={() => handleSetBottomSheetState(BottomSheetStateEnum.SET_ARRIVAL_ADDRESS)} projectType="address_input">
                     <LocationMarkIcon width={25}/>
                     <Text 
                         numberOfLines={1}
                         ellipsizeMode="tail"
-                        style={[fonts.regular, styles.button_text]}>{address || "Адрес"}</Text>
+                        style={[fonts.regular, styles.button_text]}>{editingOrder.arrival.address || "Адрес"}</Text>
                 </Button>
             </View>
             <View style={styles.buttons_holder}>
-                <Button onPress={onApply} projectType="primary">
+                <Button onPress={handleApply} projectType="primary">
                     <Text style={[fonts.medium, styles.apply_button_text]}>Применить</Text>
                 </Button>
             </View>
@@ -51,7 +63,7 @@ export const ArriveAddressMenu: React.FC<IArriveAddressMenu> = ({ onClose, onSel
     )
 };
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 20
     },

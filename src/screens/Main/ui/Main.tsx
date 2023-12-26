@@ -1,39 +1,44 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { DrawerActions } from "@react-navigation/routers";
-import { FC, useEffect, useRef, useState } from "react";
-import { StyleSheet, SafeAreaView, View, TouchableOpacity, Platform, StatusBar, Image } from "react-native";
+import { FC, useEffect, useRef } from "react";
+import { StyleSheet, View, TouchableOpacity, Platform, Image } from "react-native";
 import { StackScreens } from "src/routes";
 import { MenuIcon, StatusBarBackground } from "src/shared/img";
 import { colors } from "src/shared/style";
-
-import { check, PERMISSIONS, request, RESULTS } from "react-native-permissions";
-import { FindTaxi } from "src/features/main/ui/FindTaxi";
+import { check, PERMISSIONS, RESULTS } from "react-native-permissions";
 import { Map } from "src/features/map";
-import { $gps, GpsEnableModal, setGpsEnabled } from "src/features/gps";
+import { EnableGps, setGpsEnabled } from "src/features/gps";
 import { useUnit } from "effector-react";
+import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { $bottomSheet, setBottomSheetState, setIndex, setSnapPoints } from "src/features/main/model/BottomSheetStore";
+import { BottomSheetStateEnum } from "src/features/main/enums/bottomSheetState.enum";
+import { SetAddress } from "src/features/main/ui/SetAddress";
+import { 
+    SelectArrivalAddress, 
+    SelectDepartureAddress, 
+    DepartureAddressMenu, 
+    ArriveAddressMenu, 
+    SelectArrivalCity, 
+    SelectDepartureCity,
+    Loader,
+    OrderDetails
+} from "src/features/main";
+import { PaymentMethod } from "src/features/main/ui/PaymentMethod";
+import { $main } from "src/features/main/model/MainStore";
+import { getGeocode } from "src/features/map/model/map-actions";
+import { $map, setArrivalLocation, setDepartureLocation } from "src/features/map/model/MapStore";
 
 type MainProps = NativeStackScreenProps<StackScreens, "Main">;
-enum SheetModalStates {
-    LOADING = 'loading',
-    ENABLE_GPS = 'enable_gps',
-    FIND_TAXI = 'find_taxi',
-    ORDER_CAR = 'order_car',
-    ADDITIONAL_INFO = 'additional_info',
-    ACCEPTED = 'accepted',
-    SEARCHING = 'searching',
-    EMPTY = 'empty',
-    PAYMENT_METHOD = 'payment_method'
-}
 
 export const Main: FC<MainProps> = ({ navigation }) => {
-    const [sheetModalState, setSheetModalState] = useState<SheetModalStates>(SheetModalStates.LOADING);
-    const [location, setLocation] = useState({ departure: null, arrival: null, default: { lat: 55.75333, lon: 37.62176 } });
-
-    const [_, handleSetGpsEnabled] = useUnit([$gps, setGpsEnabled])
-
-    const handleLoadSheetModalState = async () => {
-        await handleCheckGpsPermission();
-    }
+    const sheetModalRef = useRef<BottomSheetModal>(null);
+    const [handleSetGpsEnabled] = useUnit([setGpsEnabled])
+    const [
+        { bottomSheetState, index, snapPoints },
+        handleSetBottomSheetState
+    ] = useUnit([$bottomSheet, setBottomSheetState]);
+    const [{orderDetailModal, order}] = useUnit([$main]);
+    const [{arrivalLocation, departureLocation}, handleSetDepartureLocation, handleSetArrivalLocation] = useUnit([$map, setDepartureLocation, setArrivalLocation]);
 
     const handleOpenDrawer = () => {
         navigation.dispatch(DrawerActions.openDrawer());
@@ -42,34 +47,62 @@ export const Main: FC<MainProps> = ({ navigation }) => {
     const handleCheckGpsPermission = async () => {
         try {
             const result = await check(Platform.OS === "android" ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-            if (result !== RESULTS.GRANTED) {
-                handleSetGpsEnabled(true);
-                handleSetFindTaxiState();
+            console.log('Result: ', result);
+            if (result === RESULTS.GRANTED) {
+                setTimeout(() => {
+                    console.log('Time out');
+                    handleSetGpsEnabled(true);
+                    handleSetBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
+                }, 50);
             }
             else {
-                handleSetEnableGpsState();
+                handleSetBottomSheetState(BottomSheetStateEnum.ENABLE_GPS);
+                sheetModalRef.current?.snapToIndex(0);
             }
             
         } catch (err) {
-            setSheetModalState(SheetModalStates.ENABLE_GPS);
+            handleSetBottomSheetState(BottomSheetStateEnum.ENABLE_GPS);
         }
     }
 
-    const handleSetFindTaxiState = () => {
-        setSheetModalState(SheetModalStates.FIND_TAXI);
-    }
-
-    const handleSetEnableGpsState = () => {
-        setSheetModalState(SheetModalStates.ENABLE_GPS);
-    }
-
-    const handleClearArrivalLocation = () => {
-        setLocation(prev => ({...prev, arrival: null}));
-    }
+    useEffect(() => {
+        handleCheckGpsPermission();
+    }, []);
 
     useEffect(() => {
-        handleLoadSheetModalState();
-    }, []);
+        // Получение геокода адреса отправной точки, если заполнены данные
+        if (order.departure.city && order.departure.address) {
+            getGeocode(`${order.departure.city},${order.departure.address}`).then((res: any) => {
+                const points = res.response?.GeoObjectCollection?.featureMember[0]?.GeoObject?.Point?.pos;
+                if (points) {
+                    const lat = parseFloat(points.split(' ')[1]);
+                    const lon = parseFloat(points.split(' ')[0]);
+                    
+                    handleSetArrivalLocation({lon, lat});
+                }
+            }).catch(err => console.error('Failed to get geocode of departure address: ', err))
+        }
+        // Получение геокода адреса конечной точки, если заполнены данные
+        if (order.arrival.city && order.arrival.address) {
+            getGeocode(`${order.arrival.city},${order.arrival.address}`).then((res: any) => {
+                const points = res.response?.GeoObjectCollection?.featureMember[0]?.GeoObject?.Point?.pos;
+                if (points) {
+                    const lat = parseFloat(points.split(' ')[1]);
+                    const lon = parseFloat(points.split(' ')[0]);
+                    
+                    handleSetDepartureLocation({lon, lat});
+                }
+            }).catch(err => console.error('Failed to get geocode of arrival address: ', err))
+        }
+        
+        // Чистка геокода адресов, если адреса были очищены
+        if ((!order.arrival.city || !order.arrival.address) && (arrivalLocation || arrivalLocation)) {
+            handleSetArrivalLocation({ lon: null, lat: null});
+        }
+        if ((!order.departure.city || !order.departure.address) && (departureLocation || departureLocation)) {
+            handleSetDepartureLocation({ lon: null, lat: null});
+        }
+    }, [order.arrival, order.departure]);
 
     return(
         <View style={styles.layout}>
@@ -84,16 +117,64 @@ export const Main: FC<MainProps> = ({ navigation }) => {
                     <MenuIcon />
                 </TouchableOpacity>
             </View>
-            <Map location={location} clearPrice={() => {}} setPrice={(distance) => {}}/>
+            <Map />
+            <BottomSheet
+                ref={sheetModalRef}
+                index={index}
+                snapPoints={snapPoints}
+                backgroundStyle={styles.bottomSheetBackground}
+                handleIndicatorStyle={styles.bottomSheetHandleIndicator}
+                enableContentPanningGesture={false}
+                enableHandlePanningGesture={true}
+                onChange={(e) => {
+                    e === -1 && sheetModalRef.current?.snapToIndex(0);
+                    console.log( e);
+                }}>
+
+                    {
+                        bottomSheetState === BottomSheetStateEnum.LOADING &&
+                        <Loader />
+                    }
+                    {
+                        bottomSheetState === BottomSheetStateEnum.ENABLE_GPS &&
+                        <EnableGps />
+                    }
+                    {
+                        bottomSheetState === BottomSheetStateEnum.SET_ADDRESS &&
+                        <SetAddress />
+                    }
+                    {
+                        bottomSheetState === BottomSheetStateEnum.SET_DEPARTURE_LOCATION &&
+                        <DepartureAddressMenu />
+                    }
+                    {
+                        bottomSheetState === BottomSheetStateEnum.SET_DEPARTURE_CITY &&
+                        <SelectDepartureCity/>
+                    }
+                    {
+                        bottomSheetState === BottomSheetStateEnum.SET_DEPARTURE_ADDRESS &&
+                        <SelectDepartureAddress />
+                    }
+                    {
+                        bottomSheetState === BottomSheetStateEnum.SET_ARRIVAL_LOCATION &&
+                        <ArriveAddressMenu />   
+                    }
+                    {
+                        bottomSheetState === BottomSheetStateEnum.SET_ARRIVAL_CITY &&
+                        <SelectArrivalCity/>
+                    }
+                    {
+                        bottomSheetState === BottomSheetStateEnum.SET_ARRIVAL_ADDRESS &&
+                        <SelectArrivalAddress />
+                    }
+                    {
+                        bottomSheetState === BottomSheetStateEnum.DEFINED_PAYMENT_METHOD &&
+                        <PaymentMethod />
+                    }
+            </BottomSheet>
             {
-                sheetModalState === SheetModalStates.ENABLE_GPS &&
-                <GpsEnableModal setFindTaxiState={handleSetFindTaxiState} />
-            }
-            {
-                sheetModalState === SheetModalStates.FIND_TAXI &&
-                <FindTaxi
-                    setLocation={setLocation}
-                    onClearArrivalAddress={handleClearArrivalLocation}/>
+                orderDetailModal && 
+                <OrderDetails />
             }
         </View>
     );
@@ -102,7 +183,7 @@ export const Main: FC<MainProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
     layout: {
         flex: 1,
-        backgroundColor: colors.background,
+        backgroundColor: colors.white,
         position: "relative"
     },
     status_bar: {
@@ -124,5 +205,11 @@ const styles = StyleSheet.create({
         backgroundColor: colors.black,
         borderRadius: 12
     },
-    
+    bottomSheetBackground: {
+        backgroundColor: colors.background
+    },
+    bottomSheetHandleIndicator: {
+        width: '10%',
+        backgroundColor: colors.opacity
+    },
 });

@@ -1,29 +1,31 @@
-import React, { useContext, useEffect } from "react";
-import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Input } from "src/shared/components/Input";
+import React, { useEffect } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { CheckedGreenIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
 import { PAYMENT_METHODS } from "../model/constants";
 import { PaymentMethodEnum } from "../types/paymentMethod.enum";
-import { BottomSheetContext } from "../context/BottomSheetContext";
+import { useBottomSheet } from "@gorhom/bottom-sheet";
+import { useUnit } from "effector-react";
+import { $main, setOrder } from "../model/MainStore";
+import { setBottomSheetState } from "../model/BottomSheetStore";
+import { BottomSheetStateEnum } from "../enums/bottomSheetState.enum";
 
-interface IPaymentMethodProps {
-    value: PaymentMethodEnum | null;
-    onChange: (method: PaymentMethodEnum) => void;
-}
+interface IPaymentMethodProps {};
 
-export const PaymentMethod: React.FC<IPaymentMethodProps> = ({ value: paymentValue, onChange }) => {
-    const { modalRef, setSnapPoints } = useContext(BottomSheetContext);
+export const PaymentMethod: React.FC<IPaymentMethodProps> = () => {
+    const { snapToIndex } = useBottomSheet();
+    const [{order}, handleSetOrder] = useUnit([$main, setOrder]);
+    const handleSetBottomSheetstate = useUnit(setBottomSheetState);
+
+    const handleSelectMethod = (method: PaymentMethodEnum) => {
+        handleSetOrder({...order, paymentMethod: method});
+        handleSetBottomSheetstate(BottomSheetStateEnum.SET_ADDRESS);
+    }
+
     useEffect(() => {
-        if (Platform.OS === "ios") {
-            setSnapPoints([325]);
-            modalRef.current.snapToPosition(325);
-        }
-        else {
-            setSnapPoints([295]);
-            modalRef.current.snapToPosition(295);
-        }
+        snapToIndex(0);
     }, []);
+
     return (
         <View style={styles.container}>
             <Text style={[fonts.medium, styles.title]}>Споспоб оплаты</Text>
@@ -31,15 +33,15 @@ export const PaymentMethod: React.FC<IPaymentMethodProps> = ({ value: paymentVal
                 {
                     Object.keys(PAYMENT_METHODS).map((key: string, index) => {
                         const method: PaymentMethodEnum = key as PaymentMethodEnum;
-                        const Icon = PAYMENT_METHODS[method]['Icon'];
+                        const icon = PAYMENT_METHODS[method].Icon;
                         return (
                         <View key={index} style={styles.method}>
-                            <TouchableOpacity style={styles.method_item_holder} onPress={() => onChange(method)}>
-                                <Icon width={25}/>
+                            <TouchableOpacity style={styles.method_item_holder} onPress={() => handleSelectMethod(method)}>
+                                {icon}
                                 <Text style={[fonts.regular, styles.method_text]}>{PAYMENT_METHODS[method].label}</Text>
                             </TouchableOpacity>
                             {
-                                paymentValue === key &&
+                                order.paymentMethod === key &&
                                 <CheckedGreenIcon height={20}/>
                             }
                         </View>

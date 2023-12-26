@@ -10,6 +10,6 @@ export const CARS_CLASSES = [
 ];
 
 export const PAYMENT_METHODS = {
-    [PaymentMethodEnum.CASH]: { label: "Наличные", Icon: WhiteWalletIcon },
-    [PaymentMethodEnum.CARD]: { label: "Перевод", Icon: WhiteCreditCardIcon },
+    [PaymentMethodEnum.CASH]: { label: "Наличные", Icon: <WhiteWalletIcon width={25} /> },
+    [PaymentMethodEnum.CARD]: { label: "Перевод", Icon: <WhiteCreditCardIcon width={25} /> },
 }

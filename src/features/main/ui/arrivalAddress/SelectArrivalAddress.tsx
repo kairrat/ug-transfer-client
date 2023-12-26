@@ -1,40 +1,49 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Button } from "src/shared/components/Button";
 import { Input } from "src/shared/components/Input";
 import { BuildingIcon, CrossIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
 import { useKeyboardVisibility } from "src/features/useKeyboardVisibility";
-import { BottomSheetContext } from "../../context/BottomSheetContext";
+import { useBottomSheet } from "@gorhom/bottom-sheet";
+import { BOTTOM_SHEET_SNAP_POINTS } from "../../constants/SnapPoints";
+import { BottomSheetStateEnum } from "../../enums/bottomSheetState.enum";
+import { useUnit } from "effector-react";
+import { $main, setEditingOrder } from "../../model/MainStore";
+import { setBottomSheetState } from "../../model/BottomSheetStore";
 
 interface ISelectArrivalAddressProps {
-    snapPosition: number;
-    onClose: () => void;
-    setDepartureAddress: (address: string) => void;
 };
 
-export const SelectArrivalAddress: React.FC<ISelectArrivalAddressProps> = ({ onClose, setDepartureAddress, snapPosition: defaultSnapPosition }) => {
-    const { modalRef, setSnapPoints } = useContext(BottomSheetContext);
-    const [ address, setAddress ] = useState<string>("");
-    const isKeyboardVisible = useKeyboardVisibility();
-    const [ snapPosition, setSnapPosition ] = useState<number>(defaultSnapPosition);
+export const SelectArrivalAddress: React.FC<ISelectArrivalAddressProps> = ({}) => {
+    const { snapToPosition } = useBottomSheet();
+    const [handleSetBottomSheetState] = useUnit([setBottomSheetState]);
+    const [{editingOrder, order}, handleSetEditingOrder] = useUnit([$main, setEditingOrder])
+    const keyboardVisible = useKeyboardVisibility();
+
+    const handleAddressChange = (address: string) => {
+        handleSetEditingOrder({...editingOrder, arrival: { ...editingOrder.arrival, address }})
+    }
+
+    const handleClose = () => {
+        handleSetEditingOrder({...editingOrder, arrival: order.arrival});
+        handleSetBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION)
+    }
+
+    const handleApply = () => {
+        handleSetBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION)
+    }
 
     useEffect(() => {
-        if (Platform.OS === "ios") {
-            modalRef.current?.snapToPosition(isKeyboardVisible ? 605 : 285);
-            setSnapPoints(isKeyboardVisible ? [605] : [285]);
-        }
-        else {
-            modalRef.current?.snapToPosition(isKeyboardVisible ? 575 : 255);
-            setSnapPoints(isKeyboardVisible ? [575] : [255]);
-        }
-    }, [isKeyboardVisible]);
+        const snapPoint = BOTTOM_SHEET_SNAP_POINTS[BottomSheetStateEnum.SET_ARRIVAL_ADDRESS][0];
+        snapToPosition(keyboardVisible ? snapPoint + 280 : snapPoint);
+    }, [keyboardVisible]);
 
     return(
         <View style={styles.container}>
             <View style={styles.container_header}>
                 <TouchableOpacity 
-                    onPress={onClose}
+                    onPress={handleClose}
                     style={styles.close_button}>
                         <CrossIcon />
                 </TouchableOpacity>
@@ -42,14 +51,14 @@ export const SelectArrivalAddress: React.FC<ISelectArrivalAddressProps> = ({ onC
             </View>
             <View style={styles.body}>
                 <Input
-                    value={address}
-                    onChange={setAddress}
+                    value={editingOrder.arrival.address}
+                    onChange={handleAddressChange}
                     leftIcon={<BuildingIcon />}
                     placeholder="Адрес"
-                    rightIcon={address !== "" && <CrossIcon width={30} />}
-                    onRightIconPress={() => setAddress("")}/>
+                    rightIcon={editingOrder.arrival.address !== "" && <CrossIcon width={30} />}
+                    onRightIconPress={() => handleAddressChange("")}/>
                 <View style={styles.button_holder}>
-                    <Button onPress={() => setDepartureAddress(address)} projectType="primary">
+                    <Button onPress={handleApply} projectType="primary">
                         <Text style={[fonts.medium, styles.button_text]}>Применить</Text>
                     </Button>
                 </View>

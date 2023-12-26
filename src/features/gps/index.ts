@@ -1,8 +1,8 @@
 import { $gps, setGpsEnabled } from './model/GpsStore';
-import { GpsEnableModal } from './ui/GpsEnableModal';
+import { EnableGps } from './ui/EnableGps';
 
 export {
     $gps,
     setGpsEnabled,
-    GpsEnableModal
+    EnableGps
 };

@@ -15,18 +15,18 @@ export const Init: React.FC<InitProps> = ({ navigation }) => {
     const handleSetProfile = useEvent(setProfile);
     const handleCheckAuth = async () => {
         navigation.navigate("Main");
-        const token = await AsyncStorage.getItem(AsyncStorageKeys.TOKEN);
-        if (!token) {
-            return navigation.navigate("Auth");
-        }
-        try {
-            const profile: Profile = await getProfile();
-            console.log('Profile: ', profile);
-            handleSetProfile(profile);
-        } catch (err) {
-            return navigation.navigate("Auth");
-        }
-        return navigation.navigate("Main");
+        // const token = await AsyncStorage.getItem(AsyncStorageKeys.TOKEN);
+        // if (!token) {
+        //     return navigation.navigate("Auth");
+        // }
+        // try {
+        //     const profile: Profile = await getProfile();
+        //     console.log('Profile: ', profile);
+        //     handleSetProfile(profile);
+        // } catch (err) {
+        //     return navigation.navigate("Auth");
+        // }
+        // return navigation.navigate("Main");
     }
     useEffect(() => {
         handleCheckAuth();
