@@ -7,9 +7,7 @@ export interface IGetSubscriptionTypes {
 export interface ISubscriptionType {
   _id: string;
   type: UserRoleBackend;
-  price: {
-    $numberDecimal: string;
-  };
+  price: number;
   description: string;
   __v: number;
 }

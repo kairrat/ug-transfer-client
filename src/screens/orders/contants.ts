@@ -1,6 +1,6 @@
 export const orders: Order[] = [
   {
-    id: "12212",
+    _id: "12212",
     date: "12.12.2023",
     time: "14:21",
     from: "г.Токио",
@@ -21,7 +21,22 @@ export const orders: Order[] = [
     clientNumber: "+48571210247",
   },
   {
-    id: "312313213",
+    _id: "312313213",
+    date: "12.12.2023",
+    time: "14:21",
+    from: "г.Токио",
+    to: "г.Киото",
+    fromStreet: "пр.Науки 34, д45",
+    toStreet: "ул.Маккейна 23, д13",
+    type: "Бизнес",
+    discount: 1500,
+    price: 25000,
+    aditionalInfo: [],
+
+    clientNumber: "+48571210247",
+  },
+  {
+    _id: "4321432143",
     date: "12.12.2023",
     time: "14:21",
     from: "г.Токио",

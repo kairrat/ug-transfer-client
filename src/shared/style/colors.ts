@@ -1,5 +1,6 @@
 export const colors = {
   black: "#000000",
+  board: "#1C1C1C",
   white: "#FFFFFF",
   primary: "#FFE922",
   field: "#232323",

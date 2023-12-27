@@ -2,12 +2,11 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { StackScreens } from "../../../routes/types/StackScreens";
-import { ScreenHeader } from "../../../shared/components/screenHeader";
 import { colors, fonts } from "../../../shared/style";
 import ArrowLeft from '@assets/img/arrowLeft.svg';
 import { useNavigation } from "@react-navigation/core";
 import { RemindContent } from "./RemindContent";
-import { Button } from "../../../shared/components";
+import { Button, ScreenHeader } from "../../../shared/components";
 
 type SubscribeRemindProps = NativeStackScreenProps<StackScreens, "SubscribeRemind">;
 

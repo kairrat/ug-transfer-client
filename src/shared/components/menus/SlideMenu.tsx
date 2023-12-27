@@ -2,13 +2,14 @@ import React from "react";
 import { DrawerContentScrollView } from "@react-navigation/drawer";
 import { Platform, StyleSheet } from "react-native";
 import { colors } from "@styles";
+// @ts-ignore
 import ProfileIcon from "@assets/img/profile.svg";
 import { MenuProfileItem } from "./MenuProfileItem";
 import { MenuItem } from "./MenuItem";
 import { menuItems } from "./contants";
 import { useNavigation } from "@react-navigation/native";
 import { useStore } from "effector-react";
-import { $profile } from "../../../fearures/create-profile/models/Profile";
+import { $profile } from "../../../features/create-profile/models/Profile";
 
 export const SlideMenu = () => {
   const navigation = useNavigation<any>();

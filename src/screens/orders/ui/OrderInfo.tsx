@@ -1,11 +1,20 @@
 import React from "react";
 import { Text, View } from "react-native";
+//@ts-ignore
 import DiscountIcon from "@assets/img/discount.svg";
-import WalletIcon from "@assets/img/wallet.svg";
 import { Car } from "../../../shared/components/icons/Car";
 import { colors, fonts } from "../../../shared/style";
+import { WalletIcon } from 'src/shared/components/icons/Wallet';
 
-export const OrderInfo = ({ aditionalInfo, type, discount, price }: Order) => {
+type OrderInfoProps = {
+  aditionalInfo?: string[];
+  type?: string;
+  discount?: number;
+  price?: number;
+  urgent?: boolean;
+}
+
+export const OrderInfo = ({ aditionalInfo, type, discount, price, urgent=false }: OrderInfoProps) => {
   return (
     <View
       style={{
@@ -20,13 +29,13 @@ export const OrderInfo = ({ aditionalInfo, type, discount, price }: Order) => {
         </View>
         <View style={{ flexDirection: "row", gap: 13, alignItems: "center" }}>
           <DiscountIcon />
-          <Text style={[fonts.text, { color: colors.opacity }]}>
+          <Text style={[fonts.text, { color:  colors.opacity }]}>
             {discount} р
           </Text>
         </View>
         <View style={{ flexDirection: "row", gap: 13, alignItems: "center" }}>
-          <WalletIcon />
-          <Text style={[fonts.text, { color: colors.primary }]}>{price} р</Text>
+          <WalletIcon color={urgent ? colors.green : colors.primary}/>
+          <Text style={[fonts.text, { color: urgent ? colors.green : colors.primary }]}>{price} р</Text>
         </View>
       </View>
       <View

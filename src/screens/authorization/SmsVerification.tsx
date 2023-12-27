@@ -5,14 +5,14 @@ import { SendCode } from "./ui/SendCode";
 import { useEvent, useStore } from "effector-react";
 import { $authorization } from "./models/Authorization";
 import {
-  AsyncStorakeKeys,
+  AsyncStorageKeys,
   AuthorizationType,
 } from "../../app/types/authorization";
 import { CheckCode } from "./ui/CheckCode";
 import { useNavigation } from "@react-navigation/native";
 import { sendCheckCode, verifyCode } from "./authorization-actions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { setProfileData } from "../../fearures/create-profile/models/Profile";
+import { setProfileData } from "../../features/create-profile/models/Profile";
 import { UserRole, UserRoleBackend } from "../../types/role";
 
 interface SmsVerificationProps
@@ -40,19 +40,21 @@ export const SmsVerification: React.FC<SmsVerificationProps> =
 
     const handleCodeConfirm = async (code: string) => {
       const data = await verifyCode(phone, code);
+      console.log(data);
       if (!data) {
         setIsCodeCorrect(false);
         return;
       }
       const {
         token,
-        user_data: { subscription_status },
+        user_data: { subscription_status, ...user_data },
       } = data;
-      await AsyncStorage.setItem(AsyncStorakeKeys.TOKEN, token);
-      handleProfileData({ phone, subscriptionStatus: subscription_status });
+      await AsyncStorage.setItem(AsyncStorageKeys.TOKEN, token);
+      handleProfileData({ phone, subscriptionStatus: subscription_status, ...user_data });
       if (!subscription_status) {
         navigation.navigate("Subscription", { subscription_status });
       }
+      navigation.navigate("Orders");
     };
 
     const handleResendCode = () => {

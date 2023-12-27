@@ -6,6 +6,7 @@ import {
   Animated,
   BackHandler,
   Dimensions,
+  FlatList,
   SafeAreaView,
   ScrollView,
   Text,
@@ -20,11 +21,12 @@ import { TabView } from "react-native-tab-view";
 import { OrdersTabs } from "./ui/OrdersTabs";
 import { BottomMenu } from "@components/bottomMenu/BottomMenu";
 import { useEvent, useStore } from "effector-react";
-import { $profile, setProfileData } from "../../fearures/create-profile/models/Profile";
+import { $profile, setProfileData } from "../../features/create-profile/models/Profile";
 import { SubRole, UserRole } from "../../types/role";
 import { useIsFocused } from "@react-navigation/native";
 import DringendOrders from "@screens/orders/ui/DringendOrders";
 import { orders } from "./contants";
+import { RefreshControl } from "react-native-gesture-handler";
 
 type CompProps = NativeStackScreenProps<StackScreens, "Orders">;
 const { width } = Dimensions.get("window");
@@ -39,6 +41,12 @@ export const OrdersScreen: React.FC<CompProps> = function OrdersScreen({
     { key: "third", title: "Активные" },
     { key: "fourth", title: "Архив" },
   ]);
+  const [ refreshing, setRefreshing ] = useState({
+    first: false, // need to rename to urgent
+    second: false, // need to rename to common
+    third: false, // need to rename to active
+    fourth: false // need to rename to archive
+  });
   const {
     data,
     data: { role = UserRole.DRIVERCONTROLLER, subRole = SubRole.CONTROLLER },
@@ -60,6 +68,10 @@ export const OrdersScreen: React.FC<CompProps> = function OrdersScreen({
     setIndex(indexValue);
     animate(indexValue);
   };
+
+  const handleUpdateOrders = (route) => {
+    console.log('Refreshing');
+  }
 
   const renderScene = ({ route }) => {
     switch (route.key) {
@@ -111,6 +123,7 @@ export const OrdersScreen: React.FC<CompProps> = function OrdersScreen({
       backHandler.remove();
     };
   }, [isFocused]);
+  
   return (
     <>
       <SafeAreaView
@@ -124,14 +137,7 @@ export const OrdersScreen: React.FC<CompProps> = function OrdersScreen({
         <Animated.View style={{ flex: 1, paddingTop: "1%" }}>
           <TabView
             navigationState={{ index, routes }}
-            renderScene={(route) => (
-              <ScrollView
-                style={{ flex: 1 }}
-                contentContainerStyle={{ paddingBottom: 100, flex: orders?.length > 0 ? 0 : 1}}
-              >
-                {renderScene(route)}
-              </ScrollView>
-            )}
+            renderScene={(route) => renderScene(route)}
             initialLayout={{ width }}
             renderTabBar={(props) => (
               <OrdersTabs

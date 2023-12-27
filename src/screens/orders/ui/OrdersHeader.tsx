@@ -4,7 +4,7 @@ import WalletIcon from "@assets/img/wallet.svg";
 import { colors, fonts } from "../../../shared/style";
 import MenuIcon from "@assets/img/menu.svg";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
-import { $wallet } from "../../../fearures/wallet";
+import { $wallet } from "../../../features/wallet";
 import { useStore } from "effector-react";
 
 interface CompProps {
@@ -36,7 +36,7 @@ export const OrdersHeader = ({ title }: CompProps) => {
           <MenuIcon />
         </TouchableOpacity>
 
-        <Text style={[fonts.text_semiBold, { color: colors.white }]}>
+        <Text style={[, { color: colors.white, fontSize: 16, fontWeight: "500" }]}>
           {title}
         </Text>
       </View>
@@ -46,13 +46,13 @@ export const OrdersHeader = ({ title }: CompProps) => {
           onPress={handleMoveToWallet}
           style={{ flexDirection: "row", alignItems: "center" }}
         >
-          <Text style={{ color: colors.primary, fontSize: 30 }}>+</Text>
-          <WalletIcon />
+          <Text style={{ color: colors.primary, fontSize: 24 }}>+</Text>
+          <WalletIcon width={20}/>
         </TouchableOpacity>
 
         <Text
           style={[
-            fonts.text,
+            fonts.info,
             { color: colors.primary, position: "relative", top: 2 },
           ]}
         >

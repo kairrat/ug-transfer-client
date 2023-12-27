@@ -7,8 +7,10 @@ import {
   TouchableOpacity,
   View,
   ViewStyle,
+  TextStyle
 } from "react-native";
 import { sharedStyles, colors } from "@styles";
+import { FieldError } from "react-hook-form";
 
 interface CompProps {
   value: string;
@@ -17,9 +19,14 @@ interface CompProps {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   containerStyle?: StyleProp<ViewStyle>;
+  inputStyle?: StyleProp<TextStyle>;
   onChangeText: (text: string) => void;
   onPressLeftIcon?: () => void;
   onPressRightIcon?: () => void;
+  error?: FieldError;
+  type?: string;
+  multiline?: boolean;
+  numberOfLines?: number;
 }
 
 export const Input = ({
@@ -29,9 +36,14 @@ export const Input = ({
   rightIcon,
   keyboardType = "default",
   containerStyle,
+  error=null,
   onChangeText,
   onPressLeftIcon,
   onPressRightIcon,
+  type="default",
+  multiline = false,
+  numberOfLines = 1,
+  inputStyle
 }: CompProps) => {
   const calculatedStyles = () => {
     return {
@@ -48,6 +60,9 @@ export const Input = ({
           compStyles.inputWrapper,
           containerStyle,
           calculatedStyles(),
+          {
+            borderColor: error ? colors.error : colors.stroke,
+          }
         ]}
       >
         {leftIcon && (
@@ -65,7 +80,9 @@ export const Input = ({
           placeholder={placeholder}
           placeholderTextColor={colors.opacity}
           selectionColor={colors.white}
-          style={[compStyles.input, sharedStyles.flex]}
+          style={[compStyles.input, sharedStyles.flex, inputStyle]}
+          multiline={multiline}
+          numberOfLines={numberOfLines}
         />
         {rightIcon && (
           <TouchableOpacity
@@ -88,9 +105,8 @@ const compStyles = StyleSheet.create({
   inputWrapper: {
     alignItems: "center",
     backgroundColor: colors.field,
-    paddingVertical: 15,
+    paddingVertical: 12,
     borderWidth: 1,
-    borderColor: colors.stroke,
     borderRadius: 7,
   },
   input: {

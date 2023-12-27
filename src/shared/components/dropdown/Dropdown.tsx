@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
 import { colors, fonts } from "@styles";
+import { FieldError } from "react-hook-form";
 
 interface CopmProps {
   list: any[];
@@ -11,6 +12,7 @@ interface CopmProps {
   zIndex?: number;
   name?: string;
   openDropdown?: string;
+  error?: FieldError;
   setOpenName?: (name: string) => void;
   setCurrentValue: (value: any) => void;
 }
@@ -24,6 +26,7 @@ export const Dropdown = ({
   icon=false,
   openDropdown,
   setOpenName,
+  error=null,
   name,
   zIndex=1000
 }: CopmProps) => {
@@ -46,6 +49,16 @@ export const Dropdown = ({
     }
   }, [openDropdown, name]);
 
+  const getBorderColor = () =>{
+    if (error) {
+      return colors.error;
+    }
+    if (open) {
+      return colors.line;
+    }
+    return colors.stroke;
+  }
+
   return (
     <DropDownPicker
       dropDownContainerStyle={{
@@ -59,7 +72,7 @@ export const Dropdown = ({
         backgroundColor: colors.field,
         borderWidth: open ? 1 : 1,
         paddingStart: icon ? '15%' : 16,
-        borderColor: open ? colors.line : colors.stroke,
+        borderColor: getBorderColor(),
       }}
       arrowIconStyle={{
         width: 24,

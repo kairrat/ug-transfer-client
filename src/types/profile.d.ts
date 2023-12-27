@@ -14,5 +14,11 @@ interface Profile {
   tariffId?: string;
   role?: UserRole;
   subRole?: SubRole;
+  avatar?: stirng;
   registrationComplete?: boolean;
+  subscription_status?: boolean;
+  telegram?: string;
+  urgentOrderSubscriber?: boolean;
+  carPhotoArray?: string[];
+  passportArray?: string[];
 }

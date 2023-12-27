@@ -1,7 +1,9 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+// @ts-ignore
 import SettingsIcon from "@assets/img/settings.svg";
 import { colors, fonts } from "@styles";
+// @ts-ignore
 import EditIcon from '@assets/img/edit.svg';
 import Svg from "react-native-svg";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -9,7 +11,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 const FilterButton = ({onPress}) => {
   return (
     <TouchableOpacity 
-      style={{ borderWidth: 1, borderColor: colors.stroke, borderRadius: 7, padding: 10, flexDirection: 'row', justifyContent: 'space-between',  alignItems: 'center' }}
+      style={styles.container}
       onPress={onPress}>
         <View style={{ flexDirection: 'row', alignItems: 'center'}}>
           <View style={{ marginRight: 17 }}>
@@ -25,3 +27,17 @@ const FilterButton = ({onPress}) => {
 };
 
 export default FilterButton;
+
+const styles = StyleSheet.create({
+  container: { 
+    borderWidth: 1, 
+    borderColor: 
+    colors.stroke, 
+    borderRadius: 7, 
+    padding: 10, 
+    flexDirection: 'row', 
+    justifyContent: 'space-between',  
+    alignItems: 'center',
+    marginBottom: 5
+  }
+});

@@ -15,9 +15,12 @@ import { StackScreens } from "src/routes/types/StackScreens";
 const { width, height } = Dimensions.get("window");
 type CompProps = NativeStackScreenProps<StackScreens, "PrivacyPolicy">;
 const fontScale = (size) => size * Platform.select({ ios: 1, android: 1.2 });
+
 export const PrivacyPolicy: React.FC<CompProps> = function PrivacyPolicyScreen({
   navigation,
+  route
 }) {
+  const params = route?.params;
   const hanldeConfirmPress = () => {
     navigation.navigate("SmsVerification");
   };
@@ -132,11 +135,14 @@ export const PrivacyPolicy: React.FC<CompProps> = function PrivacyPolicyScreen({
           textColor={colors.white}
           onPress={handleBackNavigation}
         />
-        <PrimaryButton
-          text="Соглашаюсь"
-          onPress={hanldeConfirmPress}
-          paddingVertical={Math.floor(height * 0.01)}
-        />
+        {
+          !params?.fromProfile &&
+          <PrimaryButton
+            text="Соглашаюсь"
+            onPress={hanldeConfirmPress}
+            paddingVertical={Math.floor(height * 0.01)}
+          />
+        }
       </View>
     </View>
   );

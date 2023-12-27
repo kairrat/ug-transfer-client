@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Platform, StyleSheet, Text, View } from "react-native";
 import { colors } from "../../style";
+// @ts-ignore
 import Calendar from '@assets/img/calendar.svg';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -9,10 +10,12 @@ type DatepickerProps = {
     value: Date | null,
     onChangeDate: (newValue: Date) => void,
     placeholder: string,
-    projectType?: string
+    projectType?: string,
+    calendarIcon?: boolean;
+    error?: any;
 }
 
-export const Datepicker: React.FC<DatepickerProps> = ({value, onChangeDate, placeholder, projectType = "default"}) => {
+export const Datepicker: React.FC<DatepickerProps> = ({value, onChangeDate, placeholder, projectType = "default", calendarIcon=true, error}) => {
     const [date, setDate] = useState(value || new Date());
     const [show, setShow] = useState<boolean>(false);
     const [text, setText] = useState<string>(placeholder);
@@ -40,10 +43,13 @@ export const Datepicker: React.FC<DatepickerProps> = ({value, onChangeDate, plac
     return (
         <>
             <TouchableOpacity 
-                style={styles[`${projectType}_holder`]}
+                style={[styles[`${projectType}_holder`], {borderColor: error ? colors.error : styles[`${projectType}_holder`]['borderColor']}]}
                 onPress={handlePressButton}
             >
-                <Calendar />
+                {
+                    calendarIcon &&
+                    <Calendar />
+                }
                 <Text
                     style={styles[`${projectType}_placeholder`]}>{text}</Text>
             </TouchableOpacity>
@@ -75,6 +81,22 @@ const styles = StyleSheet.create({
         minWidth: 160,
     },
     default_placeholder: {
+        color: colors.opacity
+    },
+    ad_banner_holder: {
+        backgroundColor: colors.gray,
+        borderWidth: 1,
+        borderRadius: 7,
+        borderColor: colors.stroke,
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        marginVertical: 5,
+        flexDirection: 'row',
+        alignItems: 'center',
+        columnGap: 10,
+        minWidth: 120,
+    },
+    ad_banner_placeholder: {
         color: colors.opacity
     }
 });

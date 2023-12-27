@@ -3,7 +3,9 @@ import { UserRole } from "../../types/role";
 export type StackScreens = {
   Init: undefined;
   AuthenticationChoice: undefined;
-  PrivacyPolicy: undefined;
+  PrivacyPolicy: {
+    fromProfile: boolean;
+  };
   SmsVerification: undefined;
   Subscription: {
     subscription_status: boolean;
@@ -28,6 +30,9 @@ export type StackScreens = {
   AuthorizationComplete: undefined;
   Wallet: undefined;
   Profile: undefined;
+  EditProfile: undefined;
   SubscribeRemind: undefined;
   ConfirmDeleteAccount: undefined;
+  AdBanners: undefined;
+  SubScreen: undefined;
 };

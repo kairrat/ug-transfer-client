@@ -7,16 +7,17 @@ import { Car } from "../icons/Car";
 import { MenuItemProps } from "./types";
 import { UserRole } from "../../../types/role";
 import { Telegram } from "../icons/Telegram";
+import AdIcon from '@assets/img/ad-icon.svg';
 
 export const menuItems: MenuItemProps[] = [
   {
-    title: "Админ панель",
-    icon: AdminIcon,
-    route: "Admin",
+    title: "Рекламный банер",
+    icon: AdIcon,
+    route: "AdBanners",
     hasUpdates: false,
     textColor: colors.black,
     backgroundColor: colors.secondary,
-    role: UserRole.ADMIN,
+    // role: UserRole.ADMIN,
   },
   {
     title: "Заказы водителя",
@@ -34,7 +35,7 @@ export const menuItems: MenuItemProps[] = [
     title: "Подписка",
     icon: StarIcon,
     textColor: colors.primary,
-    route: "Subscription",
+    route: "SubScreen",
     hasUpdates: false,
   },
   {

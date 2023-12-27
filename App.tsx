@@ -1,5 +1,5 @@
 import React from 'react';
-import Toast from 'react-native-toast-notifications';
+import Toast, { ToastProvider } from 'react-native-toast-notifications';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {StyleSheet} from 'react-native';
 import {Host} from 'react-native-portalize';
@@ -10,9 +10,11 @@ const Stack = createStackNavigator();
 export const App = () => {
   return (
     <SafeAreaProvider style={styles.container}>
+      <ToastProvider>
         <Host>
             <MainRouter />
         </Host>
+      </ToastProvider>
       {/* @ts-ignore */}
       <Toast ref={ref => (global['toast'] = ref)} />
     </SafeAreaProvider>

@@ -16,10 +16,11 @@ interface CompProps extends Order {
   showContacts?: boolean;
   showDriverInfo?: boolean;
   children?: React.ReactNode;
+  urgent?: boolean;
 }
 
 export const Order = ({
-  id,
+  _id,
   time,
   from,
   to,
@@ -41,6 +42,7 @@ export const Order = ({
   showContacts = false,
   showDriverInfo = false,
   children,
+  urgent = false
 }: CompProps) => {
   const calculateStyles = () => {
     if (!showBorder) {
@@ -50,7 +52,7 @@ export const Order = ({
     return {
       borderRadius: 7,
       borderWidth: 1,
-      borderColor: colors.stroke,
+      borderColor: urgent ? colors.green : colors.stroke,
     };
   };
   return (
@@ -64,7 +66,7 @@ export const Order = ({
         },
       ]}
     >
-      <OrderHeader id={isActive ? id : null} time={time} date={date} />
+      <OrderHeader id={isActive ? _id : null} time={time} date={date} />
       <View style={{ paddingHorizontal: 20 }}>
         <OrderDestination
           from={from}
@@ -87,6 +89,7 @@ export const Order = ({
           discount={discount}
           type={type}
           price={price}
+          urgent={urgent}
         />
         {showComments && comments && (
           <>

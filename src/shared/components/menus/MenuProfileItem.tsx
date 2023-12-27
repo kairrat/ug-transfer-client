@@ -14,7 +14,7 @@ export const MenuProfileItem = ({ title, icon, onPress }: CompProps) => {
   return (
     <View style={compStyles.container}>
       <TouchableOpacity 
-        style={{flexDirection: 'row', width: '100%'}}
+        style={{flexDirection: 'row', width: '100%', alignItems: 'center', columnGap: 10}}
         onPress={() => onPress('Profile')}
       >
         <View style={sharedStyles.center}>
@@ -22,7 +22,7 @@ export const MenuProfileItem = ({ title, icon, onPress }: CompProps) => {
           <Icon />
         </View>
 
-        <Text style={[fonts.name, compStyles.text]}>{title}</Text>
+        <Text style={[{ fontSize: 20, fontWeight: "600" }, compStyles.text]}>{title}</Text>
         
       </TouchableOpacity>
     </View>
