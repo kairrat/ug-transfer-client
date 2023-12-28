@@ -25,8 +25,8 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
     const toast = useToast();
     const [, handleChangeLoggedState] = useUnit([$auth, setLoggedState]);
     const [{profile}] = useUnit([$profile]);
-    const [newAvatar, setNewAvatar] = useState<any>(profile.img || null);
-    const [personalData, setPersonalData] = useState({full_name: profile?.full_name || "", phone: profile.phone_number || ""});
+    const [newAvatar, setNewAvatar] = useState<any>(profile?.img || null);
+    const [personalData, setPersonalData] = useState({full_name: profile?.full_name || "", phone: profile?.phone_number || ""});
     const [changed, setChanged] = useState<boolean>(false);
     const [openDeleteAccount, setOpenDeleteAccount] = useState<boolean>(false);
     const [openPrivacy, setOpenPrivacy] = useState<boolean>(false);
@@ -84,7 +84,10 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
     const handleDeleteAccount = async () => {
         setOpenDeleteAccount(false);
     }
-    
+    if (!profile) {
+        handleLogout();
+        return null;
+    }
     return(
         <>
             <Modal visible={openDeleteAccount} children={<ConfirmDeleteAccount onClose={() => setOpenDeleteAccount(false)} onConfirm={handleDeleteAccount} />}/>

@@ -6,14 +6,7 @@ export const getCities = async (city: string) => {
     return data;
 };
 
-/**
- * 
- * @param points  Точки маршруто
- */
-export const findRoutes = async (points: Location[]) => {
-    console.log('Requesting route from locationiq...');
-    const res = await mainApi.findRoutes(points);
-    // console.log(res);
-    // console.log(res.data);
-    return res.data;
+export const createOrder = async (orderData) => {
+    const { data } = await mainApi.createOrder(orderData);
+    return data;
 }

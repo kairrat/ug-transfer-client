@@ -1,6 +1,7 @@
 // @ts-nocheck
 import MenuIcon from './menu-icon.svg';
 import EarthIcon from './earth.svg';
+import Earth from './earth-icon.png';
 import BuildingIcon from './building-icon.svg';
 import LocationMarkIcon from './locationMark-icon.svg';
 import EditOptionsIcon from './editOptions-icon.svg';
@@ -37,6 +38,7 @@ import AboutLinkIcon from './about-link-icon.svg';
 export {
     MenuIcon,
     EarthIcon,
+    Earth,
     BuildingIcon,
     LocationMarkIcon,
     EditOptionsIcon,

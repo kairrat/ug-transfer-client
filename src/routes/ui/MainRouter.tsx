@@ -14,6 +14,7 @@ import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import { TripDetails } from "src/screens/TripDetails";
 import { Trips } from "src/screens/Trips";
 import { About } from "src/screens/About";
+import { MainTest } from "src/screens/MainTest/MainTest";
 
 type CustomStackNavigationOptions = NativeStackNavigationOptions & {
   unmountOnBlur?: boolean;

@@ -1,8 +1,8 @@
 import {  useBottomSheet } from "@gorhom/bottom-sheet";
 import { useUnit } from "effector-react";
-import { FC, useEffect, useRef } from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
-import { EarthIcon } from "src/shared/img";
+import { FC, memo, useEffect, useRef } from "react";
+import { Image, Platform, StyleSheet, Text, View } from "react-native";
+import { Earth, EarthIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
 import { setGpsEnabled } from "../model/GpsStore";
 import { PERMISSIONS, RESULTS, request } from "react-native-permissions";
@@ -13,7 +13,7 @@ import { BOTTOM_SHEET_SNAP_POINTS } from "src/features/main/constants/SnapPoints
 
 type EnableGpsProps = {}
 
-export const EnableGps: FC<EnableGpsProps> = ({}) => {
+export const EnableGps: FC<EnableGpsProps> = memo(({}) => {
     const { expand, snapToPosition } = useBottomSheet();
     const [handleSetGpsEnabled] = useUnit([setGpsEnabled]);
     
@@ -33,9 +33,14 @@ export const EnableGps: FC<EnableGpsProps> = ({}) => {
         }
     }
 
+    const handlePressLaterButton = () => {
+        handleSetBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
+    };
+
     return(
         <View style={styles.container}>
-            <EarthIcon style={styles.earth_icon}/>
+            <Image source={Earth} style={styles.earth_icon}/>
+            {/* <EarthIcon style={styles.earth_icon}/> */}
             <Text style={[fonts.bold, styles.title]}>Где вы находитесь?</Text>
             <View style={styles.description_holder}>
                 <Text style={[fonts.medium, styles.description]}>Установите ваше местоположение,чтобы мы могли найти ближайший к вам доступный автомобиль</Text>
@@ -44,13 +49,13 @@ export const EnableGps: FC<EnableGpsProps> = ({}) => {
                 <Button onPress={handleEnableGps} projectType="primary">
                     <Text style={[fonts.regular, styles.primary_text]}>Включить GPS</Text>
                 </Button>
-                <Button onPress={() => handleSetBottomSheetState(BottomSheetStateEnum.SET_ADDRESS)} projectType="secondary">
+                <Button onPress={handlePressLaterButton} projectType="secondary">
                     <Text style={[fonts.regular, styles.secondary_text]}>Включить позже</Text>
                 </Button>
             </View>
         </View>
     );
-};
+});
 
 const styles = StyleSheet.create({
     bototmSheetBackground: {

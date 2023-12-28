@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, memo } from "react";
 import { StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { colors } from "src/shared/style";
 
@@ -10,7 +10,7 @@ interface IButtonProps {
     style?: StyleProp<ViewStyle>
 };
 
-export const Button = forwardRef<any, IButtonProps>(({ onPress, children, projectType="default", disabled=false, style }, ref) => {
+export const Button = memo(forwardRef<any, IButtonProps>(({ onPress, children, projectType="default", disabled=false, style }, ref) => {
     const styleKey = projectType as keyof typeof styles;
     return (
         <TouchableOpacity 
@@ -20,7 +20,7 @@ export const Button = forwardRef<any, IButtonProps>(({ onPress, children, projec
             {children}
         </TouchableOpacity>
     )
-});
+}));
 
 const styles = StyleSheet.create({
     default: {

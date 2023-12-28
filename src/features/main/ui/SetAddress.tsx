@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Platform } from "react-native";
-import { CARS_CLASSES, PAYMENT_METHODS } from "../model/constants";
+import { CARS_CLASSES, PAYMENT_METHODS } from "../constants/constants";
 import { ArrowRightPrimaryIcon, ClockIcon, CrossIcon, EditOptionsIcon, LocationMarkIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
 import { BottomSheetScrollView, useBottomSheet } from "@gorhom/bottom-sheet";
@@ -8,10 +8,13 @@ import DatePicker from "react-native-date-picker";
 import dayjs from 'dayjs';
 import { Button } from "src/shared/components/Button";
 import { useUnit } from "effector-react";
-import { $main, setOrder, setOrderDetailsModal } from "../model/MainStore";
+import { $main, setOrder, setOrderDetailsModal, setStatus } from "../model/MainStore";
 import { BOTTOM_SHEET_SNAP_POINTS } from "../constants/SnapPoints";
 import { BottomSheetStateEnum } from "../enums/bottomSheetState.enum";
 import { setBottomSheetState } from "../model/BottomSheetStore";
+import { CreateOrderDto } from "../types/dto/createOrder.dto";
+import { createOrder } from "../model/main-actions";
+import { MainStatusEnum } from "../enums/mainStatus.enum";
 
 interface ISetAddress {}
 
@@ -19,7 +22,7 @@ export const SetAddress: React.FC<ISetAddress> = ({
 }) => {
     const { snapToPosition } = useBottomSheet();
     const [handleSetBottomSheetState] = useUnit([setBottomSheetState]);
-    const [{ order }, handleSetOrder, handleSetOrderDetailsModal] = useUnit([$main, setOrder, setOrderDetailsModal]);
+    const [{ order, status }, handleSetOrder, handleSetOrderDetailsModal, handleSetStatus] = useUnit([$main, setOrder, setOrderDetailsModal, setStatus]);
     const { carClass, date: shipDate, paymentMethod, price } = order;
 
     const [datePickerOpen, setDatePickerOpen] = useState<boolean>(false);
@@ -36,23 +39,77 @@ export const SetAddress: React.FC<ISetAddress> = ({
         }
         return order.arrival.city + ', ' + order.arrival.address;
     }
+    
+    // Open departure address menu sheet
+    const handleOpenDepartureAddress = () => {
+        handleSetBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION);
+    }
 
+    // Open arrival address menu sheet
+    const handleOpenArrivalAddress = () => {
+        handleSetBottomSheetState(BottomSheetStateEnum.SET_ARRIVAL_LOCATION);
+    }
+
+    // Open payment methods sheet
+    const handleOpenPaymentSheet = () => {
+        handleSetBottomSheetState(BottomSheetStateEnum.DEFINED_PAYMENT_METHOD);
+    }
+
+    // Open datepicker
+    const handleOpenDatepicker = () => {
+        setDatePickerOpen(true);
+    }
+
+    // Close datepicker
+    const handleCloseDatepicker = () => {
+        setDatePickerOpen(false);
+    }
+
+    // Confirm date picker
+    const handleConformDatepicker = (date: Date) => {
+        setDatePickerOpen(false);
+        handleSetOrder({...order, date});
+    }
+
+    // Open order details modal
     const handleOpenOrderDetails = () => {
         handleSetOrderDetailsModal(true);
     }
 
-    useEffect(() => {
-        snapToPosition(BOTTOM_SHEET_SNAP_POINTS[BottomSheetStateEnum.SET_ADDRESS][1]);
-        // new Promise(res => {
-        //     res(null);
-        // })
-    }, []);
+    // Create order
+    const handleCreateOrder = async () => {
+        const newOrder: CreateOrderDto = {
+            from: order.departure.city,
+            to: order.arrival.city,
+            fulladdressend: order.departure.address,
+            fulladdressstart: order.arrival.address,
+            date: order.date,
+            time: dayjs(order.date).format('hh:mm'),
+            comment: order.comment,
+            countPeople: order.passangersAmount,
+            tariffId: CARS_CLASSES[order.carClass].id,
+            isAnimal: order.params.animalTransfer,
+            isBaby: order.params.babyChair,
+            isBuster: order.params.buster,
+            isBaggage: order.baggage || false,
+            paymentMethod: order.paymentMethod
+        };
+        try {
+            handleSetStatus(MainStatusEnum.CREATING_ORDER);
+            const response = await createOrder(newOrder);
+            console.log('Response: ', response);
+        } catch (err) {
+            console.error('Failed to create order', err);
+        } finally {
+            handleSetStatus(MainStatusEnum.NULL);
+        }
+    }
 
     return(
         <>
             <View style={styles.container}>
                 <View style={styles.address_holder}>
-                    <Button onPress={() => handleSetBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION)} projectType="address_input">
+                    <Button onPress={handleOpenDepartureAddress} projectType="address_input">
                         <LocationMarkIcon />
                         <Text 
                             numberOfLines={1}
@@ -60,7 +117,7 @@ export const SetAddress: React.FC<ISetAddress> = ({
                             ellipsizeMode="tail">{getDepartureAddressButton()}</Text>
                         <EditOptionsIcon />
                     </Button>
-                    <Button onPress={() => handleSetBottomSheetState(BottomSheetStateEnum.SET_ARRIVAL_LOCATION)} projectType="address_input">
+                    <Button onPress={handleOpenArrivalAddress} projectType="address_input">
                         <ArrowRightPrimaryIcon style={{ marginHorizontal: 8 }} />
                         <Text 
                             numberOfLines={1}
@@ -113,7 +170,7 @@ export const SetAddress: React.FC<ISetAddress> = ({
             <View style={styles.details}>
                 <TouchableOpacity 
                     style={styles.payment_block}
-                    onPress={() => handleSetBottomSheetState(BottomSheetStateEnum.DEFINED_PAYMENT_METHOD)}>
+                    onPress={handleOpenPaymentSheet}>
                         <Text style={styles.payment_title}>Оплата</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', columnGap: 10, marginVertical: 5 }}>
                             {PAYMENT_METHODS[paymentMethod].Icon}
@@ -122,7 +179,7 @@ export const SetAddress: React.FC<ISetAddress> = ({
                 </TouchableOpacity>
                 <TouchableOpacity 
                     style={styles.time_block}
-                    onPress={() => setDatePickerOpen(true)}>
+                    onPress={handleOpenDatepicker}>
                         <Text style={styles.payment_title}>Время и дата</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', columnGap: 10, marginVertical: 5 }}>
                             <ClockIcon width={25} style={styles.payment_icon}/>
@@ -133,13 +190,10 @@ export const SetAddress: React.FC<ISetAddress> = ({
                     modal
                     mode="datetime"
                     locale="RU"
-                    date={new Date()}
+                    date={order.date}
                     open={datePickerOpen} 
-                    onConfirm={(date) => {
-                        setDatePickerOpen(false);
-                        handleSetOrder({...order, date});
-                    }}
-                    onCancel={() => setDatePickerOpen(false)}
+                    onConfirm={handleConformDatepicker}
+                    onCancel={handleCloseDatepicker}
                     confirmText="Выбрать"
                     cancelText="Отменить"
                     title="Выберите дату и время"/>
@@ -151,7 +205,7 @@ export const SetAddress: React.FC<ISetAddress> = ({
                 <Button projectType="secondary" onPress={handleOpenOrderDetails}>
                     <Text style={[fonts.medium, styles.secondary_button_text]}>Дополнительно</Text>
                 </Button>
-                <Button projectType="primary" onPress={() => {}}>
+                <Button projectType="primary" onPress={handleCreateOrder} disabled={status === MainStatusEnum.CREATING_ORDER}>
                     <Text style={[fonts.medium, styles.primary_button_text]}>Заказать авто</Text>
                 </Button>
             </View>

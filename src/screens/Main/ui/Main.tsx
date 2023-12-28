@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { DrawerActions } from "@react-navigation/routers";
-import { FC, useEffect, useRef } from "react";
+import { FC, useEffect, useMemo, useRef } from "react";
 import { StyleSheet, View, TouchableOpacity, Platform, Image, Modal } from "react-native";
 import { StackScreens } from "src/routes";
 import { MenuIcon, StatusBarBackground } from "src/shared/img";
@@ -27,6 +27,8 @@ import { PaymentMethod } from "src/features/main/ui/PaymentMethod";
 import { $main } from "src/features/main/model/MainStore";
 import { getGeocode } from "src/features/map/model/map-actions";
 import { $map, setArrivalLocation, setDepartureLocation } from "src/features/map/model/MapStore";
+import { BOTTOM_SHEET_SNAP_POINTS } from "src/features/main/constants/SnapPoints";
+import { STATE_COMPONENTS } from "../constants/StateComponents";
 
 type MainProps = NativeStackScreenProps<StackScreens, "Main">;
 
@@ -34,7 +36,7 @@ export const Main: FC<MainProps> = ({ navigation }) => {
     const sheetModalRef = useRef<BottomSheetModal>(null);
     const [handleSetGpsEnabled] = useUnit([setGpsEnabled])
     const [
-        { bottomSheetState, index, snapPoints },
+        { bottomSheetState },
         handleSetBottomSheetState
     ] = useUnit([$bottomSheet, setBottomSheetState]);
     const [{orderDetailModal, order}] = useUnit([$main]);
@@ -47,13 +49,11 @@ export const Main: FC<MainProps> = ({ navigation }) => {
     const handleCheckGpsPermission = async () => {
         try {
             const result = await check(Platform.OS === "android" ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-            if (result !== RESULTS.GRANTED) {
-                setTimeout(() => {
-                    console.log('Time out');
-                    handleSetGpsEnabled(true);
-                    handleSetBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
-                    sheetModalRef.current?.snapToPosition(Platform.OS === "ios" ? 653 : 623);
-                }, 100);
+            if (result === RESULTS.GRANTED) {
+                console.log('Granted', result);
+                handleSetGpsEnabled(true);
+                sheetModalRef.current?.snapToPosition(Platform.OS === "ios" ? 653 : 623);
+                handleSetBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
             }
             else {
                 handleSetBottomSheetState(BottomSheetStateEnum.ENABLE_GPS);
@@ -104,6 +104,8 @@ export const Main: FC<MainProps> = ({ navigation }) => {
         }
     }, [order.arrival, order.departure]);
 
+    const snapPoints = useMemo(() => BOTTOM_SHEET_SNAP_POINTS[bottomSheetState], [bottomSheetState]);
+
     return(
         <View style={styles.layout}>
             {
@@ -123,7 +125,7 @@ export const Main: FC<MainProps> = ({ navigation }) => {
             <Map />
             <BottomSheet
                 ref={sheetModalRef}
-                index={index}
+                index={0}
                 snapPoints={snapPoints}
                 backgroundStyle={styles.bottomSheetBackground}
                 handleIndicatorStyle={styles.bottomSheetHandleIndicator}
@@ -132,47 +134,7 @@ export const Main: FC<MainProps> = ({ navigation }) => {
                 onChange={(e) => {
                     e === -1 && sheetModalRef.current?.snapToIndex(0);
                 }}>
-
-                    {
-                        bottomSheetState === BottomSheetStateEnum.LOADING &&
-                        <Loader />
-                    }
-                    {
-                        bottomSheetState === BottomSheetStateEnum.ENABLE_GPS &&
-                        <EnableGps />
-                    }
-                    {
-                        bottomSheetState === BottomSheetStateEnum.SET_ADDRESS &&
-                        <SetAddress />
-                    }
-                    {
-                        bottomSheetState === BottomSheetStateEnum.SET_DEPARTURE_LOCATION &&
-                        <DepartureAddressMenu />
-                    }
-                    {
-                        bottomSheetState === BottomSheetStateEnum.SET_DEPARTURE_CITY &&
-                        <SelectDepartureCity/>
-                    }
-                    {
-                        bottomSheetState === BottomSheetStateEnum.SET_DEPARTURE_ADDRESS &&
-                        <SelectDepartureAddress />
-                    }
-                    {
-                        bottomSheetState === BottomSheetStateEnum.SET_ARRIVAL_LOCATION &&
-                        <ArriveAddressMenu />   
-                    }
-                    {
-                        bottomSheetState === BottomSheetStateEnum.SET_ARRIVAL_CITY &&
-                        <SelectArrivalCity/>
-                    }
-                    {
-                        bottomSheetState === BottomSheetStateEnum.SET_ARRIVAL_ADDRESS &&
-                        <SelectArrivalAddress />
-                    }
-                    {
-                        bottomSheetState === BottomSheetStateEnum.DEFINED_PAYMENT_METHOD &&
-                        <PaymentMethod />
-                    }
+                    {STATE_COMPONENTS[bottomSheetState]}
             </BottomSheet>
             
         </View>

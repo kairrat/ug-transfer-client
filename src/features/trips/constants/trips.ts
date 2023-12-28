@@ -1,4 +1,4 @@
-import { CARS_CLASSES } from "src/features/main/model/constants";
+import { CARS_CLASSES } from "src/features/main/constants/constants";
 import { Order } from "src/types/order";
 import { OrderStatusEnum } from "../model/orderEnum";
 

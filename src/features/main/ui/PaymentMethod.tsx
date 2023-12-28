@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { CheckedGreenIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
-import { PAYMENT_METHODS } from "../model/constants";
+import { PAYMENT_METHODS } from "../constants/constants";
 import { PaymentMethodEnum } from "../types/paymentMethod.enum";
 import { useBottomSheet } from "@gorhom/bottom-sheet";
 import { useUnit } from "effector-react";
