@@ -12,18 +12,17 @@ import { $profile, setProfileData } from "../../../features/create-profile";
 import { EditInput } from "../../../features/edit-profile";
 import { PrimaryButton } from "../../../shared/components/button/PrimaryButton";
 import { Telegram } from "../../../shared/components/icons/Telegram";
-import { addData, uploadProfileImages } from "src/features/create-profile/models/profile-actions";
-import { useToast } from "react-native-toast-notifications";
+import { addData } from "src/features/create-profile/models/profile-actions";
 import { fileService } from "src/features/files/api/file-service";
 
 type EditProfileProps = NativeStackScreenProps<StackScreens, "EditProfile">;
 
 export const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
-    const toast = useToast();
     const [{ data: profileData }, handleSetProfileData] = useUnit([$profile, setProfileData]);
     const [avatar, setAvatar] = useState(profileData.avatar || null);
     const [value, setValue] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
+    const [saved, setSaved] = useState<boolean>(false);
     const handleMoveBack = () => {
         navigation.goBack();
     }
@@ -31,15 +30,24 @@ export const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
         navigation.navigate(route);
         
     }
+    const handleRemoveEndSpaces = (str: string) => {
+        let newStr = str;
+        for(let i = str.length - 1; i >= 0; i--) {
+            if (str[i] !== ' ') {
+                return newStr;
+            }
+            else {
+                newStr = str.slice(0, i);
+            }
+        }
+    }
     const handleUpdateProfile = async () => {
         setLoading(true);
         try {
-
             let changed = false;
             const updatedData = {};
             if (value !== "") {
-                updatedData['telegram'] = value[0] === '@' ? value.slice(1) : value;
-                console.log(updatedData['telegram']);
+                updatedData['telegram'] = value[0] === '@' ? handleRemoveEndSpaces(value.slice(1)) : handleRemoveEndSpaces(value);
                 changed = true;
             }
             if (typeof avatar !== "string" && avatar) {
@@ -54,12 +62,10 @@ export const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
             if (changed) {
                 const response = await addData(updatedData);
                 if (response?.status === "success") {
-                    toast.show("Сохранено", {
-                        type: "success",
-                        placement: "top"
-                    });
                     handleSetProfileData({...profileData, ...updatedData});
-                    navigation.navigate("Profile");
+                    setSaved(true);
+                    setValue("");
+                    // navigation.navigate("Profile");
                 }
             }
         } finally {
@@ -88,9 +94,9 @@ export const EditProfile: React.FC<EditProfileProps> = ({ navigation }) => {
                     value={value} 
                     setValue={setValue} />
                 <View style={styles.button_holder}>
-                    <PrimaryButton text="Сохранить" onPress={handleUpdateProfile}/>
+                    <PrimaryButton text="Сохранить" onPress={handleUpdateProfile} disabled={loading}/>
                 </View>
-                <Text style={[styles.status, styles.inactive_status]} disabled={loading}>
+                <Text style={[styles.status, saved ? styles.active_status : styles.inactive_status]}>
                     Сохранено
                 </Text>
             </View>

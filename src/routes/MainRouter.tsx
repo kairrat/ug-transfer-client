@@ -96,7 +96,7 @@ export const MainRouter: React.FC = function MainRouter() {
           options={{ unmountOnBlur: true } as CustomStackNavigationOptions}
         />
         <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
-        <Stack.Screen name="SmsVerification" component={SmsVerification} />
+        <Stack.Screen name="SmsVerification" component={SmsVerification} options={{ unmountOnBlur: true } as CustomStackNavigationOptions}/>
       </Stack.Group>
       </Drawer.Navigator>
     </NavigationContainer>

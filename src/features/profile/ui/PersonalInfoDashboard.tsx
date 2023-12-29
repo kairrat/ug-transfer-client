@@ -23,7 +23,6 @@ interface DashboardProps {
 }
 
 export const PersonalInfoDashboard: React.FC<DashboardProps> = ({phone, avatar, firstName, lastName, middleName, telegram, edit=false, onAvatarChange }) => {
-    console.log('Avatar type: ', typeof avatar);
     return(
         <>
             <View style={styles.holder}>

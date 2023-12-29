@@ -58,6 +58,15 @@ export const AuthenticationChoice: React.FC<CompProps> =
         backHandler.remove();
       };
     }, [isFocused]);
+
+    const handleOpenSignin = () => {
+      handleButtonClick(AuthorizationType.LOGIN);
+    }
+
+    const handleOpenSignup = () => {
+      handleButtonClick(AuthorizationType.REGISTER)
+    }
+    
     return (
       <>
         <ImageBackground
@@ -80,12 +89,12 @@ export const AuthenticationChoice: React.FC<CompProps> =
               containerStyle={compStyles.authorisationButton}
               textColor={colors.white}
               paddingVertical={Math.floor(height * 0.01)}
-              onPress={() => handleButtonClick(AuthorizationType.LOGIN)}
+              onPress={handleOpenSignin}
             />
             <PrimaryButton
               text="Зарегистрироваться"
               paddingVertical={Math.floor(height * 0.01)}
-              onPress={() => handleButtonClick(AuthorizationType.REGISTER)}
+              onPress={handleOpenSignup}
             />
           </View>
         </ImageBackground>

@@ -38,6 +38,7 @@ export const InitScreen: React.FC<CompProps> = function InitScreen({
   }
 
   const handleAuthorizationChange = async () => {
+    return navigation.navigate("Orders");
     const token = await AsyncStorage.getItem(AsyncStorageKeys.TOKEN);
     if (!token) {
       return navigation.navigate("AuthenticationChoice");
@@ -61,10 +62,10 @@ export const InitScreen: React.FC<CompProps> = function InitScreen({
       ) {
         return navigation.navigate("CreateProfileComplete");
       }
+      return navigation.navigate("Orders");
     } catch (err) {
       console.error('Failed to get user info', err);
     }
-    return navigation.navigate("Orders");
   }
   useEffect(() => {
     handleAuthorizationChange();

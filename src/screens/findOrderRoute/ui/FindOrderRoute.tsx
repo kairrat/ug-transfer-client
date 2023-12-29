@@ -6,11 +6,14 @@ import { Alert, Modal, ScrollView, StyleSheet, Text, View } from "react-native";
 import { StackScreens } from "../../../routes/types/StackScreens";
 import { colors, fonts } from "../../../shared/style";
 import { FindOrderRouteHeader } from "./FindOrderRouteHeader";
+// @ts-ignore
 import LocationMark from '@assets/img/LocationMark.svg';
 import { Dropdown } from "../../../shared/components/dropdown/Dropdown";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { PrimaryButton } from "../../../shared/components/button/PrimaryButton";
 import { Datepicker } from "../../../shared/components/datepicker/Datepicker";
+import { InputDropdown } from "src/shared/components/InputDropdown";
+import { getCities } from "../model/findOrder-actions";
 
 
 type CompProps = NativeStackScreenProps<StackScreens, "FindOrderRoute">;
@@ -33,10 +36,8 @@ export const FindOrderRoute: React.FC<CompProps> = () => {
     const [openDropdown, setOpenDropdown] = useState<string>(null);
     const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
     const [date, setDate] = useState<Date | null>(null);
+    const [] = useState();
 
-    const handleDepartureCityChange = (e: string) => {
-        setDepartureCity(e);
-    }
 
     const handleArrivalCityChange = (e: string) => {
         setArrivalCity(e);
@@ -57,6 +58,27 @@ export const FindOrderRoute: React.FC<CompProps> = () => {
         setPrice(null);
         setDate(null);
     }
+
+    const handleSearchDepartureCities =  async () => {
+        try {
+            const res = await getCities(departureCity);
+            console.log('Departure cities: ', res);
+            return res;
+        } catch (err) {
+            console.error('Failed to fetch departure cities', err);
+            return [];
+        }
+    }
+
+    const handleSearchArrivalCities =  async () => {
+        try {
+            const res = await getCities(departureCity);
+            return res;
+        } catch (err) {
+            console.error('Failed to fetch arrival cities', err);
+            return [];
+        }
+    }
     
     const handleApplyFilter = () => {
         navigation.navigate('Orders');
@@ -72,8 +94,24 @@ export const FindOrderRoute: React.FC<CompProps> = () => {
           }}
         >
             <FindOrderRouteHeader onBack={handleMoveBack}/>
-            <ScrollView style={{ padding: 10 }}>
+            <View style={{ padding: 10 }}>
                 <View style={{position: 'relative', marginVertical: 5}}>
+                    <InputDropdown 
+                        placeholder="Город отправки"
+                        value={departureCity} 
+                        setValue={setDepartureCity}
+                        leftIcon={<LocationMark width={25}/>}
+                        debaunceCb={handleSearchDepartureCities}/>
+                </View>
+                <View style={{position: 'relative', marginVertical: 5}}>
+                    <InputDropdown 
+                        placeholder="Город прибытия"
+                        value={arrivalCity} 
+                        setValue={setArrivalCity}
+                        leftIcon={<LocationMark width={25}/>}
+                        debaunceCb={handleSearchArrivalCities}/>
+                </View>
+                {/* <View style={{position: 'relative', marginVertical: 5}}>
                     <View style={{position: 'absolute', left: 20, top: 10, zIndex: 6000}}>
                         <LocationMark />
                     </View>
@@ -105,7 +143,7 @@ export const FindOrderRoute: React.FC<CompProps> = () => {
                         name="arrivalCity"
                         openDropdown={openDropdown}
                         setOpenName={setOpenDropdown}/>
-                </View>
+                </View> */}
 
                 <View style={styles.divide_line} />
                 
@@ -156,7 +194,7 @@ export const FindOrderRoute: React.FC<CompProps> = () => {
                     <Text style={[fonts.description, {color: colors.opacity}]}>Выставлено ближайшее время по умолчанию</Text>
                 </View>
 
-            </ScrollView>
+            </View>
             <View style={{paddingHorizontal: 20, paddingVertical: 30}}>
                 <PrimaryButton 
                     text="Применить фильтр"

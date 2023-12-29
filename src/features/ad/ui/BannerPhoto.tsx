@@ -1,15 +1,14 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, Text, Image } from "react-native";
 import { colors, fonts } from "../../../shared/style";
-import { IFile } from "../../../types/file";
 // @ts-ignore
 import CameraIcon from "@assets/img/camera.svg";
 import { FileHelper } from "../../../shared/helper/FileHelper";
 import { Asset } from "react-native-image-picker";
 
 interface IBannerImageProps {
-    bannerImg: IFile,
-    setBannerImg: (photo: IFile) => void
+    bannerImg: File,
+    setBannerImg: (photo: File) => void
 };
 
 export const BannerImage: React.FC<IBannerImageProps> = ({ bannerImg, setBannerImg }) => {

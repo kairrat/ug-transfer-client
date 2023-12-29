@@ -6,11 +6,12 @@ import { Button, ScreenHeader } from '../../../shared/components';
 import { colors, fonts } from '../../../shared/style';
 // @ts-ignore
 import LeftArrow from '@assets/img/arrowLeft.svg';
-import { IFile } from '../../../types/file';
 import { BannerImage } from '../../../features/ad';
 import { Input } from '../../../shared/components/input/Input';
 // @ts-ignore
 import AdIcon from '@assets/img/ad-icon.svg'
+// @ts-ignore
+import LocationMark from '@assets/img/LocationMark.svg';
 import { Datepicker } from '../../../shared/components/datepicker/Datepicker';
 import { Controller, useForm } from 'react-hook-form';
 import { AdPopup } from './AdPopup';
@@ -19,11 +20,11 @@ type IAdBannersProps = NativeStackScreenProps<StackScreens, "AdBanners">;
 interface IModalData {
     title: string;
     description: string;
-    bannerImg: IFile;
+    bannerImg: File;
 }
 
 export const AdBanners: React.FC<IAdBannersProps> = ({ navigation }) => {
-    const [ bannerImg, setBannerImg ] = useState<IFile>(null);
+    const [ bannerImg, setBannerImg ] = useState<File>(null);
     const [ error, setError ] = useState<string>('Заполните все поля');
     const { control, handleSubmit, formState: { errors } } = useForm();
     const [ isModalOpen, setIsModalOpen ] = useState<boolean>(false);
@@ -60,6 +61,18 @@ export const AdBanners: React.FC<IAdBannersProps> = ({ navigation }) => {
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                 <BannerImage bannerImg={bannerImg} setBannerImg={setBannerImg}/>
                 <View style={styles.content}>
+                    <Controller 
+                        control={control}
+                        name="city"
+                        rules={{ required: true }}
+                        render={({ field: {value, onChange}, fieldState: { error }}) => (
+                            <Input 
+                                placeholder="Город"
+                                leftIcon={<LocationMark />}
+                                value={value} 
+                                onChangeText={onChange}
+                                error={error}/>  
+                    )}/>
                     <Controller 
                         control={control}
                         name="title"
