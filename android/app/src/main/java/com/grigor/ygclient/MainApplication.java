@@ -1,4 +1,4 @@
-package com.grigor.ygdriver;
+package com.grigor.ygclient;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

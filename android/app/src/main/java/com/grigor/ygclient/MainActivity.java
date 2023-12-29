@@ -1,4 +1,4 @@
-package com.grigor.ygdriver;
+package com.grigor.ygclient;
 
 import android.os.Bundle;
 import com.zoontek.rnbootsplash.RNBootSplash;
