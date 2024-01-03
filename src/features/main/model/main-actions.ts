@@ -1,5 +1,4 @@
-import { Location } from "../types/address";
-import { mainApi } from "./MainApi";
+import { mainApi } from "../api/MainApi";
 
 export const getCities = async (city: string) => {
     const { data } = await mainApi.getCities(city);

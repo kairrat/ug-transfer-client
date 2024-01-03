@@ -13,4 +13,5 @@ export type CreateOrderDto = {
     isBuster: boolean;
     isAnimal: boolean;
     comment: string;
+    price?: number;
 }

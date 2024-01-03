@@ -49,7 +49,6 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
         !changed && setChanged(true);
     }
     const handleSaveChanged = async () => {
-        
         try {
             setLoading(true);
             const updateData = { name: personalData.full_name };

@@ -7,11 +7,11 @@ import LocationMarkIcon from './locationMark-icon.svg';
 import EditOptionsIcon from './editOptions-icon.svg';
 import ArrowRightPrimaryIcon from './arrowRightPrimary-icon.svg';
 import CrossIcon from './cross-icon.svg';
-import StandartClassCar from './standart-class.png';
-import ComfortClassCar from './comfort-class.png';
-import BuisinessClassCar from './buisiness-class.png';
-import MinivenClassCar from './miniven-class.png';
-import BuisinessMinivenClassCar from './buisiness-miniven-class.png';
+import StandartClassCar from './standart-car.png';
+import ComfortClassCar from './comfort-car.png';
+import BuisinessClassCar from './buisiness-car.png';
+import MinivenClassCar from './miniven-car.png';
+import BuisinessMinivenClassCar from './buisiness-miniven-car.png';
 import WhiteWalletIcon from './wallet-white-icon.svg';
 import WhiteCreditCardIcon from './creditCard-white-icon.svg';
 import CheckedGreenIcon from './checked-green-icon';
@@ -30,8 +30,6 @@ import PhoneRoundedIcon from './phone-rounded-icon.svg';
 import ArrowDownIcon from './arrowDown-icon.svg';
 import AddGreenIcon from './add-green-icon.svg';
 import LightLogo from './light-logo.png';
-import StartLocationMarker from './start-location.png';
-import EndLocationMarker from './end-location.png';
 import StatusBarBackground from './gradient.png';
 import AboutLinkIcon from './about-link-icon.svg';
 
@@ -67,8 +65,6 @@ export {
     ArrowDownIcon,
     AddGreenIcon,
     LightLogo,
-    StartLocationMarker,
-    EndLocationMarker,
     StatusBarBackground,
     AboutLinkIcon
 };

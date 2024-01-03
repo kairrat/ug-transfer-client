@@ -46,9 +46,10 @@ export const Auth: FC<IAuthProps> = ({ navigation }) => {
     }
 
     const handleChangePhone = (phone: string) => {
-        if (phone.length > 1) {
-            setCredentials(prev => ({...prev, phone: `+7${phone.slice(2)}` }));
-        }
+        // if (phone.length > 1) {
+            // setCredentials(prev => ({...prev, phone: `${phone.slice(2)}` }));
+            setCredentials(prev => ({...prev, phone: `${phone}` }));
+        // }
     }
 
     const handleChangeCode = (code: string) => {

@@ -1,6 +1,11 @@
-const baseUrl = "http://95.163.235.158:3001"
-// const baseUrl = "http://192.168.0.131:3001"
+const baseUrl = "http://5.35.89.71:3001";
 
 export const Endpoints = {
-    uploadFiles: baseUrl + '/users/upload'
+    uploadFiles: baseUrl + '/users/upload',
+    requestCode: baseUrl + '/users/clients/make-call',
+    verifyCoe: baseUrl + '/users/clients/register',
+    getProfile: baseUrl + '/users/clients/info',
+    updateProfile: baseUrl + '/users/clients/update',
+    getCity: baseUrl + '/city/',
+    createOrder: baseUrl + '/order/create',      
 }

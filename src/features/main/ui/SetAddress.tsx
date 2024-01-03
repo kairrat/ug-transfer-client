@@ -78,6 +78,7 @@ export const SetAddress: React.FC<ISetAddress> = ({
 
     // Create order
     const handleCreateOrder = async () => {
+        
         const newOrder: CreateOrderDto = {
             from: order.departure.city,
             to: order.arrival.city,
@@ -87,23 +88,26 @@ export const SetAddress: React.FC<ISetAddress> = ({
             time: dayjs(order.date).format('hh:mm'),
             comment: order.comment,
             countPeople: order.passangersAmount,
-            tariffId: CARS_CLASSES[order.carClass].id,
+            tariffId: CARS_CLASSES[order.carClass].label,
             isAnimal: order.params.animalTransfer,
             isBaby: order.params.babyChair,
             isBuster: order.params.buster,
             isBaggage: order.baggage || false,
-            paymentMethod: order.paymentMethod
+            paymentMethod: order.paymentMethod,
+            price: order.price
         };
-        try {
-            handleSetStatus(MainStatusEnum.CREATING_ORDER);
-            const response = await createOrder(newOrder);
-            console.log('Response: ', response);
-        } catch (err) {
-            console.error('Failed to create order', err);
-        } finally {
-            handleSetStatus(MainStatusEnum.NULL);
-        }
+        // try {
+        //     handleSetStatus(MainStatusEnum.CREATING_ORDER);
+        //     const response = await createOrder(newOrder);
+        //     console.log('Response: ', response);
+        // } catch (err) {
+        //     console.error('Failed to create order', err);
+        // } finally {
+        //     handleSetStatus(MainStatusEnum.NULL);
+        // }
     }
+
+    useEffect(() => {}, []);
 
     return(
         <>

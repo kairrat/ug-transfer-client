@@ -2,11 +2,11 @@ import { BuisinessClassCar, BuisinessMinivenClassCar, ComfortClassCar, MinivenCl
 import { PaymentMethodEnum } from "../types/paymentMethod.enum";
 
 export const CARS_CLASSES = [
-    { label: "Стандарт", img: StandartClassCar, id: "658ae8fdd6d1b39add937b8c" },
-    { label: "Комфорт", img: ComfortClassCar, id: "" },
-    { label: "Бизнес", img: BuisinessClassCar, id: "" },
-    { label: "Минивен", img: MinivenClassCar, id: "" },
-    { label: "Бизнес минивен", img: BuisinessMinivenClassCar, id: "" },
+    { label: "Стандарт", img: StandartClassCar, id: "658ae8fdd6d1b39add937b8c", price: 25},
+    { label: "Комфорт", img: ComfortClassCar, id: "", price: 30 },
+    { label: "Бизнес", img: BuisinessClassCar, id: "", price: 35 },
+    { label: "Минивен", img: MinivenClassCar, id: "", price: 40 },
+    { label: "Бизнес минивен", img: BuisinessMinivenClassCar, id: "", price: 80},
 ];
 
 export const PAYMENT_METHODS = {

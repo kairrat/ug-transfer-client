@@ -3,6 +3,7 @@ module.exports = `<!DOCTYPE html>
 
 <head>
     <script src="https://api-maps.yandex.ru/2.1/?apikey=035b796f-9668-4e4d-9fa3-dd2a1ca31999&lang=ru_RU" type="text/javascript"></script>
+    <meta name="viewport" content="width=device-width, initil-scale=1.0"/>
     <style>
         body {
             margin: 0;
