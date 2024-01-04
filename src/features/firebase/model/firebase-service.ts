@@ -18,7 +18,7 @@ export const getFcmToken = async () => {
 //method was called on  user register with firebase FCM for notification
 export async function registerAppWithFCM() {
   console.log(
-    'registerAppWithFCM status',
+    'registerAppWithFCM status: ',
     messaging().isDeviceRegisteredForRemoteMessages,
   );
   if (!messaging().isDeviceRegisteredForRemoteMessages) {

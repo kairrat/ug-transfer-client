@@ -26,13 +26,13 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>Allow play music</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Allow play music</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Allow camera</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
@@ -55,6 +55,11 @@
 		<string>Montserrat-Regular.ttf</string>
 		<string>Montserrat-SemiBold.ttf</string>
 	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>BootSplash.storyboard</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -69,5 +74,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>Разрешить получать уведомления</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<true />
 </dict>
 </plist>

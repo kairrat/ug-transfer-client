@@ -49,6 +49,8 @@ target 'ygclient' do
 
   # Flags change depending on the env values.
   flags = get_default_flags()
+  use_frameworks! :linkage => :static
+  $RNFirebaseAsStaticFramework = true
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -59,7 +61,7 @@ target 'ygclient' do
     #
     # Note that if you have use_frameworks! enabled, Flipper will not work and
     # you should disable the next line.
-    :flipper_configuration => flipper_config,
+    # :flipper_configuration => flipper_config,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
@@ -80,4 +82,8 @@ target 'ygclient' do
   end
 
   pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
+  pod 'Firebase', :modular_headers => true
+  pod 'FirebaseCoreInternal', :modular_headers => true
+  pod 'GoogleUtilities', :modular_headers => true
+  pod 'FirebaseCore', :modular_headers => true
 end
