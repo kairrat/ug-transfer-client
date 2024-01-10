@@ -14,17 +14,18 @@ type InitProps = NativeStackScreenProps<StackScreens, "Init">
 export const Init: React.FC<InitProps> = ({ navigation }) => {
     const handleSetProfile = useEvent(setProfile);
     const handleCheckAuth = async () => {
-        // const token = await AsyncStorage.getItem(AsyncStorageKeys.TOKEN);
-        // if (!token) {
-        //     return navigation.navigate("Auth");
-        // }
-        // try {
-        //     const profile: Profile = await getProfile();
-        //     console.log('Profile: ', profile);
-        //     handleSetProfile(profile);
-        // } catch (err) {
-        //     return navigation.navigate("Auth");
-        // }
+        const token = await AsyncStorage.getItem(AsyncStorageKeys.TOKEN);
+        console.log('Token: ', token);
+        if (!token) {
+            return navigation.navigate("Auth");
+        }
+        try {
+            const profile: Profile = await getProfile();
+            console.log('Profile: ', profile);
+            handleSetProfile(profile);
+        } catch (err) {
+            return navigation.navigate("Auth");
+        }
         return navigation.navigate("Main");
     }
     useEffect(() => {

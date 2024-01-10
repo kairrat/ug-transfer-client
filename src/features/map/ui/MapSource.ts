@@ -26,7 +26,9 @@ module.exports = `<!DOCTYPE html>
             startMarker = null,
             endMarker = null,
             startMarkerLocation = null,
-            endMarkerLocation = null;
+            endMarkerLocation = null
+            myLocation = null
+            myLocationMarker = null;
         ymaps.ready(init);
 
         function init() {
@@ -37,6 +39,7 @@ module.exports = `<!DOCTYPE html>
             },{
                 yandexMapDisablePoiInteractivity: true
             });
+            window.ReactNativeWebView.postMessage(\`map:init\`);   
         }
 
         function removeStartMarker() {
@@ -80,6 +83,28 @@ module.exports = `<!DOCTYPE html>
                 fitMarkers();
             }
         };
+
+        function addMyLocation(lat, lon) {
+            if (myLocationMarker !== null) {
+                myMap.geoObjects.remove(myLocationMarker);
+                myLocation = null;
+            }
+            if (ymaps) {
+                myLocationMarker = new ymaps.Placemark([lat, lon], {}, {
+                    preset: 'islands#redCircleDotIcon'
+                });
+                myLocation = [lat, lon];
+                myMap.geoObjects.add(myLocationMarker);
+            }
+        }
+
+        function setMyPosition() {
+            if (myLocation !== null) {
+                myMap.setCenter(myLocation, 5, {
+                    checkZoomRange: true
+                });
+            }
+        }
 
         function fitMarkers() {
             if (startMarkerLocation !== null && endMarkerLocation !== null) {

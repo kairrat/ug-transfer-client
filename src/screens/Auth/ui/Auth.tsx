@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useEvent } from "effector-react";
+import { useEvent, useUnit } from "effector-react";
 import { FC, useEffect, useState } from "react";
 import { ImageBackground, Modal, StyleSheet, View } from "react-native";
 import { AsyncStorageKeys } from "src/app/types/authorization";
@@ -14,6 +14,8 @@ import { AuthCredentials } from "../types/authCredentials";
 import { AuthStateEnum } from "../types/authEnum";
 import { AuthMenu } from "./AuthMenu";
 import { colors } from "src/shared/style";
+import { $main, resetOrder } from "src/features/main/model/MainStore";
+import { resetLocations } from "src/features/map";
 
 type IAuthProps = NativeStackScreenProps<StackScreens, "Auth">;
 type AuthState = {
@@ -25,7 +27,7 @@ export const Auth: FC<IAuthProps> = ({ navigation }) => {
     const [authState, setAuthState] = useState<AuthState>({ state: null, type: 'sign-in'});
     const [privacyState, setPrivacyState] = useState<'closed' | 'confirm' | 'read'>('closed');
     const [credentials, setCredentials] = useState<AuthCredentials>({ phone: "+7", code: "" });
-    const handleSetProfile = useEvent(setProfile);
+    const [handleSetProfile, handleResetOrder, handleResetLocations] = useUnit([setProfile, resetOrder, resetLocations]);
 
     useEffect(() => {
         setAuthState(prev => ({...prev, state: AuthStateEnum.MENU}));
@@ -67,6 +69,12 @@ export const Auth: FC<IAuthProps> = ({ navigation }) => {
             setPrivacyState("closed");
         }
     }, [authState]);
+    
+    useEffect(() => {
+        console.log('Resetting');
+        handleResetOrder();
+        handleResetLocations();
+    }, []);
 
     const authComponents = {
         [AuthStateEnum.MENU]: <AuthMenu 

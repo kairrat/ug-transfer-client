@@ -60,7 +60,7 @@ export const MainRouter: React.FC = function MainRouter() {
         <Stack.Screen name={"Main"} component={Main} />
         <Stack.Screen name={"Trips"} component={Trips} />
         <Stack.Screen name={"TripDetails"} component={TripDetails} />
-        <Stack.Screen name={"Profile"} component={Profile} />
+        <Stack.Screen name={"Profile"} component={Profile} options={{unmountOnBlur: true} as CustomStackNavigationOptions}/>
         <Stack.Screen name={"About"} component={About} />
       </Drawer.Navigator>
     </NavigationContainer>

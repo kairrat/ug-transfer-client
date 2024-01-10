@@ -50,7 +50,7 @@ export const RequestCode: FC<IRequestCodeProps> = ({
                 <View style={styles.body}>
                     <Image source={Logo} style={styles.logo}/>
                     <View>
-                        <Text style={[fonts.regular, styles.title]}>{type === 'sign-in' ? "Вход" : "Регистрация"}</Text>
+                        <Text style={[fonts.regular, styles.title]}>Авторизация</Text>
                         <Text style={[fonts.regular, styles.title]}>по номеру телефона</Text>
                     </View>
                     <Input placeholder="Телефон" value={phone} onChange={onPhoneChange} leftIcon={<PhoneRoundedIcon />} keyboardType="phone-pad"/>

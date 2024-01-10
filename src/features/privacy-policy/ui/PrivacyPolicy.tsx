@@ -5,7 +5,7 @@ import { colors, fonts } from "src/shared/style";
 // import { colors, fonts } from "src/shared/styles";
 
 interface IPrivacyPolicy {
-    type: 'confirm' | 'read';
+    type?: 'confirm' | 'read';
     onConfirm?: () => void;
     onBack: () => void;
 }

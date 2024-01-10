@@ -1,17 +1,18 @@
 export type CreateOrderDto = {
     from: string;
     to: string;
-    fulladdressstart: string;
-    fulladdressend: string;
-    date: Date;
+    fulladressstart: string;
+    fulladressend: string;
+    date: string;
     time: string;
     tariffId: string;
     paymentMethod: string;
     countPeople: string;
-    isBaggage: boolean | string;
+    isBagage: string;
     isBaby: boolean;
     isBuster: boolean;
     isAnimal: boolean;
     comment: string;
-    price?: number;
+    full_price?: string;
+    phone_number: string;
 }

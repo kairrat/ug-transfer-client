@@ -8,5 +8,6 @@ export interface Profile {
     avatar?: string;
     blocked?: boolean;
     img?: string;
+    fcm_token?: string;
   }
   

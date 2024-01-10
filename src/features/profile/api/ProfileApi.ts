@@ -31,6 +31,18 @@ class ProfileApi extends AbstractApiRepository {
             },
         })
     };
+    async updateFcmToken(fcm_token: string) {
+        const token = await AsyncStorage.getItem(AsyncStorageKeys.TOKEN);
+        return this.apiClient.put({
+            url: Endpoints.updateFcmToken,
+            data: { fcm_token },
+            config: {
+                headers: {
+                    Authorization: 'Bearer ' + token
+                }
+            }
+        })
+    }
 };
 
 export const profileApi = new ProfileApi();

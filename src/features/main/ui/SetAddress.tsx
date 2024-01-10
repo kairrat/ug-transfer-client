@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Platform } from "react-native";
 import { CARS_CLASSES, PAYMENT_METHODS } from "../constants/constants";
 import { ArrowRightPrimaryIcon, ClockIcon, CrossIcon, EditOptionsIcon, LocationMarkIcon } from "src/shared/img";
@@ -9,36 +9,36 @@ import dayjs from 'dayjs';
 import { Button } from "src/shared/components/Button";
 import { useUnit } from "effector-react";
 import { $main, setOrder, setOrderDetailsModal, setStatus } from "../model/MainStore";
-import { BOTTOM_SHEET_SNAP_POINTS } from "../constants/SnapPoints";
 import { BottomSheetStateEnum } from "../enums/bottomSheetState.enum";
 import { setBottomSheetState } from "../model/BottomSheetStore";
 import { CreateOrderDto } from "../types/dto/createOrder.dto";
 import { createOrder } from "../model/main-actions";
 import { MainStatusEnum } from "../enums/mainStatus.enum";
+import { $profile } from "src/features/profile";
 
 interface ISetAddress {}
 
 export const SetAddress: React.FC<ISetAddress> = ({
 }) => {
-    const { snapToPosition } = useBottomSheet();
     const [handleSetBottomSheetState] = useUnit([setBottomSheetState]);
-    const [{ order, status }, handleSetOrder, handleSetOrderDetailsModal, handleSetStatus] = useUnit([$main, setOrder, setOrderDetailsModal, setStatus]);
+    const [{ order, status }, { profile }, handleSetOrder, handleSetOrderDetailsModal, handleSetStatus] = useUnit([$main, $profile, setOrder, setOrderDetailsModal, setStatus]);
     const { carClass, date: shipDate, paymentMethod, price } = order;
 
     const [datePickerOpen, setDatePickerOpen] = useState<boolean>(false);
 
-    const getDepartureAddressButton = () => {
+    const getDepartureAddressButton = useCallback(() => {
+        console.log(order);
         if (order.departure.address === "" || order.departure.city === "") {
             return "Откуда едем?";
         }
         return order.departure.city + ', ' + order.departure.address;
-    }
-    const getArrivalAddressButton = () => {
+    }, [order.departure]);
+    const getArrivalAddressButton = useCallback(() => {
         if (order.arrival.address === "" || order.arrival.city === "") {
             return "Куда едем?";
         }
         return order.arrival.city + ', ' + order.arrival.address;
-    }
+    }, [order.arrival]);
     
     // Open departure address menu sheet
     const handleOpenDepartureAddress = () => {
@@ -78,36 +78,41 @@ export const SetAddress: React.FC<ISetAddress> = ({
 
     // Create order
     const handleCreateOrder = async () => {
+        if (!profile) {
+            return;
+        }
         
         const newOrder: CreateOrderDto = {
             from: order.departure.city,
             to: order.arrival.city,
-            fulladdressend: order.departure.address,
-            fulladdressstart: order.arrival.address,
-            date: order.date,
+            fulladressend: order.departure.address,
+            fulladressstart: order.arrival.address,
+            date: dayjs(order.date).format('DD.MM.YYYY'),
             time: dayjs(order.date).format('hh:mm'),
             comment: order.comment,
-            countPeople: order.passangersAmount,
+            countPeople: order.passangersAmount !== '' ? order.passangersAmount : "1",
             tariffId: CARS_CLASSES[order.carClass].label,
             isAnimal: order.params.animalTransfer,
             isBaby: order.params.babyChair,
             isBuster: order.params.buster,
-            isBaggage: order.baggage || false,
-            paymentMethod: order.paymentMethod,
-            price: order.price
+            isBagage: order.baggage !== '' ? order.baggage : "1",
+            paymentMethod: PAYMENT_METHODS[order.paymentMethod].label,
+            full_price: `${order.price}`,
+            phone_number: profile.phone_number
         };
-        // try {
-        //     handleSetStatus(MainStatusEnum.CREATING_ORDER);
-        //     const response = await createOrder(newOrder);
-        //     console.log('Response: ', response);
-        // } catch (err) {
-        //     console.error('Failed to create order', err);
-        // } finally {
-        //     handleSetStatus(MainStatusEnum.NULL);
-        // }
+        try {
+            console.log('New order: ', newOrder);
+            handleSetStatus(MainStatusEnum.CREATING_ORDER);
+            const response: any = await createOrder(newOrder);
+            if (response && response.status === "true") {
+                handleSetBottomSheetState(BottomSheetStateEnum.ORDER_PROCESS);
+            }
+        } catch (err) {
+            console.error('Failed to create order', err);
+        } finally {
+            handleSetStatus(MainStatusEnum.NULL);
+        }
     }
-
-    useEffect(() => {}, []);
 
     return(
         <>

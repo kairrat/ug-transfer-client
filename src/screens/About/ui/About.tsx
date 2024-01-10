@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { FC, useEffect } from "react";
-import { BackHandler, Image, Linking, Platform, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { FC, useEffect, useState } from "react";
+import { BackHandler, Image, Linking, Modal, Platform, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { VERSION } from "src/appConfig";
 import { StackScreens } from "src/routes";
 import { ScreenHeader } from "src/shared/components/ScreenHeader";
@@ -9,10 +9,12 @@ import { colors } from "src/shared/style";
 import { ABOUT_LINKS } from "../constants/Links";
 import { LinkItem } from "./LinkItem";
 import { AboutLink } from "../types/AboutLink";
+import { PrivacyPolicy } from "src/features/privacy-policy";
 
 type AboutProps = NativeStackScreenProps<StackScreens, "About">;
 
 export const About: FC<AboutProps> = ({ navigation }) => {
+    const [privacyOpen, setPrivacyOpen] = useState<boolean>(false);
 
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -27,6 +29,9 @@ export const About: FC<AboutProps> = ({ navigation }) => {
     return(
         <SafeAreaView style={[styles.layout]}>
             <ScreenHeader title="О сервисе" leftIcon={<ArrowLeftIcon />} onLeftIconPress={() => navigation.navigate("Main")}/>
+            <Modal visible={privacyOpen}>
+                <PrivacyPolicy onBack={() => setPrivacyOpen(false)}/>
+            </Modal>
             <View style={styles.content}>
                 <View />
                 <View style={styles.body}>
@@ -36,7 +41,15 @@ export const About: FC<AboutProps> = ({ navigation }) => {
                             ABOUT_LINKS.map((item: AboutLink, index: number) => (
                             <LinkItem 
                                 key={index} 
-                                onPress={() => Linking.openURL(item.link)} title={item.label}
+                                onPress={() => {
+                                    console.log(item.label);
+                                    if (item.label === "Политика конфиденциальности") {
+                                        setPrivacyOpen(true);
+                                    }
+                                    else {
+                                        Linking.openURL(item.link);
+                                    }
+                                }} title={item.label}
                                 leftIcon={<AboutLinkIcon />}
                                 rightIcon={<ArrowRightIcon />}/>))
                         }

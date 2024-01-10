@@ -1,46 +1,43 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { DrawerActions } from "@react-navigation/routers";
-import { FC, useEffect, useMemo, useRef } from "react";
-import { StyleSheet, View, TouchableOpacity, Platform, Image, Modal } from "react-native";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
+import { StyleSheet, View, TouchableOpacity, Platform, Image, Modal, Text } from "react-native";
 import { StackScreens } from "src/routes";
-import { MenuIcon, StatusBarBackground } from "src/shared/img";
+import { LocationScopeIcon, MenuIcon, StatusBarBackground } from "src/shared/img";
 import { colors } from "src/shared/style";
 import { check, PERMISSIONS, RESULTS } from "react-native-permissions";
 import { Map } from "src/features/map";
-import { EnableGps, setGpsEnabled } from "src/features/gps";
+import { $gps, setCurrentLocation, setGpsEnabled, setMyLocationTrigger } from "src/features/gps";
 import { useUnit } from "effector-react";
 import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { $bottomSheet, setBottomSheetState, setIndex, setSnapPoints } from "src/features/main/model/BottomSheetStore";
+import { $bottomSheet, setBottomSheetState } from "src/features/main/model/BottomSheetStore";
 import { BottomSheetStateEnum } from "src/features/main/enums/bottomSheetState.enum";
-import { SetAddress } from "src/features/main/ui/SetAddress";
 import { 
-    SelectArrivalAddress, 
-    SelectDepartureAddress, 
-    DepartureAddressMenu, 
-    ArriveAddressMenu, 
-    SelectArrivalCity, 
-    SelectDepartureCity,
-    Loader,
     OrderDetails
 } from "src/features/main";
-import { PaymentMethod } from "src/features/main/ui/PaymentMethod";
 import { $main } from "src/features/main/model/MainStore";
 import { getGeocode } from "src/features/map/model/map-actions";
 import { $map, setArrivalLocation, setDepartureLocation } from "src/features/map/model/MapStore";
 import { BOTTOM_SHEET_SNAP_POINTS } from "src/features/main/constants/SnapPoints";
 import { STATE_COMPONENTS } from "../constants/StateComponents";
+import Geolocation from '@react-native-community/geolocation';
+
+Geolocation.setRNConfiguration({
+    skipPermissionRequests: true,
+    locationProvider: 'auto',
+    enableBackgroundLocationUpdates: false,
+    authorizationLevel: 'whenInUse'
+})
 
 type MainProps = NativeStackScreenProps<StackScreens, "Main">;
 
 export const Main: FC<MainProps> = ({ navigation }) => {
     const sheetModalRef = useRef<BottomSheetModal>(null);
-    const [handleSetGpsEnabled] = useUnit([setGpsEnabled])
-    const [
-        { bottomSheetState },
-        handleSetBottomSheetState
-    ] = useUnit([$bottomSheet, setBottomSheetState]);
+    const [{gpsEnabled}, handleSetGpsEnabled, handleSetCurrentLocation, handleSetMyPosition] = useUnit([$gps, setGpsEnabled, setCurrentLocation, setMyLocationTrigger])
+    const [{ bottomSheetState }, handleSetBottomSheetState] = useUnit([$bottomSheet, setBottomSheetState]);
     const [{orderDetailModal, order}] = useUnit([$main]);
     const [{arrivalLocation, departureLocation}, handleSetDepartureLocation, handleSetArrivalLocation] = useUnit([$map, setDepartureLocation, setArrivalLocation]);
+    const [initCheckFinish, setInitCheckFinish] = useState<boolean>(false);
 
     const handleOpenDrawer = () => {
         navigation.dispatch(DrawerActions.openDrawer());
@@ -59,15 +56,35 @@ export const Main: FC<MainProps> = ({ navigation }) => {
                 handleSetBottomSheetState(BottomSheetStateEnum.ENABLE_GPS);
                 sheetModalRef.current?.snapToIndex(0);
             }
-            
         } catch (err) {
             handleSetBottomSheetState(BottomSheetStateEnum.ENABLE_GPS);
+        } finally {
+            setInitCheckFinish(true);
         }
     }
 
     useEffect(() => {
         handleCheckGpsPermission();
     }, []);
+
+    useEffect(() => {
+        let watchPositionId;
+        if (gpsEnabled && initCheckFinish) {
+            watchPositionId = Geolocation.watchPosition((pos) => {
+                handleSetCurrentLocation({lon: pos.coords.longitude, lat: pos.coords.latitude});
+            }, (err) => {
+                console.error('Failed to get current location', err);
+            }, {
+                distanceFilter: 0.5,
+                interval: 5000
+            })
+        }
+        return () => {
+            if (watchPositionId) {
+                Geolocation.clearWatch(watchPositionId);
+            }
+        }
+    }, [gpsEnabled, initCheckFinish]);
 
     useEffect(() => {
         // Получение геокода адреса отправной точки, если заполнены данные
@@ -104,6 +121,10 @@ export const Main: FC<MainProps> = ({ navigation }) => {
         }
     }, [order.arrival, order.departure]);
 
+    const handleMoveToMyPosition = () => {
+        handleSetMyPosition(true);
+    }
+
     const snapPoints = useMemo(() => BOTTOM_SHEET_SNAP_POINTS[bottomSheetState], [bottomSheetState]);
 
     return(
@@ -122,21 +143,27 @@ export const Main: FC<MainProps> = ({ navigation }) => {
                     <MenuIcon />
                 </TouchableOpacity>
             </View>
-            <Map />
-            <BottomSheet
-                ref={sheetModalRef}
-                index={0}
-                snapPoints={snapPoints}
-                backgroundStyle={styles.bottomSheetBackground}
-                handleIndicatorStyle={styles.bottomSheetHandleIndicator}
-                enableContentPanningGesture={false}
-                enableHandlePanningGesture={true}
-                onChange={(e) => {
-                    e === -1 && sheetModalRef.current?.snapToIndex(0);
-                }}>
-                    {STATE_COMPONENTS[bottomSheetState]}
-            </BottomSheet>
             
+            <Map />
+            {
+                (bottomSheetState === BottomSheetStateEnum.ORDER_PROCESS && gpsEnabled) &&
+                <TouchableOpacity style={styles.myLocation_container} onPress={handleMoveToMyPosition}>
+                    <LocationScopeIcon />
+                </TouchableOpacity>
+            }
+            {
+                initCheckFinish &&
+                <BottomSheet
+                    ref={sheetModalRef}
+                    index={0}
+                    snapPoints={snapPoints}
+                    backgroundStyle={styles.bottomSheetBackground}
+                    handleIndicatorStyle={styles.bottomSheetHandleIndicator}
+                    enableContentPanningGesture={false}
+                    enableHandlePanningGesture={true}>
+                        {STATE_COMPONENTS[bottomSheetState]}
+                </BottomSheet>
+            }
         </View>
     );
 };
@@ -167,10 +194,19 @@ const styles = StyleSheet.create({
         borderRadius: 12
     },
     bottomSheetBackground: {
-        backgroundColor: colors.background
+        backgroundColor: colors.background,
+        // position: 'relative'
     },
     bottomSheetHandleIndicator: {
         width: '10%',
         backgroundColor: colors.opacity
     },
+    myLocation_container: {
+        backgroundColor: colors.background,
+        position: 'absolute',
+        right: 15,
+        bottom: 235,
+        padding: 10,
+        borderRadius: 100
+    }
 });

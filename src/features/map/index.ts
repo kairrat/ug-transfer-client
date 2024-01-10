@@ -1,5 +1,10 @@
-import { Map } from './ui/Map';
+import Map from './ui/Map';
+import { $map, resetLocations, setArrivalLocation, setDepartureLocation } from './model/MapStore';
 
 export {
-    Map
+    Map,
+    resetLocations,
+    $map,
+    setArrivalLocation,
+    setDepartureLocation
 };

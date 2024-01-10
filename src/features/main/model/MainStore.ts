@@ -8,6 +8,7 @@ type MainState = {
     order: Order;
     editingOrder: EditingOrder;
     orderDetailModal: boolean;
+    orderProcessStatus: null | 'seeking' | 'received';
 };
 
 const initialState: MainState = {
@@ -44,18 +45,21 @@ const initialState: MainState = {
             address: ""
         }
     },
-    orderDetailModal: false
+    orderDetailModal: false,
+    orderProcessStatus: null
 };
 
 export const setOrder = createEvent<Order>();
 export const setEditingOrder = createEvent<EditingOrder>();
 export const setOrderDetailsModal = createEvent<boolean>();
 export const setStatus = createEvent<MainStatusEnum>();
-export const resetOrder = createEvent<never>();
+export const resetOrder = createEvent();
+export const setOrderProcessStatus = createEvent<null | 'seeking' | 'received'>();
 
 export const $main = createStore<MainState>(initialState)
     .on(setOrder, (state, order) => ({...state, order}))
     .on(setEditingOrder, (state, editingOrder) => ({...state, editingOrder}))
     .on(setOrderDetailsModal, (state, orderDetailModal) => ({...state, orderDetailModal}))
     .on(setStatus, (state, status) => ({...state, status}))
-    .on(resetOrder, (state) => ({...state, ...initialState.order, ...initialState.editingOrder}))
+    .on(resetOrder, (state) => ({...state, order: {...initialState.order}, editingOrder: {...initialState.editingOrder}}))
+    .on(setOrderProcessStatus, (state, orderProcessStatus) => ({...state, orderProcessStatus}))

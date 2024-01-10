@@ -18,7 +18,9 @@ const initialState: MapState = {
 
 export const setDepartureLocation = createEvent<Location>();
 export const setArrivalLocation = createEvent<Location>();
+export const resetLocations = createEvent();
 
 export const $map = createStore<MapState>(initialState)
     .on(setDepartureLocation, (state, departureLocation) => ({...state, departureLocation}))
     .on(setArrivalLocation, (state, arrivalLocation) => ({...state, arrivalLocation}))
+    .on(resetLocations, () => ({...initialState}))

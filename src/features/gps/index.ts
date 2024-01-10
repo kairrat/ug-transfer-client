@@ -1,8 +1,10 @@
-import { $gps, setGpsEnabled } from './model/GpsStore';
+import { $gps, setGpsEnabled, setCurrentLocation, setMyLocationTrigger } from './model/GpsStore';
 import { EnableGps } from './ui/EnableGps';
 
 export {
     $gps,
     setGpsEnabled,
-    EnableGps
+    EnableGps,
+    setCurrentLocation,
+    setMyLocationTrigger
 };

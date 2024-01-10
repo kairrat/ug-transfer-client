@@ -9,3 +9,9 @@ export const updateProfile = async (updateData) => {
     const { data } = await profileApi.updateProfile(updateData);
     return data;
 }
+
+export const updateFcmToken = async (token: string) => {
+    const { data } = await profileApi.updateFcmToken(token);
+    console.log(data);
+    return data;
+}

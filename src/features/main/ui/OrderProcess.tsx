@@ -3,30 +3,27 @@ import { Platform, StyleSheet, Text, View } from "react-native";
 import { Button } from "src/shared/components/Button";
 import { colors } from "src/shared/style";
 import { BottomSheetContext } from "../context/BottomSheetContext";
+import { useUnit } from "effector-react";
+import { $main } from "../model/MainStore";
+import { setBottomSheetState } from "../model/BottomSheetStore";
+import { BottomSheetStateEnum } from "../enums/bottomSheetState.enum";
 
 type OrderProcessProps = {
-    status: 'received' | 'seeking' | null;
-    onReceivedDismiss: () => void;
-    onSeekingDismiss: () => void;
 }
 
-export const OrderProcess: FC<OrderProcessProps> = ({ status, onReceivedDismiss, onSeekingDismiss }) => {
-    const { modalRef, setSnapPoints } = useContext(BottomSheetContext);
-    useEffect(() => {
-        if (Platform.OS === "ios") {
-            setSnapPoints([325]);
-            modalRef.current?.snapToPosition(235);
-        }
-        else {
-            setSnapPoints([295]);
-            modalRef.current?.snapToPosition(295);
-        }
-    }, []);
+export const OrderProcess: FC<OrderProcessProps> = ({ }) => {
+    const [{ orderProcessStatus }, handleSetBottomSheetState] = useUnit([$main, setBottomSheetState]);
+    console.log(orderProcessStatus)
+    // if (orderProcessStatus === null) {
+    //     handleSetBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
+    // }
+    const onReceivedDismiss = () => {};
+    const onSeekingDismiss = () => {};
     return(
         <View style={styles.container}>
-            <Text style={styles.title}>{status == "received" ? "Ваш заказ принят" : "Водитель ищется..."}</Text>
-            <Button projectType="primary" onPress={status === "received" ? onReceivedDismiss : onSeekingDismiss}>
-                <Text style={styles.button_text}>ОК</Text>
+            <Text style={styles.title}>{orderProcessStatus == "received" ? "Ваш заказ принят" : "Водитель ищется..."}</Text>
+            <Button projectType="primary" onPress={orderProcessStatus === "received" ? onReceivedDismiss : onSeekingDismiss}>
+                <Text style={styles.button_text}>OK</Text>
             </Button>
         </View>
     );
