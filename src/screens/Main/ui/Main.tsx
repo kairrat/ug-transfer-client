@@ -50,8 +50,7 @@ export const Main: FC<MainProps> = ({ navigation }) => {
                 console.log('Granted', result);
                 handleSetGpsEnabled(true);
                 // sheetModalRef.current?.snapToPosition(Platform.OS === "ios" ? 653 : 623);
-                // handleSetBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
-                handleSetBottomSheetState(BottomSheetStateEnum.ORDER_FINISHED);
+                handleSetBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
             }
             else {
                 handleSetBottomSheetState(BottomSheetStateEnum.ENABLE_GPS);

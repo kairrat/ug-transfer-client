@@ -40,8 +40,19 @@ function Map(){
         if (routeDetails.distance) {
             const carClass = CARS_CLASSES[order.carClass];  
             let price = Math.max(routeDetails.distance * carClass.price, 10); // Дистанция умноженная на тариф
-            price += parseInt(order.passangersAmount) <= 5 ? 1500 : 2500;
-            price += parseInt(order.baggage) <= 5 ? 200 : 500;
+            console.log(price, order.passangersAmount, parseInt(order.passangersAmount));
+            if (order.passangersAmount === "") {
+                price += 1500;
+            }
+            else {
+                price += parseInt(order.passangersAmount) <= 5 ? 1500 : 2500;
+            }
+            if (order.baggage === "") {
+                price += 200;    
+            }
+            else {
+                price += parseInt(order.baggage) <= 5 ? 200 : 500;
+            }
             if (order.params.buster) {
                 price += 300;
             }
@@ -57,7 +68,7 @@ function Map(){
         else {
             handleSetOrder({...order, price: null});
         }
-    }, [routeDetails, order.params, order.carClass]);
+    }, [routeDetails, order.params, order.carClass, order.passangersAmount, order.baggage]);
 
     useEffect(() => {
         if (setMyLocationTrigger) {
