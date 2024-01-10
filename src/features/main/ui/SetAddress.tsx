@@ -15,11 +15,13 @@ import { CreateOrderDto } from "../types/dto/createOrder.dto";
 import { createOrder } from "../model/main-actions";
 import { MainStatusEnum } from "../enums/mainStatus.enum";
 import { $profile } from "src/features/profile";
+import { useToast } from "react-native-toast-notifications";
 
 interface ISetAddress {}
 
 export const SetAddress: React.FC<ISetAddress> = ({
 }) => {
+    const toast = useToast();
     const [handleSetBottomSheetState] = useUnit([setBottomSheetState]);
     const [{ order, status }, { profile }, handleSetOrder, handleSetOrderDetailsModal, handleSetStatus] = useUnit([$main, $profile, setOrder, setOrderDetailsModal, setStatus]);
     const { carClass, date: shipDate, paymentMethod, price } = order;
@@ -104,10 +106,23 @@ export const SetAddress: React.FC<ISetAddress> = ({
             console.log('New order: ', newOrder);
             handleSetStatus(MainStatusEnum.CREATING_ORDER);
             const response: any = await createOrder(newOrder);
+            console.log(response, response?.status);
             if (response && response.status === "true") {
                 handleSetBottomSheetState(BottomSheetStateEnum.ORDER_PROCESS);
             }
+            else if (response && response.error_message && response.status === 'false') {
+                toast.show(response.error_message, {
+                    type: "danger",
+                    placement: "top",
+                    textStyle: {
+                        textAlign: "center"
+                    }
+                })
+            }
         } catch (err) {
+            toast.show('Не получилось создать заказ', {
+                type: "error"
+            })
             console.error('Failed to create order', err);
         } finally {
             handleSetStatus(MainStatusEnum.NULL);
@@ -235,7 +250,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: colors.opacity,
         flexGrow: 1,
-        width: '90%'
+        width: '80%'
     },
     carOptions_holder: {
         marginBottom: 2,

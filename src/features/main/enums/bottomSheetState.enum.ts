@@ -9,5 +9,6 @@ export enum BottomSheetStateEnum {
     SET_ARRIVAL_CITY = 'set_arrival_city',
     SET_ARRIVAL_ADDRESS = 'set_arrival_address',
     ORDER_PROCESS = 'order_process',
+    ORDER_FINISHED = 'order_finished',
     LOADING = 'loading',
 }

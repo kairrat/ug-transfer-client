@@ -6,6 +6,7 @@ import { SelectDepartureAddress } from './ui/departureAddress/SelectDepartureAdd
 import { SelectDepartureCity } from './ui/departureAddress/SelectDepartureCity';
 import { OrderDetails } from './ui/OrderDetails';
 import { Loader } from './ui/Loader';
+import { FinishedOrder } from './ui/FinishedOrder';
 
 export {
     ArriveAddressMenu,
@@ -15,5 +16,6 @@ export {
     SelectDepartureCity,
     SelectDepartureAddress,
     Loader,
-    OrderDetails
+    OrderDetails,
+    FinishedOrder
 };

@@ -21,6 +21,7 @@ export type Order = {
     comment: string;
     price: number | null;
     paymentMethod: PaymentMethodEnum;
+    distance?: string;
 }
 
 export type EditingOrder = {

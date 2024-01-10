@@ -13,4 +13,5 @@ export const BOTTOM_SHEET_SNAP_POINTS = {
     [BottomSheetStateEnum.SET_ARRIVAL_CITY]: Platform.OS === "ios" ? [285] : [255],
     [BottomSheetStateEnum.SET_ARRIVAL_ADDRESS]: Platform.OS === "ios" ? [285] : [255],
     [BottomSheetStateEnum.ORDER_PROCESS]: Platform.OS === "ios" ? [215] : [195],
+    [BottomSheetStateEnum.ORDER_FINISHED]: Platform.OS === "ios" ? [440] : [410]
 }

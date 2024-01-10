@@ -6,6 +6,7 @@ import { PaymentMethodEnum } from "../types/paymentMethod.enum";
 type MainState = {
     status: MainStatusEnum;
     order: Order;
+    finishedOrder: Order | null;
     editingOrder: EditingOrder;
     orderDetailModal: boolean;
     orderProcessStatus: null | 'seeking' | 'received';
@@ -45,6 +46,7 @@ const initialState: MainState = {
             address: ""
         }
     },
+    finishedOrder: null,
     orderDetailModal: false,
     orderProcessStatus: null
 };
@@ -55,6 +57,7 @@ export const setOrderDetailsModal = createEvent<boolean>();
 export const setStatus = createEvent<MainStatusEnum>();
 export const resetOrder = createEvent();
 export const setOrderProcessStatus = createEvent<null | 'seeking' | 'received'>();
+export const setFinishedOrder = createEvent<null | Order>();
 
 export const $main = createStore<MainState>(initialState)
     .on(setOrder, (state, order) => ({...state, order}))
@@ -63,3 +66,4 @@ export const $main = createStore<MainState>(initialState)
     .on(setStatus, (state, status) => ({...state, status}))
     .on(resetOrder, (state) => ({...state, order: {...initialState.order}, editingOrder: {...initialState.editingOrder}}))
     .on(setOrderProcessStatus, (state, orderProcessStatus) => ({...state, orderProcessStatus}))
+    .on(setFinishedOrder, (state, finishedOrder) => ({...state, finishedOrder}))

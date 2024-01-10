@@ -4,7 +4,7 @@ import { Button } from "src/shared/components/Button";
 import { colors } from "src/shared/style";
 import { BottomSheetContext } from "../context/BottomSheetContext";
 import { useUnit } from "effector-react";
-import { $main } from "../model/MainStore";
+import { $main, setFinishedOrder, setOrderProcessStatus } from "../model/MainStore";
 import { setBottomSheetState } from "../model/BottomSheetStore";
 import { BottomSheetStateEnum } from "../enums/bottomSheetState.enum";
 
@@ -12,13 +12,24 @@ type OrderProcessProps = {
 }
 
 export const OrderProcess: FC<OrderProcessProps> = ({ }) => {
-    const [{ orderProcessStatus }, handleSetBottomSheetState] = useUnit([$main, setBottomSheetState]);
-    console.log(orderProcessStatus)
+    const [
+        { orderProcessStatus, order }, 
+        handleSetOrderProcessStatus, 
+        handleSetBottomSheetState,
+        handleSetFinishedOrder
+    ] = useUnit([$main, setOrderProcessStatus, setBottomSheetState, setFinishedOrder]);
     // if (orderProcessStatus === null) {
     //     handleSetBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
     // }
-    const onReceivedDismiss = () => {};
-    const onSeekingDismiss = () => {};
+    const onReceivedDismiss = () => {
+        handleSetFinishedOrder(order); // Mock order data
+        handleSetBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
+    };
+
+    const onSeekingDismiss = () => {
+        handleSetOrderProcessStatus("received");
+    };
+
     return(
         <View style={styles.container}>
             <Text style={styles.title}>{orderProcessStatus == "received" ? "Ваш заказ принят" : "Водитель ищется..."}</Text>
