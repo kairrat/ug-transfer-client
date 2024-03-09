@@ -6,7 +6,6 @@ export const Endpoints = {
     verifyCoe: baseUrl + '/users/clients/register',
     getProfile: baseUrl + '/users/clients/info',
     updateProfile: baseUrl + '/users/clients/update',
-    getCity: baseUrl + '/city/',
     createOrder: baseUrl + '/order/create',
     updateFcmToken: baseUrl + '/users/drivers/token'
 }

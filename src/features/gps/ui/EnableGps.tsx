@@ -1,46 +1,39 @@
-import {  useBottomSheet } from "@gorhom/bottom-sheet";
 import { useUnit } from "effector-react";
-import { FC, memo, useEffect, useRef } from "react";
+import { FC, memo } from "react";
 import { Image, Platform, StyleSheet, Text, View } from "react-native";
 import { Earth, EarthIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
 import { setGpsEnabled } from "../model/GpsStore";
 import { PERMISSIONS, RESULTS, request } from "react-native-permissions";
 import { Button } from "src/shared/components/Button";
-import { setBottomSheetState } from "src/features/main/model/BottomSheetStore";
 import { BottomSheetStateEnum } from "src/features/main/enums/bottomSheetState.enum";
-import { BOTTOM_SHEET_SNAP_POINTS } from "src/features/main/constants/SnapPoints";
+import { TBottomSheetMethods } from "src/features/order/types/bottomSheetMethods";
 
-type EnableGpsProps = {}
+type Props = TBottomSheetMethods & {};
 
-export const EnableGps: FC<EnableGpsProps> = memo(({}) => {
-    const { expand, snapToPosition } = useBottomSheet();
+export const EnableGps: FC<Props> = memo(({setBottomSheetState}) => {
     const [handleSetGpsEnabled] = useUnit([setGpsEnabled]);
-    
-    const [handleSetBottomSheetState] = useUnit([setBottomSheetState]);
 
     const handleEnableGps = async () => {
         try {
             const result = await request(Platform.OS === "android" ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-            console.log('Result: ', result);
             if (result === RESULTS.GRANTED) {
                 handleSetGpsEnabled(true);
             }
         } catch (err) {
             console.error('Failed to requetst permission', err);
         } finally {
-            handleSetBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
+            setBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
         }
     }
 
     const handlePressLaterButton = () => {
-        handleSetBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
+        setBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
     };
 
     return(
         <View style={styles.container}>
             <Image source={Earth} style={styles.earth_icon}/>
-            {/* <EarthIcon style={styles.earth_icon}/> */}
             <Text style={[fonts.bold, styles.title]}>Где вы находитесь?</Text>
             <View style={styles.description_holder}>
                 <Text style={[fonts.medium, styles.description]}>Установите ваше местоположение,чтобы мы могли найти ближайший к вам доступный автомобиль</Text>

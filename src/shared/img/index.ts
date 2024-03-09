@@ -11,7 +11,6 @@ import StandartClassCar from './standart-car.png';
 import ComfortClassCar from './comfort-car.png';
 import BuisinessClassCar from './buisiness-car.png';
 import MinivenClassCar from './miniven-car.png';
-import BuisinessMinivenClassCar from './buisiness-miniven-car.png';
 import WhiteWalletIcon from './wallet-white-icon.svg';
 import WhiteCreditCardIcon from './creditCard-white-icon.svg';
 import CheckedGreenIcon from './checked-green-icon';
@@ -47,7 +46,6 @@ export {
     ComfortClassCar,
     BuisinessClassCar,
     MinivenClassCar,
-    BuisinessMinivenClassCar,
     WhiteWalletIcon,
     WhiteCreditCardIcon,
     CheckedGreenIcon,

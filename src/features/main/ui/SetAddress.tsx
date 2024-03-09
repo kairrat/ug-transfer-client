@@ -17,12 +17,14 @@ import { MainStatusEnum } from "../enums/mainStatus.enum";
 import { $profile } from "src/features/profile";
 import { useToast } from "react-native-toast-notifications";
 
-interface ISetAddress {}
+interface ISetAddress {
+    setBottomSheetState
+}
 
 export const SetAddress: React.FC<ISetAddress> = ({
+    setBottomSheetState
 }) => {
     const toast = useToast();
-    const [handleSetBottomSheetState] = useUnit([setBottomSheetState]);
     const [{ order, status }, { profile }, handleSetOrder, handleSetOrderDetailsModal, handleSetStatus] = useUnit([$main, $profile, setOrder, setOrderDetailsModal, setStatus]);
     const { carClass, date: shipDate, paymentMethod, price } = order;
 
@@ -44,17 +46,17 @@ export const SetAddress: React.FC<ISetAddress> = ({
     
     // Open departure address menu sheet
     const handleOpenDepartureAddress = () => {
-        handleSetBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION);
+        setBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION);
     }
 
     // Open arrival address menu sheet
     const handleOpenArrivalAddress = () => {
-        handleSetBottomSheetState(BottomSheetStateEnum.SET_ARRIVAL_LOCATION);
+        setBottomSheetState(BottomSheetStateEnum.SET_ARRIVAL_LOCATION);
     }
 
     // Open payment methods sheet
     const handleOpenPaymentSheet = () => {
-        handleSetBottomSheetState(BottomSheetStateEnum.DEFINED_PAYMENT_METHOD);
+        setBottomSheetState(BottomSheetStateEnum.DEFINED_PAYMENT_METHOD);
     }
 
     // Open datepicker
@@ -108,7 +110,7 @@ export const SetAddress: React.FC<ISetAddress> = ({
             const response: any = await createOrder(newOrder);
             console.log(response, response?.status);
             if (response && response.status === "true") {
-                handleSetBottomSheetState(BottomSheetStateEnum.ORDER_PROCESS);
+                setBottomSheetState(BottomSheetStateEnum.ORDER_PROCESS);
             }
             else if (response && response.error_message && response.status === 'false') {
                 toast.show(response.error_message, {

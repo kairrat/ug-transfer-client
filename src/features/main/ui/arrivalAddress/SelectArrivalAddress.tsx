@@ -5,7 +5,7 @@ import { Input } from "src/shared/components/Input";
 import { BuildingIcon, CrossIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
 import { useKeyboardVisibility } from "src/features/useKeyboardVisibility";
-import { useBottomSheet } from "@gorhom/bottom-sheet";
+import { BottomSheetTextInput, useBottomSheet } from "@gorhom/bottom-sheet";
 import { BOTTOM_SHEET_SNAP_POINTS } from "../../constants/SnapPoints";
 import { BottomSheetStateEnum } from "../../enums/bottomSheetState.enum";
 import { useUnit } from "effector-react";
@@ -56,13 +56,13 @@ export const SelectArrivalAddress: React.FC<ISelectArrivalAddressProps> = ({}) =
                 <Text style={[fonts.medium, styles.header_title]}>В какой адрес едем?</Text>
             </View>
             <View style={styles.body}>
-                <Input
-                    value={editingOrder.arrival.address}
-                    onChange={handleAddressChange}
-                    leftIcon={<BuildingIcon />}
+                {/* <BuildingIcon /> */}
+                <BottomSheetTextInput 
+                    style={styles.input}
+                    value={editingOrder.arrival.address} 
                     placeholder="Адрес"
-                    rightIcon={editingOrder.arrival.address !== "" && <CrossIcon width={30} />}
-                    onRightIconPress={() => handleAddressChange("")}/>
+                    placeholderTextColor={colors.opacity}
+                    onChangeText={handleAddressChange}/>
                 <View style={styles.button_holder}>
                     <Button onPress={handleApply} projectType="primary">
                         <Text style={[fonts.medium, styles.button_text]}>Применить</Text>
@@ -98,6 +98,16 @@ const styles = StyleSheet.create({
     },
     body: {
         paddingVertical: 35
+    },
+    input: {
+        width: '100%',
+        borderWidth: 1,
+        borderColor: colors.stroke,
+        borderRadius: 7,
+        backgroundColor: colors.gray,
+        paddingVertical: 12,
+        paddingHorizontal: 10,
+        color: colors.white
     },
     dropdown: {
         width: '100%',

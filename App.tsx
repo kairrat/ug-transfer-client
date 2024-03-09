@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import Toast, { ToastProvider } from 'react-native-toast-notifications';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {Platform, StyleSheet} from 'react-native';
+import {LogBox, Platform, StyleSheet} from 'react-native';
 import {Host} from 'react-native-portalize';
 import { MainRouter } from './src/routes';
 import Orientation from 'react-native-orientation-locker';
@@ -13,6 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AsyncStorageKeys } from 'src/app/types/authorization';
 
 Orientation.lockToPortrait();
+LogBox.ignoreAllLogs();
 
 export const App = () => {
   const [{ profile }] = useUnit([$profile]);

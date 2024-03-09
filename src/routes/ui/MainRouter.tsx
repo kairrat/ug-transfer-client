@@ -14,7 +14,7 @@ import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import { TripDetails } from "src/screens/TripDetails";
 import { Trips } from "src/screens/Trips";
 import { About } from "src/screens/About";
-import { MainTest } from "src/screens/MainTest/MainTest";
+import { Order } from "src/screens/Order";
 
 type CustomStackNavigationOptions = NativeStackNavigationOptions & {
   unmountOnBlur?: boolean;
@@ -57,7 +57,7 @@ export const MainRouter: React.FC = function MainRouter() {
       >
         <Stack.Screen name={"Init"} component={Init} />
         <Stack.Screen name={"Auth"} component={Auth} options={{unmountOnBlur: true} as CustomStackNavigationOptions}/>
-        <Stack.Screen name={"Main"} component={Main} />
+        <Stack.Screen name={"Main"} component={Order} />
         <Stack.Screen name={"Trips"} component={Trips} />
         <Stack.Screen name={"TripDetails"} component={TripDetails} />
         <Stack.Screen name={"Profile"} component={Profile} options={{unmountOnBlur: true} as CustomStackNavigationOptions}/>

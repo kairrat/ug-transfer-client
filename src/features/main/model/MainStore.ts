@@ -34,7 +34,8 @@ const initialState: MainState = {
         baggage: "",
         passangersAmount: "",
         comment: "",
-        paymentMethod: PaymentMethodEnum.CASH
+        paymentMethod: PaymentMethodEnum.CASH,
+        isUrgent: false
     },
     editingOrder: {
         departure: {

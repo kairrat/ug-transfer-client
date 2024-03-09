@@ -22,6 +22,7 @@ export type Order = {
     price: number | null;
     paymentMethod: PaymentMethodEnum;
     distance?: string;
+    isUrgent: boolean;
 }
 
 export type EditingOrder = {

@@ -1,11 +1,10 @@
-import { useBottomSheet } from "@gorhom/bottom-sheet";
+import { BottomSheetFlatList, BottomSheetTextInput, useBottomSheet } from "@gorhom/bottom-sheet";
 import { useUnit } from "effector-react";
 import React, { useEffect, useState } from "react";
-import { DimensionValue, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useKeyboardVisibility } from "src/features/useKeyboardVisibility";
 import { Button } from "src/shared/components/Button";
-import { Input } from "src/shared/components/Input";
-import { BuildingIcon, CrossIcon } from "src/shared/img";
+import { CrossIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
 import { ICity } from "src/types/city";
 import { BOTTOM_SHEET_SNAP_POINTS } from "../../constants/SnapPoints";
@@ -17,7 +16,7 @@ import { $main, setEditingOrder } from "../../model/MainStore";
 interface ISelectDepartureCityProps {};
 
 export const SelectDepartureCity: React.FC<ISelectDepartureCityProps> = () => {
-    const { snapToPosition } = useBottomSheet();
+    const { snapToIndex } = useBottomSheet();
     const [{snapPoints}, handleSetSnapPoints, handleSetBottomSheetState] = useUnit([$bottomSheet, setSnapPoints, setBottomSheetState]);
     const [{order, editingOrder}, handleSetEditingOrder] = useUnit([$main, setEditingOrder]);
     const [ foundCities, setFoundCities ] = useState<ICity[]>([]);
@@ -40,6 +39,11 @@ export const SelectDepartureCity: React.FC<ISelectDepartureCityProps> = () => {
         handleSetBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION);
     }
 
+    const handleChangeCity = (text: string) => {
+        setCity(text);
+        setFoundCities(prev => prev.filter(item => item.city.toLowerCase().includes(text.toLowerCase())));
+    }
+
     const handleSearchCities = () => {
         if (city === "") {
             return;
@@ -59,43 +63,10 @@ export const SelectDepartureCity: React.FC<ISelectDepartureCityProps> = () => {
     }, [city]);
 
     useEffect(() => {
-        const points = BOTTOM_SHEET_SNAP_POINTS[BottomSheetStateEnum.SET_DEPARTURE_CITY];
-
-        if (foundCities.length === 0) {
-            snapToPosition(points[0]);
-            handleSetSnapPoints(points);
-            setSnapPos(points[0]);
-        }
-        else if (foundCities.length > 0 && foundCities.length < 4) {
-            snapToPosition(points[0] + 200);
-            handleSetSnapPoints(points.map(pos => pos + 200));
-            setSnapPos(points[0] + 200);
-        }
-        else {
-            snapToPosition(points[0] + 420);
-            handleSetSnapPoints(points.map(pos => pos + 420));
-            setSnapPos(points[0] + 420);
-        }
-    }, [foundCities]);
-
-    useEffect(() => {
-        if (Platform.OS === "ios") {
-            snapToPosition(keyboardVisible ? snapPos + 320 : snapPos);
-        }
-        else {
-            snapToPosition(keyboardVisible ? snapPos + 280 : snapPos);
+        if (!keyboardVisible && city.length === 0) {
+            snapToIndex(0);
         }
     }, [keyboardVisible]);
-
-    const handleGetDropdownHeight = (): DimensionValue => {
-        if (foundCities.length === 0) {
-            return 20;
-        }
-        else if (foundCities.length < 4) {
-            return 220;
-        }
-        return 430;
-    }
 
     return(
         <View style={styles.container}>
@@ -108,31 +79,31 @@ export const SelectDepartureCity: React.FC<ISelectDepartureCityProps> = () => {
                 <Text style={[fonts.medium, styles.header_title]}>С какого города едем?</Text>
             </View>
             <View style={styles.body}>
-                <Input
-                    value={city}
-                    onChange={setCity}
-                    leftIcon={<BuildingIcon />}
+                <BottomSheetTextInput
+                    style={styles.input} 
+                    value={city} 
                     placeholder="Город"
-                    rightIcon={city !== "" && <CrossIcon width={30} />}
-                    onRightIconPress={() => setCity("")}/>
-                <ScrollView contentContainerStyle={[styles.dropdown, { height: handleGetDropdownHeight()  }]}>
-                    {
-                        foundCities.length > 0 &&
-                        foundCities.map(({ city: foundCity, id }: ICity, i: number) => (
-                            <TouchableOpacity 
-                                onPress={() => handleSelectCity(foundCity)}
-                                key={id}
-                                style={i === 0 ? styles.dropdown_item_first : styles.dropdown_item}>
-                                    <Text style={[fonts.regular, styles.dropdown_item_text]}>{foundCity}</Text>
-                            </TouchableOpacity>
-                        ))
-                    }
-                </ScrollView>
-                <View style={styles.button_holder}>
-                    <Button onPress={handleApply} projectType="primary">
-                        <Text style={[fonts.medium, styles.button_text]}>Применить</Text>
-                    </Button>
-                </View>
+                    placeholderTextColor={colors.opacity}
+                    onChangeText={handleChangeCity}/>
+            </View>
+            {
+                foundCities.length > 0 &&
+                <BottomSheetFlatList
+                data={foundCities}
+                keyExtractor={(i) => `${i.id}`}
+                style={styles.dropdown}
+                renderItem={({item, index}) => (
+                    <TouchableOpacity 
+                            onPress={() => handleSelectCity(item.city)}
+                            style={index === 0 ? styles.dropdown_item_first : styles.dropdown_item}>
+                                <Text style={[fonts.regular, styles.dropdown_item_text]}>{item.city}</Text>
+                    </TouchableOpacity>
+                )}/>
+            }
+            <View style={styles.button_holder}>
+                <Button onPress={handleApply} projectType="primary">
+                    <Text style={[fonts.medium, styles.button_text]}>Применить</Text>
+                </Button>
             </View>
         </View>
     );
@@ -140,7 +111,8 @@ export const SelectDepartureCity: React.FC<ISelectDepartureCityProps> = () => {
 
 const styles = StyleSheet.create({
     container: {
-        paddingHorizontal: 20
+        paddingHorizontal: 20,
+        flex: 1
     },
     container_header: {
         position: 'relative',
@@ -164,9 +136,21 @@ const styles = StyleSheet.create({
     body: {
         paddingVertical: 35
     },
+    input: {
+        width: '100%',
+        borderWidth: 1,
+        borderColor: colors.stroke,
+        borderRadius: 7,
+        backgroundColor: colors.gray,
+        paddingVertical: 12,
+        paddingHorizontal: 10,
+        color: colors.white
+    },
     dropdown: {
         width: '100%',
-        marginTop: 10
+        paddingHorizontal: 20,
+        borderWidth: 2,
+        maxHeight: 200
     },
     dropdown_item: {
         width: '100%',

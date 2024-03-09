@@ -40,7 +40,6 @@ function Map(){
         if (routeDetails.distance) {
             const carClass = CARS_CLASSES[order.carClass];  
             let price = Math.max(routeDetails.distance * carClass.price, 10); // Дистанция умноженная на тариф
-            console.log(price, order.passangersAmount, parseInt(order.passangersAmount));
             if (order.passangersAmount === "") {
                 price += 1500;
             }

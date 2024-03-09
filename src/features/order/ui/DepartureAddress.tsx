@@ -1,44 +1,47 @@
-import { BottomSheetTextInput, useBottomSheet } from "@gorhom/bottom-sheet";
-import { useUnit } from "effector-react";
-import React, { useEffect } from "react";
-import { Keyboard, Platform, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
-import { useKeyboardVisibility } from "src/features/useKeyboardVisibility";
-import { Button } from "src/shared/components/Button";
-import { Input } from "src/shared/components/Input";
-import { BuildingIcon, CrossIcon } from "src/shared/img";
+import { Keyboard, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { TBottomSheetMethods } from "../types/bottomSheetMethods";
+import { FC } from "react";
+import { CrossIcon, BuildingIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
-import { BOTTOM_SHEET_SNAP_POINTS } from "../../constants/SnapPoints";
-import { BottomSheetStateEnum } from "../../enums/bottomSheetState.enum";
-import { setBottomSheetState } from "../../model/BottomSheetStore";
-import { $main, setEditingOrder } from "../../model/MainStore";
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
+import { $main, setEditingOrder } from "src/features/main/model/MainStore";
+import { useUnit } from "effector-react";
+import { Button } from "src/shared/components/Button";
+import { BottomSheetStateEnum } from "../enums/bottomSheetState.enum";
 
-interface ISelectDepartureAddressProps {
-};
+type Props = TBottomSheetMethods & {};
 
-export const SelectDepartureAddress: React.FC<ISelectDepartureAddressProps> = () => {
-    const { snapToPosition } = useBottomSheet();
-    const [handleSetBottomSheetState] = useUnit([setBottomSheetState]);
+const DepartureAddress: FC<Props> = function({setBottomSheetState}) {
     const [{editingOrder, order}, handleSetEditingOrder] = useUnit([$main, setEditingOrder])
-    const keyboardVisible = useKeyboardVisibility();
 
-    const handleAddressChange = (address: string) => {
+    /**
+     * Resets changes my assigning previous value and moves back to menu
+     */
+    function close() {
+        handleSetEditingOrder({...editingOrder, departure: order.departure});
+        setBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION);
+    }
+    
+    /**
+     * Change text method for input
+     * @param address input text
+     */
+    function onAddressChange(address: string) {
         handleSetEditingOrder({...editingOrder, departure: { ...editingOrder.departure, address }})
     }
 
-    const handleClose = () => {
-        handleSetEditingOrder({...editingOrder, departure: order.departure});
-        handleSetBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION);
-    }
-
-    const handleApply = () => {
-        handleSetBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION)
+    /**
+     * Applyies changes, input changes text in effector "editingOrder" store
+     */
+    function applyChanges() {
+        setBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION)
     }
 
     return(
         <View style={styles.container}>
             <View style={styles.container_header}>
                 <TouchableOpacity 
-                    onPress={handleClose}
+                    onPress={close}
                     style={styles.close_button}>
                         <CrossIcon />
                 </TouchableOpacity>
@@ -46,15 +49,16 @@ export const SelectDepartureAddress: React.FC<ISelectDepartureAddressProps> = ()
             </View>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={styles.body}>
-                    {/* <BuildingIcon /> */}
+                    {/* [TODO] Style Building Icon */}
+                    {/* <BuildingIcon />  */}
                     <BottomSheetTextInput
                         style={styles.input} 
                         value={editingOrder.departure.address} 
                         placeholder="Адрес"
                         placeholderTextColor={colors.opacity}
-                        onChangeText={handleAddressChange}/>
+                        onChangeText={onAddressChange}/>
                     <View style={styles.button_holder}>
-                        <Button onPress={handleApply} projectType="primary">
+                        <Button onPress={applyChanges} projectType="primary">
                             <Text style={[fonts.medium, styles.button_text]}>Применить</Text>
                         </Button>
                     </View>
@@ -134,3 +138,5 @@ const styles = StyleSheet.create({
         color: colors.black
     }
 });
+
+export default DepartureAddress;

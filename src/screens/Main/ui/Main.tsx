@@ -9,7 +9,7 @@ import { check, PERMISSIONS, RESULTS } from "react-native-permissions";
 import { Map } from "src/features/map";
 import { $gps, setCurrentLocation, setGpsEnabled, setMyLocationTrigger } from "src/features/gps";
 import { useUnit } from "effector-react";
-import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetModal, useBottomSheetDynamicSnapPoints } from "@gorhom/bottom-sheet";
 import { $bottomSheet, setBottomSheetState } from "src/features/main/model/BottomSheetStore";
 import { BottomSheetStateEnum } from "src/features/main/enums/bottomSheetState.enum";
 import { 
@@ -21,6 +21,7 @@ import { $map, setArrivalLocation, setDepartureLocation } from "src/features/map
 import { BOTTOM_SHEET_SNAP_POINTS } from "src/features/main/constants/SnapPoints";
 import { STATE_COMPONENTS } from "../constants/StateComponents";
 import Geolocation from '@react-native-community/geolocation';
+import useGpsCheck from "../hooks/useGpsCheck";
 
 Geolocation.setRNConfiguration({
     skipPermissionRequests: true,
@@ -33,11 +34,12 @@ type MainProps = NativeStackScreenProps<StackScreens, "Main">;
 
 export const Main: FC<MainProps> = ({ navigation }) => {
     const sheetModalRef = useRef<BottomSheetModal>(null);
-    const [{gpsEnabled}, handleSetGpsEnabled, handleSetCurrentLocation, handleSetMyPosition] = useUnit([$gps, setGpsEnabled, setCurrentLocation, setMyLocationTrigger])
+    const [{isGpsEnabled}, handleSetGpsEnabled, handleSetCurrentLocation, handleSetMyPosition] = useUnit([$gps, setGpsEnabled, setCurrentLocation, setMyLocationTrigger])
     const [{ bottomSheetState }, handleSetBottomSheetState] = useUnit([$bottomSheet, setBottomSheetState]);
     const [{orderDetailModal, order}] = useUnit([$main]);
     const [{arrivalLocation, departureLocation}, handleSetDepartureLocation, handleSetArrivalLocation] = useUnit([$map, setDepartureLocation, setArrivalLocation]);
     const [initCheckFinish, setInitCheckFinish] = useState<boolean>(false);
+    // const {  } = useGpsCheck();
 
     const handleOpenDrawer = () => {
         navigation.dispatch(DrawerActions.openDrawer());
@@ -49,10 +51,10 @@ export const Main: FC<MainProps> = ({ navigation }) => {
             if (result === RESULTS.GRANTED) {
                 console.log('Granted', result);
                 handleSetGpsEnabled(true);
-                // sheetModalRef.current?.snapToPosition(Platform.OS === "ios" ? 653 : 623);
                 handleSetBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
             }
             else {
+                console.log('Not granted', result);
                 handleSetBottomSheetState(BottomSheetStateEnum.ENABLE_GPS);
             }
         } catch (err) {
@@ -68,7 +70,8 @@ export const Main: FC<MainProps> = ({ navigation }) => {
 
     useEffect(() => {
         let watchPositionId;
-        if (gpsEnabled && initCheckFinish) {
+        if (isGpsEnabled && initCheckFinish) {
+            console.log('Watching...');
             watchPositionId = Geolocation.watchPosition((pos) => {
                 handleSetCurrentLocation({lon: pos.coords.longitude, lat: pos.coords.latitude});
             }, (err) => {
@@ -83,7 +86,7 @@ export const Main: FC<MainProps> = ({ navigation }) => {
                 Geolocation.clearWatch(watchPositionId);
             }
         }
-    }, [gpsEnabled, initCheckFinish]);
+    }, [isGpsEnabled, initCheckFinish]);
 
     useEffect(() => {
         // Получение геокода адреса отправной точки, если заполнены данные
@@ -124,6 +127,8 @@ export const Main: FC<MainProps> = ({ navigation }) => {
         handleSetMyPosition(true);
     }
 
+    console.log('Sheet state: ', bottomSheetState);
+
     const snapPoints = useMemo(() => BOTTOM_SHEET_SNAP_POINTS[bottomSheetState], [bottomSheetState]);
 
     return(
@@ -145,7 +150,7 @@ export const Main: FC<MainProps> = ({ navigation }) => {
             
             <Map />
             {
-                (bottomSheetState === BottomSheetStateEnum.ORDER_PROCESS && gpsEnabled) &&
+                (bottomSheetState === BottomSheetStateEnum.ORDER_PROCESS && isGpsEnabled) &&
                 <TouchableOpacity style={styles.myLocation_container} onPress={handleMoveToMyPosition}>
                     <LocationScopeIcon />
                 </TouchableOpacity>
@@ -156,6 +161,8 @@ export const Main: FC<MainProps> = ({ navigation }) => {
                     ref={sheetModalRef}
                     index={0}
                     snapPoints={snapPoints}
+                    keyboardBlurBehavior="restore"
+                    android_keyboardInputMode="adjustResize"
                     backgroundStyle={styles.bottomSheetBackground}
                     handleIndicatorStyle={styles.bottomSheetHandleIndicator}
                     enableContentPanningGesture={false}
