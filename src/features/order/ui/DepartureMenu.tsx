@@ -50,14 +50,14 @@ const DepartureMenu: FC<Props> = function({ setBottomSheetState }) {
                     <Text 
                         numberOfLines={1}
                         ellipsizeMode="tail"
-                        style={[fonts.regular, styles.button_text]}>{editingOrder.arrival.city || "Выберите город"}</Text>
+                        style={[fonts.regular, styles.button_text]}>{editingOrder.departure.city || "Выберите город"}</Text>
                 </Button>
                 <Button onPress={openAddressSelection} projectType="address_input">
                     <LocationMarkIcon width={25}/>
                     <Text 
                         numberOfLines={1}
                         ellipsizeMode="tail"
-                        style={[fonts.regular, styles.button_text]}>{editingOrder.arrival.address || "Адрес"}</Text>
+                        style={[fonts.regular, styles.button_text]}>{editingOrder.departure.address || "Адрес"}</Text>
                 </Button>
             </View>
             <View style={styles.buttons_holder}>

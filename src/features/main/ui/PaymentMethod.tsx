@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { CheckedGreenIcon } from "src/shared/img";
+import { CheckedGreenIcon, CrossIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
 import { PAYMENT_METHODS } from "../constants/constants";
 import { PaymentMethodEnum } from "../types/paymentMethod.enum";
@@ -9,26 +9,32 @@ import { useUnit } from "effector-react";
 import { $main, setOrder } from "../model/MainStore";
 import { setBottomSheetState } from "../model/BottomSheetStore";
 import { BottomSheetStateEnum } from "../enums/bottomSheetState.enum";
+import { useNavigation } from "@react-navigation/native";
+import { TBottomSheetMethods } from 'src/features/order/types/bottomSheetMethods';
 
-interface IPaymentMethodProps {};
+type IPaymentMethodProps = TBottomSheetMethods & {};
 
-export const PaymentMethod: React.FC<IPaymentMethodProps> = () => {
+
+export const PaymentMethod: React.FC<IPaymentMethodProps> = ({setBottomSheetState}) => {
     const { snapToIndex } = useBottomSheet();
     const [{order}, handleSetOrder] = useUnit([$main, setOrder]);
     const handleSetBottomSheetstate = useUnit(setBottomSheetState);
 
     const handleSelectMethod = (method: PaymentMethodEnum) => {
         handleSetOrder({...order, paymentMethod: method});
-        handleSetBottomSheetstate(BottomSheetStateEnum.SET_ADDRESS);
+        setBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
     }
-
     useEffect(() => {
         snapToIndex(0);
     }, []);
 
     return (
         <View style={styles.container}>
-            <Text style={[fonts.medium, styles.title]}>Споспоб оплаты</Text>
+            <View>
+      
+            <Text style={[fonts.medium, styles.header_title]}>Споспоб оплаты</Text>
+            </View>
+          
             <View style={styles.methods_holder}>
                 {
                     Object.keys(PAYMENT_METHODS).map((key: string, index) => {
@@ -79,5 +85,26 @@ const styles = StyleSheet.create({
     },
     method_text: {
         color: colors.white
-    }
+    },
+    close_holder: {
+        position: 'absolute',
+        left: -5,
+        top: -5,
+        padding: 8,
+        borderRadius: 12,
+        backgroundColor: colors.opacity,
+        zIndex: 10
+
+    },
+    header_title: {
+        fontSize: 16,
+        color: colors.white,
+        textAlign: 'center',
+        display : 'flex',
+        justifyContent: 'center',
+    },
+    header: {
+        position: 'relative',
+        paddingVertical: 15
+    },
 });

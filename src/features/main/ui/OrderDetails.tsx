@@ -7,11 +7,13 @@ import { colors, fonts } from "src/shared/style";
 import Checkbox from '@react-native-community/checkbox';
 import { useUnit } from "effector-react";
 import { $main, setOrder, setOrderDetailsModal } from "../model/MainStore";
+import { BottomSheetStateEnum } from "../../order/enums/bottomSheetState.enum";
+import { TBottomSheetMethods } from "src/features/order/types/bottomSheetMethods";
 
 
-type OrderDetailsProps = {};
+type OrderDetailsProps = TBottomSheetMethods & {};
 
-export const OrderDetails: React.FC<OrderDetailsProps> = () => {
+export const OrderDetails: React.FC<OrderDetailsProps> = ({setBottomSheetState}) => {
     const [{order}, handleSetOrder, handleSetOrderDetailsModal] = useUnit([$main, setOrder, setOrderDetailsModal]);
     const [baggage, setBaggage] = useState<string>(order.baggage);
     const [passangersAmount, setPassangersAmount] = useState<string>(order.passangersAmount);
@@ -22,14 +24,17 @@ export const OrderDetails: React.FC<OrderDetailsProps> = () => {
         handleSetOrder({...order, baggage, passangersAmount, params, comment});
         handleSetOrderDetailsModal(false);
     }
-    
+    function close() {
+        setBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
+        console.log('close')
+    }
 
     return(
         <SafeAreaView style={styles.layout}>
             <View style={styles.header}>
                 <TouchableOpacity 
                     style={styles.close_holder}
-                    onPress={() => handleSetOrderDetailsModal(false)}>
+                    onPress={() => close()}>
                         <CrossIcon />
                 </TouchableOpacity>
                 <Text style={[fonts.medium, styles.header_title]}>Дополнительно</Text>
@@ -54,11 +59,11 @@ export const OrderDetails: React.FC<OrderDetailsProps> = () => {
                                 <Checkbox
                                     value={params.babyChair}   
                                     onValueChange={() => Platform.OS !== "ios" && setParams(prev => ({...prev, babyChair: !prev.babyChair}))}
-                                    tintColor={colors.primary}
-                                    boxType="square"
-                                    tintColors={{ true: colors.primary, false: colors.primary }}
-                                    onCheckColor={colors.primary}
-                                    onTintColor={colors.primary}/>
+                                    tintColor={colors.white}
+                                    boxType="cirlce"
+                                    tintColors={{ true: colors.white, false: colors.white }}
+                                    onCheckColor={colors.white}
+                                    onTintColor={colors.white}/>
                                 <Text style={styles.option_text}>Детское кресло</Text>
                             </TouchableOpacity>
                         </View>
@@ -66,12 +71,12 @@ export const OrderDetails: React.FC<OrderDetailsProps> = () => {
                             <TouchableOpacity style={styles.option_button} onPress={(e) => setParams(prev => ({...prev, buster: !prev.buster}))}>
                                 <Checkbox
                                     value={params.buster}
-                                    tintColors={{ true: colors.primary, false: colors.primary }}
-                                    tintColor={colors.primary}
-                                    boxType="square"
+                                    tintColors={{ true: colors.white, false: colors.white }}
+                                    tintColor={colors.white}
+                                    boxType="cirlce"
                                     onValueChange={(e) => Platform.OS !== "ios" && setParams(prev => ({...prev, buster: !prev.buster}))}
-                                    onCheckColor={colors.primary}
-                                    onTintColor={colors.primary}/>
+                                    onCheckColor={colors.white}
+                                    onTintColor={colors.white}/>
                                 <Text style={styles.option_text}>Бустер</Text>
                             </TouchableOpacity>
                         </View>
@@ -80,11 +85,12 @@ export const OrderDetails: React.FC<OrderDetailsProps> = () => {
                                 <Checkbox
                                     value={params.animalTransfer}
                                     onValueChange={() => Platform.OS !== "ios" && setParams(prev => ({...prev, animalTransfer: !prev.animalTransfer}))}
-                                    boxType="square"
-                                    tintColors={{ true: colors.primary, false: colors.primary }}
-                                    tintColor={colors.primary}
-                                    onCheckColor={colors.primary}
-                                    onTintColor={colors.primary}/>
+                                    boxType="cirlce"
+                                    tintColors={{ true: colors.white, false: colors.white }}
+                                    tintColor={colors.white}
+                                    onCheckColor={colors.white}
+                                    onTintColor={colors.white}
+                                    />
                                 <Text style={styles.option_text}>Перевозка животных</Text>
                             </TouchableOpacity>
                         </View>
@@ -147,6 +153,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         columnGap: 10,
+        marginBottom: 10,
     },
     option_button: {
         flexDirection: 'row', 

@@ -14,6 +14,7 @@ function Map(){
     const [routeDetails, setRouteDetails] = useState({ distance: null, time: null });
     const [mapLoaded, setMapLoaded] = useState<boolean>(false);
     const [firstLocationLoad, setFirstLocationLoad] = useState<boolean>(false);
+    
 
     useEffect(() => {
         if (this._webView && mapLoaded) {

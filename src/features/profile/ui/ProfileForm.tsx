@@ -1,9 +1,9 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Image, Keyboard, Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { FileHelper } from "src/features/file";
 import { AddGreenIcon, PhoneRoundedIcon, UnknownUser, UserIcon } from "src/shared/img";
 import { Asset } from 'react-native-image-picker';
-import { useUnit } from "effector-react";
+import { useEvent, useUnit } from "effector-react";
 import { $auth, setLoggedState } from "src/features/auth/model/AuthStore";
 import { Input } from "src/shared/components/Input";
 import { Button } from "src/shared/components/Button";
@@ -12,9 +12,11 @@ import { ConfirmDeleteAccount } from "./ConfirmDeleteAccount";
 import { PrivacyPolicy } from "src/features/privacy-policy";
 import { AsyncStorageKeys } from "src/app/types/authorization";
 import { colors } from "src/shared/style";
-import { $profile, updateProfile } from "..";
+import { $profile, getProfile, updateProfile,setProfile } from "..";
 import { useToast } from "react-native-toast-notifications";
 import { fileService } from "src/features/file/model/file-service";
+import { Profile } from "src/types/profile";
+
 // import { PrivacyPolicy } from "src/features/privacy-policy";
 
 interface IProfileFormProps {
@@ -26,11 +28,14 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
     const [, handleChangeLoggedState] = useUnit([$auth, setLoggedState]);
     const [{profile}] = useUnit([$profile]);
     const [newAvatar, setNewAvatar] = useState<any>(profile?.img || null);
+    const handleSetProfile = useEvent(setProfile);
+
     const [personalData, setPersonalData] = useState({full_name: profile?.full_name || "", phone: profile?.phone_number || ""});
     const [changed, setChanged] = useState<boolean>(false);
     const [openDeleteAccount, setOpenDeleteAccount] = useState<boolean>(false);
     const [openPrivacy, setOpenPrivacy] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+
     
     const handleSelectAvatar = async () => {
         try {
@@ -59,6 +64,11 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
                 updateData['img'] = uploadResponse.avatar_link;
             }
             const data: any = await updateProfile(updateData);
+            const profile: Profile = await getProfile();
+            handleSetProfile(profile);
+
+
+            console.log('data', data)
             if (data && data.message) {
                 setChanged(false);
                 toast.show('Сохранено', {
@@ -73,6 +83,8 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
             setLoading(false);
         }
     }
+    
+  
 
     const handleLogout = async () => {
         await AsyncStorage.removeItem(AsyncStorageKeys.TOKEN);

@@ -45,6 +45,8 @@ export const Main: FC<MainProps> = ({ navigation }) => {
         navigation.dispatch(DrawerActions.openDrawer());
     }
 
+    console.log('main')
+
     const handleCheckGpsPermission = async () => {
         try {
             const result = await check(Platform.OS === "android" ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);

@@ -28,7 +28,7 @@ const ArriveMenu: FC<Props> = function({setBottomSheetState}) {
     }
 
     function openAddressSelection() {
-        setBottomSheetState(BottomSheetStateEnum.SET_ARRIVAL_CITY);
+        setBottomSheetState(BottomSheetStateEnum.SET_ARRIVAL_ADDRESS);
     }
 
     return(

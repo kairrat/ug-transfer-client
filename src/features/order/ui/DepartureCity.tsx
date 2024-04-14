@@ -38,6 +38,7 @@ const DepartureCity: FC<Props> = function({setBottomSheetState}) {
      * @param selectedCity city to select
      */
     function handleSelectCity(selectedCity: string) {
+        console.log('handle Select city')
         handleSetEditingOrder({...editingOrder, departure: {...editingOrder.departure, city: selectedCity}});
         setBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION);
     }
@@ -50,7 +51,9 @@ const DepartureCity: FC<Props> = function({setBottomSheetState}) {
             return;
         }
         getCities(search).then((res: any) => {
+            
             setFoundCities(res.results.map((item) => item.title.text));
+            
         }).catch(err => {
             console.error(err);
         });

@@ -32,9 +32,11 @@ import LightLogo from './light-logo.png';
 import StatusBarBackground from './gradient.png';
 import AboutLinkIcon from './about-link-icon.svg';
 import LocationScopeIcon from './location-scope-icon.svg';
+import UrgentIcon from './urgent.png'
 
 export {
     MenuIcon,
+    UrgentIcon,
     EarthIcon,
     Earth,
     BuildingIcon,

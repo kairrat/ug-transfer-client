@@ -53,9 +53,10 @@ export const SelectArrivalCity: React.FC<ISelectArrivalCityProps> = ({}) => {
             setFoundCities(res);
             console.log(res);
         }).catch(err => {
-            console.error(err);
+            console.error('getCities',err);
         });
     }
+    console.log('main')
 
     useEffect(() => {
         console.log(city);

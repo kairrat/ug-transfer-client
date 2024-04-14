@@ -20,6 +20,7 @@ export const App = () => {
   
   const handleConnectSocket = async () => {
     const token = AsyncStorage.getItem(AsyncStorageKeys.TOKEN);
+    console.log('token', token)
     const socket = io('http://5.35.89.71:3001', {
         auth: {
           token

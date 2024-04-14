@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { Alert, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { TBottomSheetMethods } from "../types/bottomSheetMethods";
 import { FC, useCallback, useMemo, useState } from "react";
 import { colors } from "src/shared/style";
@@ -50,7 +50,12 @@ const OrderMenu: FC<Props> = function({setBottomSheetState}) {
 
     // Open modal with order additional information
     function handleOpenOrderAdditionalModal() {
+        setBottomSheetState(BottomSheetStateEnum.ORDER_DETAIL);
 
+    }
+
+    const handleOpenPaymentSheet = () => {
+        setBottomSheetState(BottomSheetStateEnum.DEFINED_PAYMENT_METHOD);
     }
 
     const getDepartureAddressButton = useCallback(() => {
@@ -66,6 +71,9 @@ const OrderMenu: FC<Props> = function({setBottomSheetState}) {
         }
         return order.arrival.city + ', ' + order.arrival.address;
     }, [order.arrival]);
+
+
+    console.log('order date', order.date)
 
     return(
         <View style={styles.container}>
@@ -95,7 +103,7 @@ const OrderMenu: FC<Props> = function({setBottomSheetState}) {
             <SelectCarClass selectCarClass={selectCarClass} activeCarClassIndex={order.carClass}/>
             <View style={styles.details}>
                 <TouchableOpacity 
-                    onPress={() => {}}
+                    onPress={() => handleOpenPaymentSheet()}
                     style={styles.payment_block}>
                         <Text style={styles.payment_title}>Оплата</Text>
                         <View style={{flexDirection: 'row', alignItems: 'center', columnGap: 10, marginVertical: 5}}>
@@ -109,7 +117,7 @@ const OrderMenu: FC<Props> = function({setBottomSheetState}) {
                         <Text style={styles.payment_title}>Время и дата</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', columnGap: 10, marginVertical: 5 }}>
                             <ClockIcon width={25} style={styles.payment_icon}/>
-                            <Text style={[styles.payment_text]}>{dayjs(order.date).format('DD.MM.YYYY hh:mm')}</Text>
+                            <Text style={[styles.payment_text]}>{dayjs(order.date).format('DD.MM.YYYY HH:mm')}</Text>
                         </View>
                 </TouchableOpacity>
                 <DatePicker 

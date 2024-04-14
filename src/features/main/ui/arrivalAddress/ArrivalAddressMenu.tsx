@@ -24,6 +24,8 @@ export const ArriveAddressMenu: React.FC<IArriveAddressMenu> = ({  }) => {
         handleSetEditingOrder({...editingOrder, arrival: order.arrival});
         handleSetBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
     }
+
+    console.log('main')
     
     useEffect(() => {
         snapToIndex(0);

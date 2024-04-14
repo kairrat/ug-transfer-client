@@ -10,9 +10,11 @@ import { Profile } from "src/screens/Profile";
 import { DrawerContent } from "src/widgets/Drawer";
 import { Init } from "src/screens/Init";
 import { StackScreens } from "../types/StackScreens";
-import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
+import { DefaultTheme, NavigationContainer, useNavigation } from "@react-navigation/native";
 import { TripDetails } from "src/screens/TripDetails";
 import { Trips } from "src/screens/Trips";
+import { TouchableOpacity } from 'react-native';
+
 import { About } from "src/screens/About";
 import { Order } from "src/screens/Order";
 
@@ -22,6 +24,7 @@ type CustomStackNavigationOptions = NativeStackNavigationOptions & {
 
 const Stack = createNativeStackNavigator<StackScreens>();
 const Drawer = createDrawerNavigator();
+
 
 export const MainRouter: React.FC = function MainRouter() {
   useEffect(() => {
@@ -37,6 +40,7 @@ export const MainRouter: React.FC = function MainRouter() {
     ];
     return !bannedRoutes.includes(route.name);
   };
+
   return (
     <NavigationContainer
       theme={{
@@ -48,7 +52,7 @@ export const MainRouter: React.FC = function MainRouter() {
         backBehavior="history"
         drawerContent={DrawerContent}
         screenOptions={({ route }) => ({
-          headerShown: false,
+        headerShown: false,
           drawerType: "front",
           overlayColor: "rgba(24, 50, 58, 0.41)",
           drawerStyle: { width: "80%" },
