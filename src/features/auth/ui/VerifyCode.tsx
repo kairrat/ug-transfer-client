@@ -56,9 +56,9 @@ export const VerifyCode: FC<IVerifyCodeProps> = ({
             setLoading(true);
             error && setError(false);
             const res: VerifyCodeResponse = await verifyCode(credentials.phone, credentials.code) as VerifyCodeResponse;
-            console.log('Verify code response: ', res);
+            // console.log('Verify code response: ', res);
             if (res && res.token) {
-                console.log('Setting token: ', res.token);
+                // console.log('Setting token: ', res.token);
                 onSuccessVerify(res.token, res.user_data);
             }
         } catch (err) {

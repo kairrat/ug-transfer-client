@@ -6,7 +6,8 @@ export type CreateOrderDto = {
     date: string;
     time: string;
     tariffId: string;
-    paymentMethod: string;
+    isUrgent : boolean;
+    additional?: string;
     countPeople: string;
     isBagage: string;
     isBaby: boolean;
@@ -15,4 +16,5 @@ export type CreateOrderDto = {
     comment: string;
     full_price?: string;
     phone_number: string;
+ 
 }

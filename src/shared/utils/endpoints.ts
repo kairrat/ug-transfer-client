@@ -7,5 +7,7 @@ export const Endpoints = {
     getProfile: baseUrl + '/users/clients/info',
     updateProfile: baseUrl + '/users/clients/update',
     createOrder: baseUrl + '/order/create',
+    getPrice: baseUrl + '/order/price',
+
     updateFcmToken: baseUrl + '/users/drivers/token'
 }

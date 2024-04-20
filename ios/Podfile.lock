@@ -446,7 +446,8 @@ PODS:
     - React-Core
   - react-native-date-picker (4.3.4):
     - React-Core
-  - react-native-geolocation (3.1.0):
+  - react-native-geolocation (3.2.1):
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - react-native-image-picker (7.1.0):
     - RCT-Folly (= 2021.07.22.00)
@@ -922,7 +923,7 @@ SPEC CHECKSUMS:
   React-logger: c5b527272d5f22eaa09bb3c3a690fee8f237ae95
   react-native-blur: cfdad7b3c01d725ab62a8a729f42ea463998afa2
   react-native-date-picker: db26a4dc48fe4e7c3c3afd5008519fad1091c524
-  react-native-geolocation: ef66fb798d96284c6043f0b16c15d9d1d4955db4
+  react-native-geolocation: 67bb814aa950c4a5b32ed19ceab38ebd01565bbd
   react-native-image-picker: be000cd54f1b1bd71dba9677b36847827f9cc012
   react-native-image-resizer: 681f7607418b97c084ba2d0999b153b103040d8a
   react-native-multiple-image-picker: 7836e8269dd7696edc87bab686b3c3c7e6ebb41d

@@ -1,15 +1,22 @@
 import { useUnit } from "effector-react";
-import { useEffect } from "react";
+import { FC, useEffect } from "react";
 import { Image, StyleSheet, Text, View } from "react-native"
 import { LightLogo } from "src/shared/img";
 import { colors } from "src/shared/style";
-import { $main } from "../model/MainStore";
-import { setBottomSheetState } from "../model/BottomSheetStore";
+import { $main, setFinishedOrder, setOrderProcessStatus } from "../model/MainStore";
 import { BottomSheetStateEnum } from "../enums/bottomSheetState.enum";
 import { Button } from "src/shared/components/Button";
+import { TBottomSheetMethods } from "src/features/order/types/bottomSheetMethods";
 
-export const FinishedOrder = () => {
-    const [{ finishedOrder }, handleSetBottomSheetState] = useUnit([$main, setBottomSheetState]);
+type OrderFinishProps = TBottomSheetMethods &{
+}
+export const FinishedOrder: FC<OrderFinishProps> = ({setBottomSheetState}) => {
+    const [{ finishedOrder }] = useUnit([$main]);
+    const [
+        { orderProcessStatus, order }, 
+        handleSetOrderProcessStatus, 
+        handleSetFinishedOrder
+    ] = useUnit([$main, setOrderProcessStatus, setFinishedOrder]);
     
     // useEffect(() => {
     //     if (!finishedOrder) {
@@ -22,7 +29,9 @@ export const FinishedOrder = () => {
     // }
 
     const handleOkayClick = () => {
-        handleSetBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
+        handleSetOrderProcessStatus("null");
+
+        setBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
     }
 
     return(
@@ -32,11 +41,11 @@ export const FinishedOrder = () => {
             <View style={{ marginVertical: 40}}>
                 <View style={styles.description_line}>
                     <Text style={styles.description_key}>Проехана:</Text>
-                    <Text style={styles.description_value}>{finishedOrder?.distance || 23}км</Text>
+                    <Text style={styles.description_value}>{order?.distance}км</Text>
                 </View>
                 <View style={styles.description_line}>
                     <Text style={styles.description_key}>Стоимость:</Text>
-                    <Text style={styles.description_value}>Проехана</Text>
+                    <Text style={styles.description_value}>{order.price}р</Text>
                 </View>
             </View>
             <Button projectType="primary" onPress={handleOkayClick}>

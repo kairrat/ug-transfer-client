@@ -51,15 +51,12 @@ export const SelectArrivalCity: React.FC<ISelectArrivalCityProps> = ({}) => {
         }
         getCities(city).then((res: ICity[]) => {
             setFoundCities(res);
-            console.log(res);
         }).catch(err => {
             console.error('getCities',err);
         });
     }
-    console.log('main')
 
     useEffect(() => {
-        console.log(city);
         const getData = setTimeout(handleSearchCities, 2000);
         return () => {
             clearTimeout(getData);
@@ -67,7 +64,6 @@ export const SelectArrivalCity: React.FC<ISelectArrivalCityProps> = ({}) => {
     }, [city]);
     
     useEffect(() => {
-        console.log(keyboardVisible, city.length)
         if (!keyboardVisible && city.length === 0) {
             snapToIndex(0);
         }

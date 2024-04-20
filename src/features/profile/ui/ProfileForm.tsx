@@ -68,7 +68,6 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
             handleSetProfile(profile);
 
 
-            console.log('data', data)
             if (data && data.message) {
                 setChanged(false);
                 toast.show('Сохранено', {

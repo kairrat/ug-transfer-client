@@ -25,7 +25,6 @@ export const ArriveAddressMenu: React.FC<IArriveAddressMenu> = ({  }) => {
         handleSetBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
     }
 
-    console.log('main')
     
     useEffect(() => {
         snapToIndex(0);

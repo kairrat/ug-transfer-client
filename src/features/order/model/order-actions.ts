@@ -10,3 +10,7 @@ export const createOrder = async (orderData) => {
     const { data } = await orderApi.createOrder(orderData);
     return data;
 }
+export const getPrice = async (orderData) => {
+    const { data } = await orderApi.getPrice(orderData);
+    return data;
+}

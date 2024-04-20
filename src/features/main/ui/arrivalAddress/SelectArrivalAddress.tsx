@@ -44,7 +44,6 @@ export const SelectArrivalAddress: React.FC<ISelectArrivalAddressProps> = ({}) =
             snapToPosition(keyboardVisible ? snapPoint + 280 : snapPoint);
         }
     }, [keyboardVisible]);
-    console.log('main')
 
 
     return(

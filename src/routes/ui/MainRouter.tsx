@@ -17,6 +17,9 @@ import { TouchableOpacity } from 'react-native';
 
 import { About } from "src/screens/About";
 import { Order } from "src/screens/Order";
+import { io } from "socket.io-client";
+import { useUnit } from "effector-react";
+import { $profile } from "src/features/profile";
 
 type CustomStackNavigationOptions = NativeStackNavigationOptions & {
   unmountOnBlur?: boolean;
@@ -27,6 +30,25 @@ const Drawer = createDrawerNavigator();
 
 
 export const MainRouter: React.FC = function MainRouter() {
+  const [{profile}] = useUnit([$profile]);
+
+  useEffect(() => {
+    const socket = io('http://http://5.35.89.71:3001:3001/order/client');
+
+    socket.on('connect', () => {
+      console.log('Connected to server');
+      if (profile && profile.phone_number) {
+        sendPhoneNumber(profile.phone_number);
+      }
+    });
+
+    const sendPhoneNumber = (phoneNumber: string) => {
+      socket.emit('clientConnected', { phone: phoneNumber });
+    };
+
+  }, [profile]);
+
+
   useEffect(() => {
     (async () => {
       await RNBootSplash.hide({ fade: true });

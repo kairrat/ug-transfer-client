@@ -8,20 +8,22 @@ import { Button } from "src/shared/components/Button";
 import { BottomSheetStateEnum } from "../enums/bottomSheetState.enum";
 import { getCities } from "../model/order-actions";
 import { useUnit } from "effector-react";
-import { $main, setEditingOrder } from "src/features/main/model/MainStore";
+import { $main, setEditingOrder, setOrder } from "src/features/main/model/MainStore";
 
 type Props = TBottomSheetMethods & {};
 
-const DepartureCity: FC<Props> = function({setBottomSheetState}) {
+const ArrivalCityAdditonal: FC<Props> = function({setBottomSheetState}) {
     const [search, setSearch] = useState<string>(""); // Input state
     const [foundCities, setFoundCities] = useState<string[]>([]); // Fetched cities to select from list
     const [{editingOrder}, handleSetEditingOrder] = useUnit([$main, setEditingOrder]);
+    const [{ order, status }, handleSetOrder] = useUnit([$main, setOrder]);
+
 
     /**
      * Move back to menu without changes
      */
     function close() {
-        setBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION);
+        setBottomSheetState(BottomSheetStateEnum.SET_ARRIVAL_LOCATION);
     }
 
     /**
@@ -31,7 +33,6 @@ const DepartureCity: FC<Props> = function({setBottomSheetState}) {
     function handleChangeSearch(text: string) {
         setSearch(text);
         setFoundCities(prev => prev.filter(item => item.toLowerCase().includes(text.toLowerCase())));
-
     }
 
     /**
@@ -39,10 +40,16 @@ const DepartureCity: FC<Props> = function({setBottomSheetState}) {
      * @param selectedCity city to select
      */
     function handleSelectCity(selectedCity: string) {
-        handleSetEditingOrder({...editingOrder, departure: {...editingOrder.departure, city: selectedCity}});
-        setBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION);
+        const index = order.index;
+        const additionalArrivals = order.additionalArrivals?.slice() || [];
+        const arrival = additionalArrivals[index];
+        arrival.city = selectedCity;
+
+        handleSetOrder({...order, additionalArrivals });
+        setBottomSheetState(BottomSheetStateEnum.SET_ARRIVAL_LOCATION);
     }
 
+    
     /**
      * Fetching cities from yandex
      */
@@ -52,7 +59,6 @@ const DepartureCity: FC<Props> = function({setBottomSheetState}) {
         }
         getCities(search).then((res: any) => {
             setFoundCities(res.results.map((item) => item.title.text));
-            
         }).catch(err => {
             console.error(err);
         });
@@ -77,7 +83,7 @@ const DepartureCity: FC<Props> = function({setBottomSheetState}) {
                         style={styles.close_button}>
                             <CrossIcon />
                     </TouchableOpacity>
-                    <Text style={[fonts.medium, styles.header_title]}>С какого города едем?</Text>
+                    <Text style={[fonts.medium, styles.header_title]}>В какой город остановки едем?</Text>
                 </View>
                 <View style={styles.body}>
                     <BottomSheetTextInput 
@@ -180,8 +186,8 @@ const styles = StyleSheet.create({
     button_text: {
         textAlign: 'center',
         fontSize: 16,
-        color: colors.black
+        color: colors.black,
     }
 });
 
-export default DepartureCity;
+export default ArrivalCityAdditonal;

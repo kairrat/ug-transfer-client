@@ -12,6 +12,7 @@ const Order = function({navigation}) {
     const handleOpenDrawer = () => {
         navigation.dispatch(DrawerActions.openDrawer());
     }
+    
     return(
         <View style={styles.layout}>
              <View style={[styles.header, Platform.OS === "ios" && { marginTop: 50 }]}>

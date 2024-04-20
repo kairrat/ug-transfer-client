@@ -2,7 +2,7 @@ module.exports = `<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <script src="https://api-maps.yandex.ru/2.1/?apikey=035b796f-9668-4e4d-9fa3-dd2a1ca31999&lang=ru_RU" type="text/javascript"></script>
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=d692a7d7-638d-46ce-84f0-57c51f83ad0c&lang=ru_RU" type="text/javascript"></script>
     <meta name="viewport" content="width=device-width, initil-scale=1.0"/>
     <style>
         body {
@@ -26,10 +26,15 @@ module.exports = `<!DOCTYPE html>
             startMarker = null,
             endMarker = null,
             startMarkerLocation = null,
-            endMarkerLocation = null
-            myLocation = null
-            myLocationMarker = null;
+            endMarkerLocation = null,
+            myLocation = null,
+            myLocationMarker = null,
+            stops = [];
+
+
         ymaps.ready(init);
+        let additionalStops = [];
+
 
         function init() {
             myMap = new ymaps.Map("map", {
@@ -73,6 +78,7 @@ module.exports = `<!DOCTYPE html>
 
         function addEndMarker(lat, lon) {
             window.ReactNativeWebView.postMessage(\`Adding end marker\`);
+
             removeEndMarker();
             endMarker = new ymaps.Placemark([lat, lon], {}, {
                 preset: 'islands#blueCircleDotIcon'
@@ -91,12 +97,13 @@ module.exports = `<!DOCTYPE html>
             }
             if (ymaps) {
                 myLocationMarker = new ymaps.Placemark([lat, lon], {}, {
-                    preset: 'islands#redCircleDotIcon'
+                    preset: 'islands#greenCircleDotIcon' // Здесь можно изменить пресет
                 });
                 myLocation = [lat, lon];
                 myMap.geoObjects.add(myLocationMarker);
             }
         }
+        
 
         function setMyPosition() {
             if (myLocation !== null) {
@@ -106,6 +113,40 @@ module.exports = `<!DOCTYPE html>
             }
         }
 
+        function addStop(lat, lon) {
+            
+            const stopLocationMarker = new ymaps.Placemark([lat, lon], {}, {
+                preset: 'islands#greenCircleDotIcon' // Здесь можно изменить пресет
+            });
+
+            myMap.geoObjects.add(stopLocationMarker);
+            
+        }
+        function removeMarkerInMap() {
+            fitMarkers();
+            removeStopMarkers();
+            renderStopMarkers();
+                      
+        }
+  
+    
+
+        function removeStopMarkers() {
+            stops = stops.map(stop => {
+                myMap.geoObjects.remove(stop.marker);
+                return {lat: stop.lat, lon: stop.lon, marker: null};
+            });
+        };
+
+        function renderStopMarkers() {
+            stops = stops.map(item => {
+                let marker = new ymaps.Placemark([item.lat, item.lon], {}, {
+                    preset: 'islands#blueCircleDotIcon'
+                });
+                return {lat: item.lat, lon: item.lon, marker};
+            })
+        };
+
         function fitMarkers() {
             if (startMarkerLocation !== null && endMarkerLocation !== null) {
                 myMap.setBounds(myMap.geoObjects.getBounds()).then(() => {
@@ -113,7 +154,7 @@ module.exports = `<!DOCTYPE html>
                     if (zoom > 2) {
                         myMap.setZoom(zoom - 1);
                     }
-                    setRoutes();
+                    setRoutes(); 
                 });
             } else if (startMarkerLocation !== null) {
                 window.ReactNativeWebView.postMessage(\`Setting start: \${startMarkerLocation}\`);
@@ -129,6 +170,21 @@ module.exports = `<!DOCTYPE html>
             };
         }
 
+
+        function removeStop(lat, lon) {
+            const currentStop = stops.findIndex(item => item.lat === lat && item.lon === lon);
+            if (currentStop > -1) {
+                stops.splice(currentStop, 1);
+                removeStopMarkers();
+                renderStopMarkers();
+            }
+        };
+        function removeStopMarker(index) {
+            if (stops[index]) {
+                myMap.geoObjects.remove(stops[index]);
+                stops.splice(index, 1);
+            }
+        }
         async function setRoutes() {
             if (startMarkerLocation === null || endMarkerLocation === null) {
                 return;
@@ -136,16 +192,28 @@ module.exports = `<!DOCTYPE html>
             if (multiRoute !== null) {
                 myMap.geoObjects.remove(multiRoute);
             }
+
+
+            const tempFilterStops =  additionalStops.filter((item) => Boolean(item?.lat) && Boolean(item?.lon))
+
+            const tempStops = [startMarkerLocation]
+            
+            for(const item of tempFilterStops ){ 
+                tempStops.push([item.lat,item.lon])
+            }
+            tempStops.push(endMarkerLocation)
+            startMarkerLocation.forEach((item) => {
+                window.ReactNativeWebView.postMessage(\`startMarkerLocation:\${JSON.stringify(item)}\`);
+            })
+    
+
             multiRoute = new ymaps.multiRouter.MultiRoute({
-                referencePoints: [
-                    startMarkerLocation,
-                    endMarkerLocation
-                ],
+                referencePoints: tempStops,
                 params: {
                     routingMode: "auto",
                     avoidTrafficJams: true,
                     viewAutoApply: true,
-                    results: 1
+                     results: 5
                 }
             }, {
                 balloonLayout: null,
@@ -162,6 +230,15 @@ module.exports = `<!DOCTYPE html>
                 window.ReactNativeWebView.postMessage(\`time:\${activeRoute.properties.get("duration").text}\`);
             })
         };
+
+        function removeAllMarkers() {
+            removeStartMarker();
+            removeEndMarker();
+            if (stops.length > 0) {
+                stops.forEach(marker => myMap.geoObjects.remove(marker));
+                stops = [];
+            }
+        }
 
         async function removeRoutes() {
             if (multiRoute !== null) {

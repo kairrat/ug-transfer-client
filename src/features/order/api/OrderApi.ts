@@ -28,6 +28,18 @@ class OrderApi extends AbstractApiRepository {
                 }
             }
         })
+    };
+    async getPrice(data) {
+        const token = await checkAuthorization();
+        return this.apiClient.post({
+            url: Endpoints.getPrice,
+            data,
+            config: {
+                headers: {
+                    Authorization: 'Bearer ' + token
+                }
+            }
+        })
     }
 }
 

@@ -31,7 +31,6 @@ export const SetAddress: React.FC<ISetAddress> = ({
     const [datePickerOpen, setDatePickerOpen] = useState<boolean>(false);
 
     const getDepartureAddressButton = useCallback(() => {
-        console.log(order);
         if (order.departure.address === "" || order.departure.city === "") {
             return "Откуда едем?";
         }
@@ -100,15 +99,14 @@ export const SetAddress: React.FC<ISetAddress> = ({
             isBaby: order.params.babyChair,
             isBuster: order.params.buster,
             isBagage: order.baggage !== '' ? order.baggage : "1",
-            paymentMethod: PAYMENT_METHODS[order.paymentMethod].label,
             full_price: `${order.price}`,
             phone_number: profile.phone_number
         };
         try {
-            console.log('New order: ', newOrder);
+            // console.log('New order: ', newOrder);
             handleSetStatus(MainStatusEnum.CREATING_ORDER);
             const response: any = await createOrder(newOrder);
-            console.log(response, response?.status);
+            // console.log(response, response?.status);
             if (response && response.status === "true") {
                 setBottomSheetState(BottomSheetStateEnum.ORDER_PROCESS);
             }

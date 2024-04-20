@@ -26,7 +26,6 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({setBottomSheetState})
     }
     function close() {
         setBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
-        console.log('close')
     }
 
     return(

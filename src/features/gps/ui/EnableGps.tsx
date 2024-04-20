@@ -8,29 +8,43 @@ import { PERMISSIONS, RESULTS, request } from "react-native-permissions";
 import { Button } from "src/shared/components/Button";
 import { BottomSheetStateEnum } from "src/features/main/enums/bottomSheetState.enum";
 import { TBottomSheetMethods } from "src/features/order/types/bottomSheetMethods";
+import Geolocation from '@react-native-community/geolocation';
+import { setDepartureLocation } from "src/features/map";
 
 type Props = TBottomSheetMethods & {};
 
 export const EnableGps: FC<Props> = memo(({setBottomSheetState}) => {
     const [handleSetGpsEnabled] = useUnit([setGpsEnabled]);
+    const [ handleSetDepartureLocation] = useUnit([setDepartureLocation]);
+
+    
+    const handlePressLaterButton = () => {
+        setBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
+    };
 
     const handleEnableGps = async () => {
         try {
             const result = await request(Platform.OS === "android" ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
             if (result === RESULTS.GRANTED) {
+                Geolocation.getCurrentPosition(
+                    position => {
+                        const { latitude, longitude } = position.coords;
+                        handleSetDepartureLocation({ lat: latitude, lon: longitude });
+                    },
+                    error => {
+                        console.error('Failed to get current location', error);
+                    },
+                    { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+                );
                 handleSetGpsEnabled(true);
             }
-        } catch (err) {
-            console.error('Failed to requetst permission', err);
+            }
+         catch (err) {
+            console.error('Failed to request permission', err);
         } finally {
             setBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
         }
     }
-
-    const handlePressLaterButton = () => {
-        setBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
-    };
-
     return(
         <View style={styles.container}>
             <Image source={Earth} style={styles.earth_icon}/>

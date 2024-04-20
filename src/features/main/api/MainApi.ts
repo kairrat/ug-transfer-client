@@ -29,7 +29,7 @@ class MainApi extends AbstractApiRepository {
 
     async createOrder(data) {
         const token = await checkAuthorization();
-        console.log(token);
+        // console.log(token);
         return this.apiClient.post({
             url: Endpoints.createOrder,
             data,
