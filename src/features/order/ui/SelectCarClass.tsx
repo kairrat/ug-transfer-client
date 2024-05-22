@@ -19,7 +19,10 @@ const SelectCarClass: FC<Props> = function({selectCarClass, activeCarClassIndex}
                             key={index}
                             style={[styles.button, activeCarClassIndex === index && styles.active_button]}
                             onPress={() => selectCarClass(index)}>
-                            <Image source={img}/>
+                            <View style={styles.imageContainer}>
+                            <Image source={img} style={styles.image}/>
+
+                            </View>
                             <Text style={styles.label}>{label}</Text>
                         </TouchableOpacity>
                     ))
@@ -34,6 +37,16 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         color: colors.white,
         fontSize: 16
+    },
+    imageContainer: {
+        maxWidth: 103,
+        maxHeight: 41,
+
+    },
+    image: {
+        maxWidth: '100%', 
+        maxHeight: "100%",
+        objectFit: 'contain'
     },
     container: {
         width: '100%'
@@ -54,7 +67,9 @@ const styles = StyleSheet.create({
     },
     label: {
         textAlign: 'center',
-        color: colors.white
+        color: colors.white,
+        fontSize : 14,
+
     }
 });
 

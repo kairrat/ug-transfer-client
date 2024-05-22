@@ -1,86 +1,179 @@
-import { Keyboard, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { TBottomSheetMethods } from "../types/bottomSheetMethods";
-import { FC } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { CrossIcon, BuildingIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
-import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import { $main, setEditingOrder } from "src/features/main/model/MainStore";
+import { BottomSheetFlatList, BottomSheetModal, BottomSheetTextInput, useBottomSheet } from "@gorhom/bottom-sheet";
+import { $main, setEditingOrder, setOrder } from "src/features/main/model/MainStore";
 import { useUnit } from "effector-react";
 import { Button } from "src/shared/components/Button";
 import { BottomSheetStateEnum } from "../enums/bottomSheetState.enum";
+import { getAddress } from "../model/order-actions";
+import { $bottomSheet } from 'src/features/main/model/BottomSheetStore';
+import { setSnapPoints } from "../model/bottomSheetStateStore";
+import { BOTTOM_SHEET_SNAP_POINTS } from "../constants/SnapPoints";
 
 type Props = TBottomSheetMethods & {};
 
 const DepartureAddress: FC<Props> = function({setBottomSheetState}) {
-    const [{editingOrder, order}, handleSetEditingOrder] = useUnit([$main, setEditingOrder])
+    const [search, setSearch] = useState<string>(""); // Input state
+    const [foundAddress, setFoundAddress] = useState<string[]>([]); // Fetched cities to select from list
 
+    const [{ order, editingOrder, }, handleSetOrder, handleSetEditingOrder] =
+    useUnit([$main, setOrder, setEditingOrder]);
+
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+
+    const [bottomSheet, setBottomSheet] = useState<BottomSheetStateEnum>(BottomSheetStateEnum.LOADING);
+    const sheetModalRef = useRef<BottomSheetModal>(null);
+
+    const [{snapPoints}, handleSetSnapPoints] = useUnit([$bottomSheet, setSnapPoints]);
+    const { snapToPosition } = useBottomSheet();
+    const [snapPos, setSnapPos] = useState(BOTTOM_SHEET_SNAP_POINTS[BottomSheetStateEnum.SET_DEPARTURE_ADDRESS][0]);
+    useEffect(() => {
+        const points = BOTTOM_SHEET_SNAP_POINTS[BottomSheetStateEnum.SET_DEPARTURE_ADDRESS];
+        let snapPoint = points[0];
+    
+       if (isKeyboardVisible && foundAddress.length > 0) {
+            snapPoint = '75%';
+        } else if (isKeyboardVisible) {
+            snapPoint = '60%';
+        } else if (foundAddress.length > 0) {
+            snapPoint = '45%';
+        }
+    
+        snapToPosition(snapPoint);
+        handleSetSnapPoints(points);
+        setSnapPos(snapPoint);
+    }, [foundAddress, isKeyboardVisible]);
+    
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+          'keyboardDidShow',
+          () => {
+            setKeyboardVisible(true); 
+          }
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+          'keyboardDidHide',
+          () => {
+            setKeyboardVisible(false);
+          }
+        );
+    
+        return () => {
+          keyboardDidHideListener.remove();
+          keyboardDidShowListener.remove();
+        };
+      }, []);
     /**
-     * Resets changes my assigning previous value and moves back to menu
+     * Move back to menu without changes
      */
     function close() {
-        handleSetEditingOrder({...editingOrder, departure: order.departure});
         setBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION);
     }
-    
+
     /**
-     * Change text method for input
-     * @param address input text
+     * Changes text in search state and filters fetched cities (foundCities state)
+     * @param text changing text of input
      */
-    function onAddressChange(address: string) {
-        handleSetEditingOrder({...editingOrder, departure: { ...editingOrder.departure, address }})
+    function handleChangeSearch(text: string) {
+        setSearch(text);
+        setFoundAddress(prev => prev.filter(item => item.toLowerCase().includes(text.toLowerCase())));
     }
 
     /**
-     * Applyies changes, input changes text in effector "editingOrder" store
+     * Selects city and moves back to menu
+     * @param selectedAddress city to select
      */
-    function applyChanges() {
-        setBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION)
+    function handleSelectAddress(selectedAddress: string) {
+        handleSetEditingOrder({...editingOrder, departure: {...editingOrder.departure, address: selectedAddress}});
+        setBottomSheetState(BottomSheetStateEnum.SET_DEPARTURE_LOCATION);
     }
+
+    /**
+     * Fetching cities from yandex
+     */
+    function handleSearchAddress() {
+        if (search === "") {
+            return;
+        }
+        const searchQuery = editingOrder.departure.city ? `${editingOrder.departure.city},${search}` : search;   
+        console.log('search query' , searchQuery)     
+        getAddress(searchQuery).then((res: any) => {
+            setFoundAddress(res.results.map((item) => item.title.text));
+        }).catch(err => {
+            console.error(err);
+        });
+    }
+    
+
+    /**
+     * Bounced fetching cities
+     */
+    useEffect(() => {
+        const getDataTimerId = setTimeout(handleSearchAddress, 800);
+        return () => {
+            clearTimeout(getDataTimerId);
+        };
+    }, [search]);
 
     return(
-        <View style={styles.container}>
-            <View style={styles.container_header}>
-                <TouchableOpacity 
-                    onPress={close}
-                    style={styles.close_button}>
-                        <CrossIcon />
-                </TouchableOpacity>
-                <Text style={[fonts.medium, styles.header_title]}>С какого адреса едем?</Text>
-            </View>
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <View style={styles.body}>
-                    {/* [TODO] Style Building Icon */}
-                    {/* <BuildingIcon />  */}
-                    <BottomSheetTextInput
-                        style={styles.input} 
-                        value={editingOrder.departure.address} 
-                        placeholder="Адрес"
-                        placeholderTextColor={colors.opacity}
-                        onChangeText={onAddressChange}/>
-                    <View style={styles.button_holder}>
-                        <Button onPress={applyChanges} projectType="primary">
-                            <Text style={[fonts.medium, styles.button_text]}>Применить</Text>
-                        </Button>
-                    </View>
+
+
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.container}>
+                <View style={styles.container_header}>
+                    <TouchableOpacity 
+                        onPress={close}
+                        style={styles.close_button}>
+                            <CrossIcon />
+                    </TouchableOpacity>
+                    <Text style={[fonts.medium, styles.header_title]}>Введите адрес</Text>
                 </View>
-            </TouchableWithoutFeedback>
-        </View>
+                <View style={styles.body}>
+                    <BottomSheetTextInput 
+                            style={styles.input} 
+                            value={search} 
+                            autoFocus
+                            onChangeText={handleChangeSearch}/>
+                </View>
+                {
+                    foundAddress.length > 0 &&
+                    <BottomSheetFlatList
+                    data={foundAddress}
+                    keyExtractor={(address) => `${address}`}
+                    style={styles.dropdown}
+                    renderItem={({item, index}) => (
+                        <TouchableOpacity 
+                                onPress={() => handleSelectAddress(item)}
+                                style={index === 0 ? styles.dropdown_item_first : styles.dropdown_item}>
+                                    <Text style={[fonts.regular, styles.dropdown_item_text]}>{item}</Text>
+                        </TouchableOpacity>
+                    )}/>
+                }
+           
+            </View>
+        </TouchableWithoutFeedback>
+
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        paddingHorizontal: 20
+        flex: 1
     },
     container_header: {
-        position: 'relative',
+        position: 'relative'
     },
     close_button: {
         backgroundColor: colors.opacity,
         borderRadius: 12,
         padding: 8,
         position: 'absolute',
-        left: 0,
+        left: 20,
         top: 0,
         zIndex: 1
     },
@@ -92,7 +185,8 @@ const styles = StyleSheet.create({
         marginVertical: 5
     },
     body: {
-        paddingVertical: 35
+        paddingVertical: Platform.OS === 'ios' ?  35 : 0,
+        marginTop :  Platform.OS === 'android' ?  35 : 0,        paddingHorizontal: 20
     },
     input: {
         width: '100%',
@@ -106,7 +200,9 @@ const styles = StyleSheet.create({
     },
     dropdown: {
         width: '100%',
-        marginTop: 10
+        paddingHorizontal: 20,
+
+        maxHeight: 200
     },
     dropdown_item: {
         width: '100%',
@@ -129,8 +225,9 @@ const styles = StyleSheet.create({
         fontSize: 16
     },
     button_holder: {
-        marginVertical: 20,
-        marginTop: 50
+        // marginVertical: 20,
+        paddingHorizontal: 20,
+        // paddingBottom: 20
     },
     button_text: {
         textAlign: 'center',
@@ -138,5 +235,4 @@ const styles = StyleSheet.create({
         color: colors.black
     }
 });
-
 export default DepartureAddress;

@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Toast, { ToastProvider } from 'react-native-toast-notifications';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {LogBox, Platform, StyleSheet} from 'react-native';
+import {Alert, BackHandler, LogBox, Platform, StyleSheet} from 'react-native';
 import {Host} from 'react-native-portalize';
 import { MainRouter } from './src/routes';
 import Orientation from 'react-native-orientation-locker';
@@ -26,10 +26,12 @@ export const App = () => {
     handleSetBottomSheetState,
     handleSetFinishedOrder
 ] = useUnit([$main, setOrderProcessStatus,setStatus, setBottomSheetState, setFinishedOrder]);
+const [loading, setLoading] = useState<boolean>(false);
+
   
   const handleConnectSocket = async () => {
     const token = AsyncStorage.getItem(AsyncStorageKeys.TOKEN);
-    // console.log('token', token)
+     console.log('token', token)
     const socket = io('http://5.35.89.71:3001', {
         auth: {
           token
@@ -38,7 +40,7 @@ export const App = () => {
 
     socket.connect();
     socket.on('connect', () => {
-      // console.log('Socket connected');
+       console.log('Socket connected');
     });
     socket.on('disconnect', socket.connect);
   }
@@ -63,8 +65,8 @@ export const App = () => {
       if (profile && profile.phone_number) {
         sendPhoneNumber(profile.phone_number);
         socket2.on('status', status => {
-          // console.log('status', status)
-          // console.log('status', status.status)
+           console.log('status', status)
+           console.log('status', status.status)
 
 
 
@@ -102,9 +104,6 @@ export const App = () => {
       
     } 
   }, [profile]);
-  
-
-
 
 
   return (

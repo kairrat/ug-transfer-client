@@ -3,6 +3,7 @@ import { FC, useEffect, useState } from "react";
 import { 
     Image, 
     Keyboard, 
+    Platform, 
     SafeAreaView, 
     StyleSheet, 
     Text, 
@@ -100,7 +101,7 @@ export const VerifyCode: FC<IVerifyCodeProps> = ({
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <View style={styles.body}>
                         <Image source={Logo} style={styles.logo}/>
-                        <Text style={[fonts.regular, styles.title]}>Проверочные цифры</Text>
+                        <Text style={[fonts.regular, styles.title]}>Проверочный код</Text>
                         <PincodeInput
                             cellStyle={styles.codeChar}
                             cellStyleFocused={{
@@ -108,24 +109,20 @@ export const VerifyCode: FC<IVerifyCodeProps> = ({
                             }}
                             textStyle={styles.codeText}
                             codeLength={4}
-                            cellSpacing={13}
+                            cellSpacing={50}
                             value={credentials.code}
                             onTextChange={onCodeChange}
                             error={error}
                         />
                         <Text style={[styles.description]}>
-                            Введите пожалуйста
-                            <Text style={{ color: colors.green }}>
-                                {' '} 4 последние {' '}
-                            </Text>
-                            цифры номера телефона нашего автоответчика
+                            Введите 
+                                 4-х значный код из СМС
                         </Text>
                         <Text style={styles.error_message}>
                             {error && "Неправильные цифры"}
                         </Text>
                     </View>
             </TouchableWithoutFeedback>
-            <View style={styles.footer}>
                 {
                     resendCodeParams.resended 
                     ?
@@ -135,12 +132,14 @@ export const VerifyCode: FC<IVerifyCodeProps> = ({
                     </View>
                     :
                     <View>
-                        <Text style={[styles.recall_label]}>Не было звонка?</Text>
+                        <Text style={[styles.recall_label]}>Не пришло СМС?</Text>
                         <TouchableOpacity style={styles.recall_button} onPress={handleResendCode}>
-                            <Text style={[styles.recall_button_text]}>Перезвонить повторно</Text>
+                            <Text style={[styles.recall_button_text]}>Отправить код повторно</Text>
                         </TouchableOpacity>
                     </View>
                 }
+             
+                <View style={styles.button_holder}>
                 <Button 
                     projectType="primary" 
                     onPress={handleVerifyCode}
@@ -163,10 +162,12 @@ const styles = StyleSheet.create({
         marginVertical: 10
     },
     body: {
-      paddingHorizontal: 20,
-      flexDirection: 'column',
-      alignItems: 'center',
-      flexGrow: 1
+        flexGrow: 1,
+        flexDirection: 'column',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        rowGap: 30
+      
     },
     logo: {
         paddingHorizontal: 20,
@@ -180,7 +181,7 @@ const styles = StyleSheet.create({
     },
     codeText: {
         color: colors.white,
-        fontSize: 30,
+        fontSize: 26,
     },
     enterCodeText: {
         color: colors.white,
@@ -197,20 +198,13 @@ const styles = StyleSheet.create({
     },
     description: {
         color: colors.white,
-        fontSize: 16,
-        width: '80%',
-        textAlign: 'center',
-        marginVertical: 20,
-        fontWeight: "300"
+        paddingHorizontal: 45,
+        textAlign: "center",
     },
     error_message: {
         color: colors.error,
         fontWeight: "300",
         fontSize: 16
-    },
-    footer: {
-        marginVertical: 20,
-        paddingHorizontal: 20
     },
     recall_label: {
         textAlign: 'center',
@@ -219,7 +213,6 @@ const styles = StyleSheet.create({
         fontWeight: "300"
     },
     recall_button: {
-        width: '50%',
         alignSelf: 'center',
         marginBottom: 20
     },
@@ -247,9 +240,14 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginBottom: 20,
     },
+    button_holder: {
+        paddingHorizontal: 20,
+        paddingVertical: 20
+    },
     button_text: {
         color: colors.black,
-        fontSize: 16,
-        textAlign: 'center'
+        textAlign: 'center',
+        fontSize: 16
+
     }
 });

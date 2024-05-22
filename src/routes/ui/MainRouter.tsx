@@ -81,9 +81,9 @@ export const MainRouter: React.FC = function MainRouter() {
           swipeEnabled: shouldShowDrawer({ route }),
         })}
       >
-        <Stack.Screen name={"Init"} component={Init} />
-        <Stack.Screen name={"Auth"} component={Auth} options={{unmountOnBlur: true} as CustomStackNavigationOptions}/>
+        {/* <Stack.Screen name={"Init"} component={Init} /> */}
         <Stack.Screen name={"Main"} component={Order} />
+        <Stack.Screen name={"Auth"} component={Auth} options={{unmountOnBlur: true} as CustomStackNavigationOptions}/>
         <Stack.Screen name={"Trips"} component={Trips} />
         <Stack.Screen name={"TripDetails"} component={TripDetails} />
         <Stack.Screen name={"Profile"} component={Profile} options={{unmountOnBlur: true} as CustomStackNavigationOptions}/>

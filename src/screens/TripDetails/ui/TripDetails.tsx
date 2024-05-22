@@ -14,8 +14,8 @@ type TripDetailsProps = NativeStackScreenProps<StackScreens, "TripDetails">;
 
 export const TripDetails: FC<TripDetailsProps> = ({ navigation, route }) => {
     const { id } = route.params;
-    const {data} = useUnit($trips)
-    const order = data.find((item: Order) => item._id === id);
+    const {trips} = useUnit($trips)
+    const order = trips?.find((item: Order) => item._id === id);
     return(
         <SafeAreaView style={[styles.layout]}>
             <ScreenHeader title="Поездка" leftIcon={<ArrowLeftIcon />} onLeftIconPress={() => navigation.navigate("Trips")}/>

@@ -4,12 +4,15 @@ import { colors, fonts } from "src/shared/style";
 import { ArrowRightIcon, UnknownUser } from 'src/shared/img';
 import { DRAWER_NAVS } from "../model/drawerNavs";
 import { useNavigation } from "@react-navigation/core";
+import { useUnit } from "effector-react";
+import { $profile } from 'src/features/profile';
 
 interface IDrawerContentProps {};
 
 export const DrawerContent: React.FC<IDrawerContentProps> = () => {
     const navigation = useNavigation<any>();
-    
+    const [{profile}] = useUnit([$profile]);
+
     return(
         <View
             style={[styles.layout, Platform.OS === "ios" && { paddingTop: 40, paddingBottom: 20 }]}>
@@ -17,8 +20,8 @@ export const DrawerContent: React.FC<IDrawerContentProps> = () => {
                     <TouchableOpacity 
                         style={styles.profile_button}
                         onPress={() => navigation.navigate("Profile")}>
-                            <Image source={UnknownUser} style={styles.avatar}/>
-                            <Text style={[fonts.regular, styles.profile_text]}>Мой профиль</Text>
+                                    <Image source={profile?.img ?  {uri: profile?.img} : UnknownUser} style={styles.avatar}/>
+                            <Text style={[fonts.regular, styles.profile_text]}>{profile?.firstName ? profile?.firstName : "ФИО"}</Text>
                             <ArrowRightIcon />
                     </TouchableOpacity>
                     {
@@ -69,7 +72,8 @@ const styles = StyleSheet.create({
     },
     avatar: {
         width: 50,
-        height: 50
+        height: 50,
+        borderRadius : 50,
     },
     profile_text: {
         color: colors.white,

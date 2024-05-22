@@ -1,14 +1,17 @@
-import { Keyboard, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
+import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
 import { colors, fonts } from "src/shared/style";
 import { TBottomSheetMethods } from "../types/bottomSheetMethods";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { CrossIcon } from "src/shared/img";
-import { BottomSheetFlatList, BottomSheetTextInput } from "@gorhom/bottom-sheet";
+import { BottomSheetFlatList, BottomSheetModal, BottomSheetTextInput, useBottomSheet } from "@gorhom/bottom-sheet";
 import { Button } from "src/shared/components/Button";
 import { BottomSheetStateEnum } from "../enums/bottomSheetState.enum";
 import { getCities } from "../model/order-actions";
 import { useUnit } from "effector-react";
 import { $main, setEditingOrder, setOrder } from "src/features/main/model/MainStore";
+import { $bottomSheet } from 'src/features/main/model/BottomSheetStore';
+import { setSnapPoints } from "../model/bottomSheetStateStore";
+import { BOTTOM_SHEET_SNAP_POINTS } from "../constants/SnapPoints";
 
 type Props = TBottomSheetMethods & {};
 
@@ -18,6 +21,55 @@ const ArrivalCityAdditonal: FC<Props> = function({setBottomSheetState}) {
     const [{editingOrder}, handleSetEditingOrder] = useUnit([$main, setEditingOrder]);
     const [{ order, status }, handleSetOrder] = useUnit([$main, setOrder]);
 
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+
+
+    const [bottomSheet, setBottomSheet] = useState<BottomSheetStateEnum>(BottomSheetStateEnum.LOADING);
+    const sheetModalRef = useRef<BottomSheetModal>(null);
+
+    const [{snapPoints}, handleSetSnapPoints] = useUnit([$bottomSheet, setSnapPoints]);
+    const { snapToPosition } = useBottomSheet();
+    const [snapPos, setSnapPos] = useState(BOTTOM_SHEET_SNAP_POINTS[BottomSheetStateEnum.SET_ARRIVAL_CITY_ADDITIONAL][0]);
+    useEffect(() => {
+        const points = BOTTOM_SHEET_SNAP_POINTS[BottomSheetStateEnum.SET_ARRIVAL_CITY_ADDITIONAL];
+        let snapPoint = points[0];
+    
+       if (isKeyboardVisible && foundCities.length > 0) {
+            snapPoint = '75%';
+        } else if (isKeyboardVisible) {
+            snapPoint = '60%';
+        } else if (foundCities.length > 0) {
+            snapPoint = '45%';
+        }
+    
+        snapToPosition(snapPoint);
+        handleSetSnapPoints(points);
+        setSnapPos(snapPoint);
+    }, [foundCities, isKeyboardVisible]);
+
+
+
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+          'keyboardDidShow',
+          () => {
+            setKeyboardVisible(true); 
+          }
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+          'keyboardDidHide',
+          () => {
+            setKeyboardVisible(false);
+          }
+        );
+    
+        return () => {
+          keyboardDidHideListener.remove();
+          keyboardDidShowListener.remove();
+        };
+      }, []);
 
     /**
      * Move back to menu without changes
@@ -58,7 +110,9 @@ const ArrivalCityAdditonal: FC<Props> = function({setBottomSheetState}) {
             return;
         }
         getCities(search).then((res: any) => {
-            setFoundCities(res.results.map((item) => item.title.text));
+            const filteredCities = res.results.map((item) => item.title.text)
+                .filter(city => city.toLowerCase().includes(search.toLowerCase()));
+            setFoundCities(filteredCities);
         }).catch(err => {
             console.error(err);
         });
@@ -68,13 +122,19 @@ const ArrivalCityAdditonal: FC<Props> = function({setBottomSheetState}) {
      * Bounced fetching cities
      */
     useEffect(() => {
-        const getDataTimerId = setTimeout(handleSearchCities, 2000);
+        const getDataTimerId = setTimeout(handleSearchCities, 800);
         return () => {
             clearTimeout(getDataTimerId);
         };
     }, [search]);
 
     return(
+           <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+
+     
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.container}>
                 <View style={styles.container_header}>
@@ -83,12 +143,13 @@ const ArrivalCityAdditonal: FC<Props> = function({setBottomSheetState}) {
                         style={styles.close_button}>
                             <CrossIcon />
                     </TouchableOpacity>
-                    <Text style={[fonts.medium, styles.header_title]}>В какой город остановки едем?</Text>
+                    <Text style={[fonts.medium, styles.header_title]}>Введите город</Text>
                 </View>
                 <View style={styles.body}>
                     <BottomSheetTextInput 
                             style={styles.input} 
-                            value={search} 
+                            value={search}
+                            autoFocus 
                             onChangeText={handleChangeSearch}/>
                 </View>
                 {
@@ -105,13 +166,12 @@ const ArrivalCityAdditonal: FC<Props> = function({setBottomSheetState}) {
                         </TouchableOpacity>
                     )}/>
                 }
-                <View style={styles.button_holder}>
-                    <Button onPress={() => {}} projectType="primary">
-                        <Text style={[styles.button_text]}>Применить</Text>
-                    </Button>
-                </View>
+             
             </View>
         </TouchableWithoutFeedback>
+        
+        </KeyboardAvoidingView>
+
     );
 };
 
@@ -139,7 +199,8 @@ const styles = StyleSheet.create({
         marginVertical: 5
     },
     body: {
-        paddingVertical: 35,
+        paddingVertical: Platform.OS === 'ios' ?  35 : 0,
+        marginTop :  Platform.OS === 'android' ?  35 : 0,
         paddingHorizontal: 20
     },
     input: {
@@ -155,7 +216,6 @@ const styles = StyleSheet.create({
     dropdown: {
         width: '100%',
         paddingHorizontal: 20,
-        borderWidth: 2,
         maxHeight: 200
     },
     dropdown_item: {

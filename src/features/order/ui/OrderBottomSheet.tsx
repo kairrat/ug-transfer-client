@@ -1,6 +1,6 @@
 import { useGpsPermissionCheck } from "src/features/gps";
 import { BottomSheetStateEnum } from "../enums/bottomSheetState.enum";
-import { memo, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useMemo, useRef, useState } from "react";
 import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { StyleSheet } from "react-native";
 import { colors } from "src/shared/style";
@@ -10,10 +10,11 @@ import { getBottomSheetComponent } from "../model/bottomStateComponents";
 const OrderBottomSheet = function() {
     const sheetModalRef = useRef<BottomSheetModal>(null);
     const [bottomSheetState, setBottomSheetState] = useState<BottomSheetStateEnum>(BottomSheetStateEnum.LOADING);
-    useGpsPermissionCheck(setBottomSheetState); // Check gps permission and ask if not granted
+    useGpsPermissionCheck(setBottomSheetState)
     
-    const snapPoints = useMemo(() => BOTTOM_SHEET_SNAP_POINTS[bottomSheetState], [bottomSheetState]); // Snap points of bottom sheet by components
+    const snapPoints = useMemo(() => BOTTOM_SHEET_SNAP_POINTS[bottomSheetState], [bottomSheetState]);
     
+  
     return(
         <BottomSheet
             ref={sheetModalRef}

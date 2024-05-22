@@ -53,13 +53,25 @@ export const RequestCode: FC<IRequestCodeProps> = ({
                         <Text style={[fonts.regular, styles.title]}>Авторизация</Text>
                         <Text style={[fonts.regular, styles.title]}>по номеру телефона</Text>
                     </View>
-                    <Input placeholder="Телефон" value={phone} onChange={onPhoneChange} leftIcon={<PhoneRoundedIcon />} keyboardType="phone-pad"/>
+                    <Input placeholder="Телефон" value={phone}  onChange={(value) => {
+        const formattedValue = value.replace(/\D/g, '').substring(0, 11);
+        if (value.length <= 12) {
+            onPhoneChange(value);
+        }
+        if (formattedValue.startsWith("7")) {
+            onPhoneChange("+7" + formattedValue.substring(1));
+        } else if (formattedValue.startsWith("7")) {
+            onPhoneChange("+7" + formattedValue);
+        } else if (formattedValue.startsWith("8")) {
+            onPhoneChange("+7" + formattedValue.substring(1));
+        } else if (formattedValue.startsWith("8")) {
+            onPhoneChange("+7" + formattedValue);
+        } else {
+            onPhoneChange("+7" + formattedValue);
+        }
+    }}  leftIcon={<PhoneRoundedIcon />} keyboardType="phone-pad"/>
                     <Text style={[fonts.regular, styles.description]}>
-                        Наш автоответчик Вам перезвонит, введите пожалуйста 
-                            <Text style={{color: colors.green}}>
-                                {' '}4 последние{' '}
-                            </Text>
-                        цифры номера телефона нашего автоответчика
+                        Наш ваш номер будет отправлен СМС код
                     </Text>
                 </View>
             </TouchableWithoutFeedback>
@@ -86,6 +98,7 @@ const styles = StyleSheet.create({
     },
     logo: {
         width: '55%',
+        
         objectFit: 'contain',
         marginVertical: 40
     },
@@ -95,7 +108,7 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     description: {
-        fontSize: 16,
+        fontSize: 15,
         color: colors.white,
         textAlign: 'center'
     },

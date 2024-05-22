@@ -103,10 +103,8 @@ export const SetAddress: React.FC<ISetAddress> = ({
             phone_number: profile.phone_number
         };
         try {
-            // console.log('New order: ', newOrder);
             handleSetStatus(MainStatusEnum.CREATING_ORDER);
             const response: any = await createOrder(newOrder);
-            // console.log(response, response?.status);
             if (response && response.status === "true") {
                 setBottomSheetState(BottomSheetStateEnum.ORDER_PROCESS);
             }

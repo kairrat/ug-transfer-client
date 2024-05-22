@@ -1,7 +1,7 @@
 import { createEvent, createStore } from "effector";
 import { Platform } from "react-native";
-import { BOTTOM_SHEET_SNAP_POINTS } from "../constants/SnapPoints";
-import { BottomSheetStateEnum } from "../enums/bottomSheetState.enum";
+import { BOTTOM_SHEET_SNAP_POINTS } from "../../order/constants/SnapPoints";
+import { BottomSheetStateEnum } from "../../order/enums/bottomSheetState.enum";
 
 type BottomSheetState = {
     index: number,

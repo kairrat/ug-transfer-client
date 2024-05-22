@@ -7,7 +7,7 @@ export type CreateOrderDto = {
     time: string;
     tariffId: string;
     isUrgent : boolean;
-    additional?: string;
+    additional?: any;
     countPeople: string;
     isBagage: string;
     isBaby: boolean;

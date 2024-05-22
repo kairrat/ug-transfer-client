@@ -1,18 +1,103 @@
 import { Platform, StyleSheet, View } from "react-native";
 import { colors } from "src/shared/style";
 import OrderStatusBarBackground from "./StatusBarBackground";
-import { Map } from "src/features/map";
+import { Map, setDepartureLocation } from "src/features/map";
 import { OrderBottomSheet } from "src/features/order";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { DrawerActions } from "@react-navigation/native";
 import { LocationScopeIcon, MenuIcon, StatusBarBackground } from "src/shared/img";
+import { useEvent, useUnit } from "effector-react";
+import { Profile } from "src/types/profile";
+import { getProfile, setProfile } from "src/features/profile";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AsyncStorageKeys } from "src/app/types/authorization";
+import { useEffect } from "react";
+import { check, PERMISSIONS, request, RESULTS } from "react-native-permissions";
+import Geolocation from "@react-native-community/geolocation";
+import { setGpsEnabled } from "src/features/gps";
+import { $main, setEditingOrder, setOrder } from 'src/features/main/model/MainStore';
+import { setBottomSheetState } from "src/features/main/model/BottomSheetStore";
+import { BottomSheetStateEnum } from "src/features/main/enums/bottomSheetState.enum";
+import { $gps } from "src/features/gps";
 
 const Order = function({navigation}) {
-    console.log("Render");
     const handleOpenDrawer = () => {
         navigation.dispatch(DrawerActions.openDrawer());
     }
+    const [handleSetGpsEnabled] = useUnit([setGpsEnabled]);
+    const [ handleSetDepartureLocation] = useUnit([setDepartureLocation]);
+    const gpsState = $gps.getState();
+    const [
+        { order, editingOrder, status },
+        handleSetOrder,
+        handleSetEditingOrder,
+    ] = useUnit([$main, setOrder, setEditingOrder]);
+  
+    const handleSetProfile = useEvent(setProfile);
+
+    const handleCheckAuth = async () => {
+        const token = await AsyncStorage.getItem(AsyncStorageKeys.TOKEN);
+        console.log('Token: ', token);
+        if (!token) {
+            return navigation.navigate("Auth");
+        }
+        try {
+            const profile: Profile = await getProfile();
+            console.log('Profile: ', profile);
+            handleSetProfile(profile);
+        } catch (err) {
+            return navigation.navigate("Auth");
+        }
+        return navigation.navigate("Main");
+    }
+    useEffect(() => {
+        handleCheckAuth();
+    }, []);
+
+
+   
+    const handleCheckGeolocation = async () => {
+        
+        try {
+                const result = await  check(
+                    Platform.OS === "android" ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
+                );
+                if (result === RESULTS.GRANTED) {
+                    Geolocation.getCurrentPosition(
+                    async position => {
+                        const { latitude, longitude } = position.coords;
     
+                        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
+                    const data = await response.json();
+                    const city = data.address.city || data.address.town || data.address.village || data.address.hamlet;
+                    const address = data.display_name;
+                        console.log('Город:', city);
+                        console.log('Адрес:', address);
+    
+                        handleSetOrder({
+                            ...order,
+                            departure: { city: city, address: address,lat: latitude, lot: longitude },
+                        });
+                        handleSetEditingOrder({
+                            ...order,
+                            departure: { city: city, address: address},
+                        });
+                    },
+                    error => {
+                        console.error('Failed to get current location', error);
+                    },
+                    { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+                );
+            }
+        } catch (err) {
+            console.error('Failed to request permission', err);
+            setBottomSheetState(BottomSheetStateEnum.ENABLE_GPS);
+
+        }
+    }
+    useEffect(()=> {
+        handleCheckGeolocation()
+    }, [])
     return(
         <View style={styles.layout}>
              <View style={[styles.header, Platform.OS === "ios" && { marginTop: 50 }]}>

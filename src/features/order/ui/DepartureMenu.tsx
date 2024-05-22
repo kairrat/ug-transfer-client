@@ -1,18 +1,34 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { TBottomSheetMethods } from "../types/bottomSheetMethods";
-import { FC } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { BottomSheetStateEnum } from "../enums/bottomSheetState.enum";
 import { colors, fonts } from "src/shared/style";
 import { BuildingIcon, CrossIcon, LocationMarkIcon } from "src/shared/img";
 import { Button } from "src/shared/components/Button";
 import { useUnit } from "effector-react";
 import { $main, setEditingOrder, setOrder } from "src/features/main/model/MainStore";
+import { BottomSheetModal, useBottomSheet } from "@gorhom/bottom-sheet";
+import { BOTTOM_SHEET_SNAP_POINTS } from "../constants/SnapPoints";
+import { $bottomSheet } from 'src/features/main/model/BottomSheetStore';
+import { setSnapPoints } from "../model/bottomSheetStateStore";
 
 type Props = TBottomSheetMethods & {};
 
 const DepartureMenu: FC<Props> = function({ setBottomSheetState }) {
 
     const [{order, editingOrder}, handleSetOrder, handleSetEditingOrder] = useUnit([$main, setOrder, setEditingOrder]);
+    const [bottomSheet, setBottomSheet] = useState<BottomSheetStateEnum>(BottomSheetStateEnum.LOADING);
+    const sheetModalRef = useRef<BottomSheetModal>(null);
+
+    const [{snapPoints}, handleSetSnapPoints] = useUnit([$bottomSheet, setSnapPoints]);
+    const { snapToPosition } = useBottomSheet();
+    const [snapPos, setSnapPos] = useState(BOTTOM_SHEET_SNAP_POINTS[BottomSheetStateEnum.SET_DEPARTURE_LOCATION][0]);
+    useEffect(() => {
+        const points = BOTTOM_SHEET_SNAP_POINTS[BottomSheetStateEnum.SET_DEPARTURE_LOCATION];
+        snapToPosition(points[0] + 0);
+        handleSetSnapPoints(points.map(pos => pos + 0));
+        setSnapPos(points[0] + 0);
+    }, []);
 
     function applyLocation() {
         handleSetOrder({...order, departure: editingOrder.departure});

@@ -10,6 +10,8 @@ import { BottomSheetStateEnum } from "src/features/main/enums/bottomSheetState.e
 import { TBottomSheetMethods } from "src/features/order/types/bottomSheetMethods";
 import Geolocation from '@react-native-community/geolocation';
 import { setDepartureLocation } from "src/features/map";
+import { setEditingOrder, setOrder, $main } from 'src/features/main/model/MainStore';
+
 
 type Props = TBottomSheetMethods & {};
 
@@ -17,19 +19,38 @@ export const EnableGps: FC<Props> = memo(({setBottomSheetState}) => {
     const [handleSetGpsEnabled] = useUnit([setGpsEnabled]);
     const [ handleSetDepartureLocation] = useUnit([setDepartureLocation]);
 
-    
+    const [
+        { order, editingOrder, status },
+        handleSetOrder,
+        handleSetEditingOrder,
+    ] = useUnit([$main, setOrder, setEditingOrder]);
     const handlePressLaterButton = () => {
         setBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
     };
 
+
     const handleEnableGps = async () => {
         try {
-            const result = await request(Platform.OS === "android" ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+            const result = await request(
+                Platform.OS === "android" ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
+            );
             if (result === RESULTS.GRANTED) {
                 Geolocation.getCurrentPosition(
-                    position => {
+                    async position => {
                         const { latitude, longitude } = position.coords;
-                        handleSetDepartureLocation({ lat: latitude, lon: longitude });
+    
+                        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
+                    const data = await response.json();
+                    const city = data.address.city || data.address.town || data.address.village || data.address.hamlet;
+                    const address = data.display_name;
+                        console.log('Город:', city);
+                        console.log('Адрес:', address);
+    
+                  //      handleSetDepartureLocation({ lat: latitude, lon: longitude });
+                        handleSetOrder({
+                            ...order,
+                            departure: { city: city, address: address,lat: latitude, lot: longitude },
+                        });
                     },
                     error => {
                         console.error('Failed to get current location', error);
@@ -38,13 +59,13 @@ export const EnableGps: FC<Props> = memo(({setBottomSheetState}) => {
                 );
                 handleSetGpsEnabled(true);
             }
-            }
-         catch (err) {
+        } catch (err) {
             console.error('Failed to request permission', err);
         } finally {
             setBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
         }
     }
+    
     return(
         <View style={styles.container}>
             <Image source={Earth} style={styles.earth_icon}/>
@@ -96,7 +117,8 @@ const styles = StyleSheet.create({
         width: '100%',
         marginVertical: 10,
         flexDirection: 'column',
-        rowGap: 10
+        rowGap: 10,
+
     },
     primary_text: {
         color: colors.black,

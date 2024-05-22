@@ -13,7 +13,7 @@ interface ITripItemProps {
     arrivalAddress: string;
     price: string;
     distance: number;
-    date: Date;
+    date: string;
     onPress: () => void;
     status: OrderStatusEnum
 }
@@ -37,7 +37,7 @@ export const TripItem: FC<ITripItemProps> = ({
     return(
         <TouchableOpacity style={[styles.container]} onPress={onPress}>
             <View style={styles.header}>
-                <Text style={[styles.header_text, { color: orderStatusColor[status]}]}>{dayjs(date).format('hh:mm DD:MM:YYYY')}</Text>
+                <Text style={[styles.header_text, { color: orderStatusColor[status]}]}>{date}</Text>
                 <Text style={styles.header_text}>{distance}км</Text>
             </View>
             <View style={styles.body}>

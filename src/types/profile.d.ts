@@ -2,7 +2,9 @@ export interface Profile {
     _id?: string;
     phone_number?: string;
     subscriptionStatus?: boolean;
-    full_name?: string;
+    firstName?: string;
+    lastName : string;
+    middleName : string;
     registrationComplete?: boolean;
     telegram?: string;
     avatar?: string;

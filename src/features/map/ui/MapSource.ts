@@ -120,6 +120,8 @@ module.exports = `<!DOCTYPE html>
             });
 
             myMap.geoObjects.add(stopLocationMarker);
+
+            fitMarkers();
             
         }
         function removeMarkerInMap() {

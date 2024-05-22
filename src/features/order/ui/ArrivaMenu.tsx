@@ -1,5 +1,5 @@
 import { useUnit } from "effector-react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import {
     $main,
     setEditingOrder,
@@ -9,21 +9,62 @@ import {
 import { BuildingIcon, CrossIcon, LocationMarkIcon } from "src/shared/img";
 import { colors, fonts } from "src/shared/style";
 import { TBottomSheetMethods } from "../types/bottomSheetMethods";
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BottomSheetStateEnum } from "../enums/bottomSheetState.enum";
 import { Button } from "src/shared/components/Button";
 import { BOTTOM_SHEET_SNAP_POINTS } from "../constants/SnapPoints";
-import { getGeocode } from "src/features/map/model/map-actions";
+import BottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet";
+import { BottomSheetModal, useBottomSheet } from "@gorhom/bottom-sheet";
+import { setBottomSheetState, $bottomSheet } from 'src/features/main/model/BottomSheetStore';
+import { setSnapPoints } from "../model/bottomSheetStateStore";
+import { getGeocode } from "src/map/model/map-actions";
 
 type Props = TBottomSheetMethods & {};
 
-const ArriveMenu: FC<Props> = function ({ setBottomSheetState }) {
+const ArriveMenu: FC<Props> = function ({ setBottomSheetState}) {
     const [{ order, editingOrder, }, handleSetOrder, handleSetEditingOrder] =
         useUnit([$main, setOrder, setEditingOrder]);
+        const [bottomSheet, setBottomSheet] = useState<BottomSheetStateEnum>(BottomSheetStateEnum.LOADING);
+        const sheetModalRef = useRef<BottomSheetModal>(null);
+
+        const [{snapPoints}, handleSetSnapPoints] = useUnit([$bottomSheet, setSnapPoints]);
+        const { snapToPosition } = useBottomSheet();
+        const [snapPos, setSnapPos] = useState(BOTTOM_SHEET_SNAP_POINTS[BottomSheetStateEnum.SET_ARRIVAL_LOCATION][0]);
+        useEffect(() => {
+            const points = BOTTOM_SHEET_SNAP_POINTS[BottomSheetStateEnum.SET_ARRIVAL_LOCATION];
+            if (order.additionalArrivals.length === 0) {
+                snapToPosition(points[0]);
+                handleSetSnapPoints(points);
+                setSnapPos(points[0]);
+            }
+            else if (order.additionalArrivals.length == 1) {
+                snapToPosition(points[0] + 200);
+                handleSetSnapPoints(points.map(pos => pos + 200));
+                setSnapPos(points[0] + 200);
+            }
+            else if  (order.additionalArrivals.length == 2) {
+                snapToPosition(points[0] + 250);
+                handleSetSnapPoints(points.map(pos => pos + 250));
+                setSnapPos(points[0] + 250);
+            }
+            else if  (order.additionalArrivals.length == 3) {
+                snapToPosition(points[0] + 400);
+                handleSetSnapPoints(points.map(pos => pos + 400));
+                setSnapPos(points[0] + 400);
+            }
+        }, [order.additionalArrivals]);
 
       const [handleMarkerRemove] =   useUnit([setMarkerRemove])
 
     const index = order.index;
+
+    const handleSheetChange = useCallback((index) => {
+        console.log("handleSheetChange", index);
+      }, []);
+    
+    const handleSnapPress = useCallback((index) => {
+        sheetModalRef.current?.snapToIndex(index);
+      }, []);
 
     async function applyLocation() {
 
@@ -51,7 +92,6 @@ const ArriveMenu: FC<Props> = function ({ setBottomSheetState }) {
                             lat,
                             lon
                         }
-                        // handleSetOrder({...order, additionalArrivals: [...order.additionalArrivals, ...stopsArr]});
                     }
                 }
             }
@@ -59,6 +99,7 @@ const ArriveMenu: FC<Props> = function ({ setBottomSheetState }) {
         } catch(err) {
             console.error('Failed to get geocode of additional arrival address: ', err)
         } finally {
+            sheetModalRef.current?.snapToPosition(Platform.OS === "ios" ? 653 : 623);
             setBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
         }
         
@@ -156,7 +197,7 @@ const ArriveMenu: FC<Props> = function ({ setBottomSheetState }) {
             </View>
             {[ ...order.additionalArrivals].map((arrival, index) => (
                 <View style={{ display: "flex", flexDirection: "row" }} key={index}>
-                    <View style={styles.container_body}>
+                    <View style={styles.container_body_add}>
                         <Button
                             onPress={() => openCitySelectionAdditional(index)}
                             projectType="address_input"
@@ -198,7 +239,7 @@ const ArriveMenu: FC<Props> = function ({ setBottomSheetState }) {
             ))}
 
             <View style={styles.additional_container}>
-                {order.newArrivals.length < 3 && (
+                {order.additionalArrivals.length < 3 && (
                     <TouchableOpacity>
     <Text
                         onPress={handlePlusAdditional}
@@ -273,6 +314,12 @@ const styles = StyleSheet.create({
     container_body: {
         marginTop: 15,
         marginBottom: 15,
+        flexDirection: "column",
+        rowGap: 10,
+    },
+    container_body_add: {
+        marginTop: 10,
+        marginBottom: 10,
         flexDirection: "column",
         rowGap: 10,
     },

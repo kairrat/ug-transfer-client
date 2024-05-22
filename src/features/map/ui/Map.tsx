@@ -7,7 +7,12 @@ import {
     setArrivalLocation,
     setDepartureLocation,
 } from "../model/MapStore";
-import { $main, $tempMarkerRemove, resetMarkerRemove, setOrder } from "src/features/main/model/MainStore";
+import {
+    $main,
+    $tempMarkerRemove,
+    resetMarkerRemove,
+    setOrder,
+} from "src/features/main/model/MainStore";
 import { CARS_CLASSES } from "src/features/main/constants/constants";
 import {
     $gps,
@@ -23,7 +28,10 @@ function Map() {
     ] = useUnit([$map, setDepartureLocation, setArrivalLocation]);
 
     const [{ order }, handleSetOrder] = useUnit([$main, setOrder]);
-   const [markerRemove, handleResetMarkerRemove] =  useUnit([$tempMarkerRemove, resetMarkerRemove])
+    const [markerRemove, handleResetMarkerRemove] = useUnit([
+        $tempMarkerRemove,
+        resetMarkerRemove,
+    ]);
     const [
         { setMyLocationTrigger, lat: myLat, lon: myLon },
         handleSetMyPosition,
@@ -35,8 +43,7 @@ function Map() {
     const [mapLoaded, setMapLoaded] = useState<boolean>(false);
     const [firstLocationLoad, setFirstLocationLoad] = useState<boolean>(false);
     const stops = order.additionalArrivals;
-
-   
+    const isUpdatedAddArrivals = order.additionalArrivals.length;
 
     useEffect(() => {
         if (this._webView && mapLoaded) {
@@ -49,56 +56,43 @@ function Map() {
             }
         }
     }, [departureLocation]);
-    const isUpdatedAddArrivals = order.additionalArrivals.length
     useEffect(() => {
-        if (!this._webView || !mapLoaded) return
-    
+        if (!this._webView || !mapLoaded) return;
+
         if (arrivalLocation) {
-            console.log('arr location', arrivalLocation)
-            let test = ''
+            console.log("arr location", arrivalLocation);
+            let test = "";
 
             const query = `${arrivalLocation.lat}, ${arrivalLocation.lon}`;
-         
-            for( const add of order.additionalArrivals){
-                test += `{lat:${add.lat}, lon:${add.lon}},`
 
+            for (const add of order.additionalArrivals) {
+                test += `{lat:${add.lat}, lon:${add.lon}},`;
             }
-            console.log('query', query)
+            console.log("query", query);
             this._webView.injectJavaScript(
-
-                `
-                additionalStops = [${test}]
+                `additionalStops = [${test}]
                 addEndMarker(${query})`
             );
         } else {
             this._webView.injectJavaScript("removeEndMarker()");
         }
-      
-    }, [arrivalLocation,isUpdatedAddArrivals]);
-
+    }, [arrivalLocation, isUpdatedAddArrivals]);
 
     useEffect(() => {
         if (this._webView && mapLoaded) {
-            if(markerRemove) {
-                this._webView.injectJavaScript(
-                    `removeMarkerInMap()`
-                );
+            if (markerRemove) {
+                this._webView.injectJavaScript(`removeMarkerInMap()`);
             }
             order.additionalArrivals.forEach(({ lat, lon, city }, index) => {
-                console.log('index from additionalArrivals', index)
-                
+                console.log("index from additionalArrivals", index);
+
                 if (lat && lon) {
-                    this._webView.injectJavaScript(
-                        `addStop(${lat}, ${lon},${index+1})`
-                    );
-                   
+                    this._webView.injectJavaScript(`addStop()`);
                 }
             });
-            handleResetMarkerRemove()
-
+            handleResetMarkerRemove();
         }
-    }, [order.additionalArrivals,markerRemove]);
-
+    }, [order.additionalArrivals, markerRemove]);
 
     // Добавим обработчик для удаления маркера по индексу
 
@@ -208,7 +202,7 @@ function Map() {
                 allowFileAccess={true}
                 allowFileAccessFromFileURLs
                 allowUniversalAccessFromFileURLs
-                allowsProtectedMedia              
+                allowsProtectedMedia
                 onMessage={(e) => {
                     const [messageKey, messageValue] =
                         e.nativeEvent.data.split(":");
@@ -236,33 +230,32 @@ function Map() {
                         setRouteDetails({ distance: null, time: null });
                         handleSetOrder({ ...order, price: null });
                     }
-                    if(messageKey === 'addStop') {
-                        console.log('addStop',{messageValue})
-                    } 
-                    if(messageKey === 'Route'){
-                        console.log('route result',{messageValue})
-
+                    if (messageKey === "addStop") {
+                        console.log("addStop", { messageValue });
                     }
-                    if(messageKey === "RouteTemp"){
-                        console.log('routeTemp result', {messageValue})
+                    if (messageKey === "Route") {
+                        console.log("route result", { messageValue });
                     }
-                    if(messageKey === "startMarkerLocation"){
-                        console.log('startMarkerLocation result', {messageValue})
-
+                    if (messageKey === "RouteTemp") {
+                        console.log("routeTemp result", { messageValue });
                     }
-                    if(messageKey === "tempStops"){
-                        console.log('tempStops result', {messageValue})
-
+                    if (messageKey === "startMarkerLocation") {
+                        console.log("startMarkerLocation result", {
+                            messageValue,
+                        });
                     }
-                    if(messageKey === "endMarkerLocation"){
-                        console.log('endMarkerLocation result', {messageValue})
-
+                    if (messageKey === "tempStops") {
+                        console.log("tempStops result", { messageValue });
+                    }
+                    if (messageKey === "endMarkerLocation") {
+                        console.log("endMarkerLocation result", {
+                            messageValue,
+                        });
                     }
                 }}
             />
         </View>
     );
-    
 }
 
 export default memo(Map);
@@ -272,4 +265,3 @@ const styles = StyleSheet.create({
         flex: 1,
     },
 });
-

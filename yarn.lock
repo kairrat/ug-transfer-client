@@ -5283,6 +5283,16 @@ loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.4.0:
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 
+lottie-ios@3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/lottie-ios/-/lottie-ios-3.4.0.tgz#a23be299760aefb44298b9cb5f60df489030adbf"
+  integrity sha512-qnV8UrawwnBRf5V0no2yxlPUE69vzfFqpxEEXGTZhb1/WX1xewqVNYvtbguqwQkdu9IT9D5WC1U9CHZ1KbkGDw==
+
+lottie-react-native@^6.7.2:
+  version "6.7.2"
+  resolved "https://registry.yarnpkg.com/lottie-react-native/-/lottie-react-native-6.7.2.tgz#615fc16f88970fcbdf63699537f499b5937afe8a"
+  integrity sha512-MZVx6N1EeO/EaSx8T44mJ0aHc5Mqee+xIfWwszni0oz8U2wlHdaWGjES44dHxaxgAp/0dRaFt3PkpZ6egTzcBg==
+
 lower-case@^2.0.2:
   version "2.0.2"
   resolved "https://registry.npmjs.org/lower-case/-/lower-case-2.0.2.tgz"
@@ -6421,6 +6431,11 @@ react-native-fast-image@^8.6.3:
   version "8.6.3"
   resolved "https://registry.npmjs.org/react-native-fast-image/-/react-native-fast-image-8.6.3.tgz"
   integrity sha512-Sdw4ESidXCXOmQ9EcYguNY2swyoWmx53kym2zRsvi+VeFCHEdkO+WG1DK+6W81juot40bbfLNhkc63QnWtesNg==
+
+react-native-geocoding@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/react-native-geocoding/-/react-native-geocoding-0.5.0.tgz#69748f896047a63d1c3c1d55255f9d67c8e275c2"
+  integrity sha512-peTXRpRxPLiZpbTW43AOvoXXAEoS+eLnSo4KRY0hcL9F2hulWE5r7o5KiaLx8AWj35c6EJP3fdGHe754q2Gd2Q==
 
 react-native-gesture-handler@^2.13.2:
   version "2.13.4"
