@@ -1,7 +1,9 @@
+import { useUnit } from "effector-react";
 import { FC } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { ArrowDownIcon } from "src/shared/img";
 import { colors } from "src/shared/style";
+import { $main, setEditingOrder, setOrder } from 'src/features/main/model/MainStore';
 
 type AddressBlockProps = {
     departureCity: string;
@@ -11,6 +13,8 @@ type AddressBlockProps = {
 }
 
 export const AddressBlock: FC<AddressBlockProps> = ({departureCity, arrivalCity, departureAddress, arrivalAddress}) => {
+    const [{ order, editingOrder, }, handleSetOrder, handleSetEditingOrder] =
+    useUnit([$main, setOrder, setEditingOrder]);
     return(
         <View style={styles.info_container}>
             <View style={styles.arrow_holder}>
@@ -23,8 +27,15 @@ export const AddressBlock: FC<AddressBlockProps> = ({departureCity, arrivalCity,
                     </Text>
                     <Text style={styles.address_text}>{departureAddress}</Text>
                 </View>
+                {[ ...order.additionalArrivals].map((arrival, index) => (
+                <View style={{ display: "flex", flexDirection: "row" }} key={index}>
+                   <Text style={styles.city_text}>Остановка {index} : {' '}<Text>г.{arrival.city}</Text></Text>
+                    <Text style={styles.address_text}>{arrival.address}</Text>
+               
+                </View>
+            ))}
                 <View style={styles.address_holder}>
-                    <Text style={styles.city_text}>Куда: {' '}<Text>г.{arrivalCity}</Text></Text>
+                    <Text style={styles.city_text}>Куда: {' '}<Text  style={{ color: colors.green }}>г.{arrivalCity}</Text></Text>
                     <Text style={styles.address_text}>{arrivalAddress}</Text>
                 </View>
             </View>

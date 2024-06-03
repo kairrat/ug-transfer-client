@@ -33,9 +33,11 @@ import StatusBarBackground from './gradient.png';
 import AboutLinkIcon from './about-link-icon.svg';
 import LocationScopeIcon from './location-scope-icon.svg';
 import UrgentIcon from './urgent.png'
+import downIcon from './down.png'
 
 export {
     MenuIcon,
+    downIcon,
     UrgentIcon,
     EarthIcon,
     Earth,

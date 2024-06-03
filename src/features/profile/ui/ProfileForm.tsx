@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { Image, Keyboard, Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { Alert, Image, Keyboard, Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { FileHelper } from "src/features/file";
 import { AddGreenIcon, PhoneRoundedIcon, UnknownUser, UserIcon } from "src/shared/img";
 import { Asset } from 'react-native-image-picker';
@@ -20,17 +20,21 @@ import { Profile } from "src/types/profile";
 // import { PrivacyPolicy } from "src/features/privacy-policy";
 
 interface IProfileFormProps {
+    navigateToMain: () => void;
     navigateToAuth: () => void;
 }
-
-export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
+export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth,navigateToMain }) => {
     const toast = useToast();
     const [, handleChangeLoggedState] = useUnit([$auth, setLoggedState]);
     const [{profile}] = useUnit([$profile]);
-    const [newAvatar, setNewAvatar] = useState<any>(profile?.img || null);
-    const handleSetProfile = useEvent(setProfile);
 
-    const [personalData, setPersonalData] = useState({full_name: profile?.full_name || "", phone: profile?.phone_number || ""});
+    console.log('profile', profile)
+    const [newAvatar, setNewAvatar] = useState<any>(null);
+    const handleSetProfile = useEvent(setProfile);
+    const [firstName, setfirstName] = useState({firstName: profile?.firstName || ""})
+    const [middleName, setMiddleName] = useState({middleName: profile?.middleName || ""})
+    const [lastName, setLastName] = useState({lastName: profile?.lastName || ""})
+    const [phone, setPhone] = useState({phone: profile?.phone_number || ""})
     const [changed, setChanged] = useState<boolean>(false);
     const [openDeleteAccount, setOpenDeleteAccount] = useState<boolean>(false);
     const [openPrivacy, setOpenPrivacy] = useState<boolean>(false);
@@ -49,14 +53,27 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
         }
     }
 
-    const handleChangeName = (full_name: string) => {
-        setPersonalData(prev => ({...prev, full_name}));
+    const handleChangeFirstName = (firstName: string) => {
+        setfirstName(prev => ({...prev, firstName}));
+        !changed && setChanged(true);
+    }
+
+    const handleChangeMiddleName = (middleName: string) => {
+        setMiddleName(prev => ({...prev, middleName}));
+        !changed && setChanged(true);
+    }
+    const handleChangeLastName = (lastName: string) => {
+        setLastName(prev => ({...prev, lastName}));
+        !changed && setChanged(true);
+    }
+    const handleChangePhone = (phone: string) => {
+        setfirstName(prev => ({...prev, phone}));
         !changed && setChanged(true);
     }
     const handleSaveChanged = async () => {
         try {
             setLoading(true);
-            const updateData = { name: personalData.full_name };
+            const updateData = { firstName: firstName.firstName, middleName : middleName.middleName, lastName : lastName.lastName, phone : phone.phone  };
             if (newAvatar) {
                 const formData: FormData = new FormData();
                 formData.append('avatar_link', newAvatar);
@@ -66,6 +83,10 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
             const data: any = await updateProfile(updateData);
             const profile: Profile = await getProfile();
             handleSetProfile(profile);
+
+            if(profile.firstName && profile.lastName && profile.img){
+                navigateToMain();
+            }
 
 
             if (data && data.message) {
@@ -86,13 +107,42 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
   
 
     const handleLogout = async () => {
-        await AsyncStorage.removeItem(AsyncStorageKeys.TOKEN);
-        handleChangeLoggedState(false);
-        navigateToAuth();
-    }
+          Alert.alert('', 'Вы действительно хотите выйти?', [
+            {
+              text: 'Отмена',
+              onPress: () => null,
+              style: 'cancel',
+            },
+            {
+              text: 'Да',
+              onPress: async () => {
+                await AsyncStorage.removeItem(AsyncStorageKeys.TOKEN);
+                handleChangeLoggedState(false);
+                navigateToAuth();
+              },
+            },
+          ]);
+          return true;
+        
+      };
+      
 
     const handleDeleteAccount = async () => {
-        setOpenDeleteAccount(false);
+        Alert.alert('', 'Вы действительно хотите Удалить аккаунт?', [
+            {
+              text: 'Отмена',
+              onPress: () => null,
+              style: 'cancel',
+            },
+            {
+              text: 'Да',
+              onPress: async () => {
+                setOpenDeleteAccount(false);
+                handleLogout();
+
+              },
+            },
+          ]);
     }
     if (!profile) {
         handleLogout();
@@ -111,10 +161,14 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
                                 newAvatar
                                 ?
                                 <Image source={newAvatar} style={styles.avatar}/>
-                                :
+                                : profile.img ? 
+
                                 <Image 
-                                    source={profile?.img ? { uri: profile.img } : UnknownUser}
+                                    source={{ uri: profile.img }}
                                     style={styles.avatar}/>
+                                    : 
+                                    <Image source={UnknownUser} style={styles.avatar}/>
+
                             }
                             <TouchableOpacity 
                                 style={styles.add_avatar}
@@ -122,18 +176,29 @@ export const ProfileForm: FC<IProfileFormProps> = ({ navigateToAuth }) => {
                                 <AddGreenIcon />
                             </TouchableOpacity>
                         </View>
-                        <Input 
+                                     <Input 
+                            leftIcon={<UserIcon />}
+                            placeholder="Фамилия"
+                            value={lastName.lastName} 
+                            onChange={handleChangeLastName}/>
+                                <Input 
                             leftIcon={<UserIcon />}
                             placeholder="Имя"
-                            value={personalData.full_name} 
-                            onChange={handleChangeName}/>
+                            value={firstName.firstName} 
+                            onChange={handleChangeFirstName}/>
+                                <Input 
+                            leftIcon={<UserIcon />}
+                            placeholder="Отчество"
+                            value={middleName.middleName} 
+                            onChange={handleChangeMiddleName}/>
+                       
                         <Input 
                             projectType="profile_phone"
                             leftIcon={<PhoneRoundedIcon />}
                             placeholder="Номер телефона"
                             keyboardType="phone-pad"
-                            value={personalData.phone}
-                            onChange={(phone: string) => setPersonalData(prev => ({...prev, phone}))}
+                            value={phone.phone}
+                            onChange={handleChangePhone}
                             disabled={true}/>
                         <Button 
                             onPress={handleSaveChanged}

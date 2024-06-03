@@ -30,11 +30,12 @@ module.exports = `<!DOCTYPE html>
             myLocation = null,
             myLocationMarker = null,
             stops = [];
+            
 
 
         ymaps.ready(init);
         let additionalStops = [];
-
+        let stopMarkers = [];
 
         function init() {
             myMap = new ymaps.Map("map", {
@@ -113,22 +114,35 @@ module.exports = `<!DOCTYPE html>
             }
         }
 
-        function addStop(lat, lon) {
+        function addStop(lat, lon, index) {
             
-            const stopLocationMarker = new ymaps.Placemark([lat, lon], {}, {
-                preset: 'islands#greenCircleDotIcon' // Здесь можно изменить пресет
+
+            const stopLocationMarker = new ymaps.Placemark([lat, lon], {
+                iconContent : String(index)
+            }, {
+                preset: 'islands#redStretchyIcon' // Здесь можно изменить пресет
             });
 
             myMap.geoObjects.add(stopLocationMarker);
-            
+            stopMarkers.push(stopLocationMarker);
+
+            fitMarkers();
         }
+
         function removeMarkerInMap() {
             fitMarkers();
-            removeStopMarkers();
-            renderStopMarkers();
-                      
+            removeStopMarkersAll()
+            removeStopMarkers()
+            renderStopMarkers()
         }
-  
+        function removeStopMarkersAll() {
+            stopMarkers.forEach(marker => {
+                myMap.geoObjects.remove(marker);
+            });
+        
+            // Очищаем массив маркеров
+            stopMarkers.length = 0;
+        }
     
 
         function removeStopMarkers() {
@@ -154,6 +168,7 @@ module.exports = `<!DOCTYPE html>
                     if (zoom > 2) {
                         myMap.setZoom(zoom - 1);
                     }
+                    removeRoutes();
                     setRoutes(); 
                 });
             } else if (startMarkerLocation !== null) {
@@ -206,22 +221,19 @@ module.exports = `<!DOCTYPE html>
                 window.ReactNativeWebView.postMessage(\`startMarkerLocation:\${JSON.stringify(item)}\`);
             })
     
-
             multiRoute = new ymaps.multiRouter.MultiRoute({
+                // Описание опорных точек мультимаршрута.
                 referencePoints: tempStops,
+                // Параметры маршрутизации.
                 params: {
-                    routingMode: "auto",
-                    avoidTrafficJams: true,
-                    viewAutoApply: true,
-                     results: 5
+                    // Ограничение на максимальное количество маршрутов, возвращаемое маршрутизатором.
+                    results: 1
                 }
             }, {
+                wayPointVisible: false,
                 balloonLayout: null,
                 editorDrawOver: false,
-                boundsAutoApply: true,
-                routeActiveStrokeColor: "#EF7F1B",
-                routeActiveStrokeWidth: 8,
-                wayPointVisible: false
+                boundsAutoApply: true
             });
             myMap.geoObjects.add(multiRoute);
             multiRoute.model.events.add("requestsuccess", function() {

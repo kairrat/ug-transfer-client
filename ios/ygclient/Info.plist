@@ -24,6 +24,8 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<true/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -46,6 +48,8 @@
 	<string>Allow location when in use</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Load photos</string>
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>Разрешить получать уведомления</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Montserrat-Black.ttf</string>
@@ -74,9 +78,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSUserNotificationsUsageDescription</key>
-	<string>Разрешить получать уведомления</string>
-	<key>FirebaseAppDelegateProxyEnabled</key>
-	<true />
 </dict>
 </plist>

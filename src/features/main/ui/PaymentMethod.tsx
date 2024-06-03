@@ -32,7 +32,7 @@ export const PaymentMethod: React.FC<IPaymentMethodProps> = ({setBottomSheetStat
         <View style={styles.container}>
             <View>
       
-            <Text style={[fonts.medium, styles.header_title]}>Споспоб оплаты</Text>
+            <Text style={[fonts.medium, styles.header_title]}>Способ оплаты</Text>
             </View>
           
             <View style={styles.methods_holder}>

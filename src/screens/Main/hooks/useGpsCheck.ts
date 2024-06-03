@@ -2,7 +2,7 @@ import Geolocation from "@react-native-community/geolocation";
 import { useUnit } from "effector-react";
 import { useEffect, useState } from "react";
 import { Platform } from "react-native";
-import { PERMISSIONS, RESULTS, check } from "react-native-permissions";
+import { PERMISSIONS, RESULTS, check,checkMultiple } from "react-native-permissions";
 import { $gps, setCurrentLocation, setGpsEnabled } from "src/features/gps";
 import { BottomSheetStateEnum } from "src/features/main/enums/bottomSheetState.enum";
 import { $bottomSheet, setBottomSheetState } from "src/features/main/model/BottomSheetStore";
@@ -15,7 +15,9 @@ const useGpsCheck = function() {
 
     const handleCheckGpsPermission = async () => {
         try {
-            const result = await check(Platform.OS === "android" ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+            const result = await check(Platform.OS === "android" ? PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+
+            
             if (result === RESULTS.GRANTED) {
                 console.log('Granted', result);
                 handleSetGpsEnabled(true);

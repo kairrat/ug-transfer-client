@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Keyboard, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { Button } from "src/shared/components/Button";
 import { Input } from "src/shared/components/Input";
 import { BaggageIcon, CrossIcon, UserIcon } from "src/shared/img";
@@ -9,6 +9,9 @@ import { useUnit } from "effector-react";
 import { $main, setOrder, setOrderDetailsModal } from "../model/MainStore";
 import { BottomSheetStateEnum } from "../../order/enums/bottomSheetState.enum";
 import { TBottomSheetMethods } from "src/features/order/types/bottomSheetMethods";
+import { BottomSheetModal, useBottomSheet } from "@gorhom/bottom-sheet";
+import { $bottomSheet, setSnapPoints } from 'src/features/main/model/BottomSheetStore';
+import { BOTTOM_SHEET_SNAP_POINTS } from "../constants/SnapPoints";
 
 
 type OrderDetailsProps = TBottomSheetMethods & {};
@@ -23,12 +26,56 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({setBottomSheetState})
     const handleApplyChanges = () => {
         handleSetOrder({...order, baggage, passangersAmount, params, comment});
         handleSetOrderDetailsModal(false);
+        setBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
+
     }
+
+
+    const [bottomSheet, setBottomSheet] = useState<BottomSheetStateEnum>(BottomSheetStateEnum.LOADING);
+    const sheetModalRef = useRef<BottomSheetModal>(null);
+
+    const [{snapPoints}, handleSetSnapPoints] = useUnit([$bottomSheet, setSnapPoints]);
+    const { snapToPosition } = useBottomSheet();
+    const [snapPos, setSnapPos] = useState(BOTTOM_SHEET_SNAP_POINTS[BottomSheetStateEnum.ORDER_DETAIL][0]);
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+    useEffect(() => {
+        const points = BOTTOM_SHEET_SNAP_POINTS[BottomSheetStateEnum.ORDER_DETAIL];
+       
+
+                    snapToPosition(points[0]);
+                    handleSetSnapPoints(points);
+                    setSnapPos(points[0]);
+                    
+       
+    }, []);
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+          'keyboardDidShow',
+          () => {
+            setKeyboardVisible(true); 
+          }
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+          'keyboardDidHide',
+          () => {
+            setKeyboardVisible(false);
+          }
+        );
+    
+        return () => {
+          keyboardDidHideListener.remove();
+          keyboardDidShowListener.remove();
+        };
+      }, []);
     function close() {
         setBottomSheetState(BottomSheetStateEnum.SET_ADDRESS);
     }
 
     return(
+        <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
         <SafeAreaView style={styles.layout}>
             <View style={styles.header}>
                 <TouchableOpacity 
@@ -53,10 +100,15 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({setBottomSheetState})
                             onChange={setPassangersAmount}
                             keyboardType="numeric"
                             leftIcon={<UserIcon />}/>
+                                                   <View style={styles.option_holder_border}></View>
+
                         <View style={styles.option_holder}>
                             <TouchableOpacity style={styles.option_button} onPress={(e) => setParams(prev => ({...prev, babyChair: !prev.babyChair}))}>
+                                
                                 <Checkbox
                                     value={params.babyChair}   
+                                    style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }], marginTop : 5 }}
+
                                     onValueChange={() => Platform.OS !== "ios" && setParams(prev => ({...prev, babyChair: !prev.babyChair}))}
                                     tintColor={colors.white}
                                     boxType="cirlce"
@@ -70,6 +122,8 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({setBottomSheetState})
                             <TouchableOpacity style={styles.option_button} onPress={(e) => setParams(prev => ({...prev, buster: !prev.buster}))}>
                                 <Checkbox
                                     value={params.buster}
+                                    style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }], marginTop : 5 }}
+
                                     tintColors={{ true: colors.white, false: colors.white }}
                                     tintColor={colors.white}
                                     boxType="cirlce"
@@ -85,8 +139,11 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({setBottomSheetState})
                                     value={params.animalTransfer}
                                     onValueChange={() => Platform.OS !== "ios" && setParams(prev => ({...prev, animalTransfer: !prev.animalTransfer}))}
                                     boxType="cirlce"
+                                    style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }], marginTop : 5 }}
                                     tintColors={{ true: colors.white, false: colors.white }}
+
                                     tintColor={colors.white}
+                                    
                                     onCheckColor={colors.white}
                                     onTintColor={colors.white}
                                     />
@@ -100,6 +157,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({setBottomSheetState})
                             textAlignVertical="top"
                             multiline 
                             numberOfLines={3}/>
+                     
                     </View>
                     <View style={styles.button_holder}>
                         <Button onPress={handleApplyChanges} projectType="primary">
@@ -109,6 +167,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({setBottomSheetState})
                 </View>
             </TouchableWithoutFeedback>
         </SafeAreaView>
+        </KeyboardAvoidingView>
     );
 };
 
@@ -144,15 +203,26 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20
     },
     body: {
-        paddingVertical: 20,
+        paddingVertical: 10,
         flexDirection: 'column',
         rowGap: 10
+        
     },
     option_holder: {
         flexDirection: 'row',
         alignItems: 'center',
         columnGap: 10,
         marginBottom: 10,
+        paddingBottom : 10,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.line
+  
+    },
+    option_holder_border: {
+        marginVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.line,
+
     },
     option_button: {
         flexDirection: 'row', 
@@ -165,7 +235,8 @@ const styles = StyleSheet.create({
         color: colors.white
     },
     button_holder: {
-        marginVertical: 20
+        marginVertical: 1,
+        paddingBottom : 10,
     },
     button_text: {
         textAlign: 'center',

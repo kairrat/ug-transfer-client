@@ -4,7 +4,7 @@ import { PERMISSIONS, RESULTS, check } from "react-native-permissions";
 import { BottomSheetStateEnum } from "src/features/order/enums/bottomSheetState.enum";
 
 const OS_PERMISSIONS = {
-    "android": PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+    "android": PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
     "ios": PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
 }
 

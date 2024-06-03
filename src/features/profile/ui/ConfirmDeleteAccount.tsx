@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Image, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { Button } from "src/shared/components/Button";
-import { ArrowLeftIcon, LightLogo } from "src/shared/img";
+import { ArrowLeftIcon, Logo } from "src/shared/img";
 import { colors } from "src/shared/style";
 
 interface IConfirmDeleteAccount {
@@ -21,7 +21,10 @@ export const ConfirmDeleteAccount: FC<IConfirmDeleteAccount> = ({ onClose, onCon
                 </Button>
             </View>
             <View style={styles.body}>
-                <Image source={LightLogo} style={styles.logo}/>
+                <View style={styles.container}>
+                <Image source={Logo} style={styles.logo}/>
+
+                </View>
                 <Text style={styles.title}>Вы действительно хотите удалить аккаунт?</Text>
                 <Text style={styles.reminder}>Все ваши данные и поездки будут стерты</Text>
             </View>
@@ -50,11 +53,17 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+       
     },
     logo: {
-        alignSelf: 'center',
-        marginVertical: 10
+        maxWidth: '100%', 
+        maxHeight: 100,
+        objectFit: 'contain'
+    },
+    container: {
+        maxWidth: '60%',
+        marginVertical: 20
     },
     title: {
         color: colors.white,

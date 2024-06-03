@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEvent } from "effector-react";
 import React, { useEffect } from "react";
-import { View } from "react-native";
+import { Alert, BackHandler, View } from "react-native";
 import { AsyncStorageKeys } from "src/app/types/authorization";
 import { getProfile, setProfile } from "src/features/profile";
 import { StackScreens } from "src/routes";
@@ -31,6 +31,7 @@ export const Init: React.FC<InitProps> = ({ navigation }) => {
     useEffect(() => {
         handleCheckAuth();
     }, []);
+
     return(
         <View style={{ flex: 1, backgroundColor: colors.background }}>
             

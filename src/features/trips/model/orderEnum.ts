@@ -1,5 +1,8 @@
 export enum OrderStatusEnum {
     selling = 'На продаже',
     in_process = "Выполняется",
-    finished = "Завершен"
+    finished = "Выполнено",
+    cancelled = "Отменен",
+
+
 }

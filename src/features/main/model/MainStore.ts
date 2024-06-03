@@ -15,6 +15,7 @@ type MainState = {
         | "received"
         | "complete"
         | "took"
+        | "cancelled"
         | "null";
 };
 

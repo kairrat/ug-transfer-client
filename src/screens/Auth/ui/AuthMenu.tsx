@@ -31,11 +31,7 @@ export const AuthMenu: FC<IAuthMenuProps> = ({
                     <Button onPress={onSignup} projectType="primary">
                         <Text style={[fonts.medium, styles.button_text, { color: colors.black }]}>Войти</Text>
                     </Button>
-                    <TouchableOpacity onPress={onPrivacyPolicy}>
-                        <Text style={[fonts.medium, styles.privacy_text]}>
-                            Политика конфиденциальности
-                        </Text>
-                    </TouchableOpacity>
+                 
                 </View>
             </View>
         </View>
